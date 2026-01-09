@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { useEffectEvent } from "react";
 
 export const useResetStore = (pathScope: string, reset: () => void) => {
     const { pathname } = useLocation();
