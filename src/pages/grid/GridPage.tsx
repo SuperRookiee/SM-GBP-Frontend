@@ -4,7 +4,7 @@ import { getSampleData } from "@/apis/grid.api";
 import GridTable from "@/components/grid/GridTable";
 import type { GridRow } from "@/interface/grid.interface";
 
-const ChartPage = () => {
+const GridPage = () => {
   const [rows, setRows] = useState<GridRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -56,4 +56,4 @@ const ChartPage = () => {
   );
 };
 
-export default ChartPage;
+export default GridPage;
