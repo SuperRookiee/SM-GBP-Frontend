@@ -1,11 +1,13 @@
 import type { GridRow } from "@/interface/grid.interface";
 import { GRID_SAMPLE_DATA } from "@/tests/gridSampleData";
 
+// Grid API 응답 데이터 형식을 정의합니다.
 interface GridResponse {
   rows: GridRow[];
   total: number;
 }
 
+// 샘플 데이터 요청 파라미터입니다.
 interface GetSampleDataParams {
   page: number;
   pageSize: number;

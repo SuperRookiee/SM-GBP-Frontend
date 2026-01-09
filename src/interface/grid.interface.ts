@@ -1,3 +1,4 @@
+// Grid 테이블에서 사용하는 행 데이터 타입입니다.
 export interface GridRow {
   id: string;
   customer: string;
@@ -6,6 +7,7 @@ export interface GridRow {
   status: string;
 }
 
+// Grid 테이블 상태 및 액션 타입을 정의합니다.
 export interface GridState {
   data: GridRow[];
   query: string;
@@ -13,6 +15,7 @@ export interface GridState {
   sortKey: keyof GridRow | null;
   sortDirection: "asc" | "desc";
   page: number;
+  // 상태 변경용 액션들입니다.
   setData: (data: GridRow[]) => void;
   setQuery: (query: string) => void;
   setFilterKey: (filterKey: "all" | keyof GridRow) => void;

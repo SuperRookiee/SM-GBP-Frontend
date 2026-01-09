@@ -6,6 +6,7 @@ import { useResetStore } from "@/hooks/useResetStore";
 import type { GridRow } from "@/interface/grid.interface";
 import { useGridStore } from "@/stores/gridStore";
 
+// Grid 데이터 테이블 페이지 컴포넌트입니다.
 const GridPage = () => {
   const [rows, setRows] = useState<GridRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
