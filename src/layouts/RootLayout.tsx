@@ -2,9 +2,16 @@ import { Outlet } from "react-router-dom";
 
 import Header from "@/components/common/Header";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useResetStore } from "@/hooks/useResetStore";
+import { useGridStore } from "@/stores/gridStore";
 
 // #. 공통 레이아웃과 헤더를 제공하는 루트 레이아웃 함수
 const RootLayout = () => {
+    const resetGridStore = useGridStore((state) => state.resetStore);
+
+    // Grid 페이지를 벗어나면 스토어 상태를 초기화합니다.
+    useResetStore("/grid", resetGridStore);
+
     return (
         <div
             className="flex h-screen flex-col overflow-hidden bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
