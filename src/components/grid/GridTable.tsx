@@ -91,17 +91,9 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
   const nextPage = currentPage < totalPages ? currentPage + 1 : null;
 
   // 화면에 표시할 페이지 번호 범위를 계산합니다.
-  const pageWindowStart = Math.max(
-    1,
-    Math.min(
-      currentPage - Math.floor(PAGE_WINDOW / 2),
-      totalPages - PAGE_WINDOW + 1,
-    ),
-  );
-  const pageWindowEnd = Math.min(
-    totalPages,
-    pageWindowStart + PAGE_WINDOW - 1,
-  );
+  const pageWindowStart =
+    Math.floor((currentPage - 1) / PAGE_WINDOW) * PAGE_WINDOW + 1;
+  const pageWindowEnd = Math.min(totalPages, pageWindowStart + PAGE_WINDOW - 1);
   const pageNumbers = Array.from(
     { length: pageWindowEnd - pageWindowStart + 1 },
     (_, index) => pageWindowStart + index,
