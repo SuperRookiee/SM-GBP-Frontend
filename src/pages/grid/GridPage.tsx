@@ -40,7 +40,7 @@ const GridPage = () => {
   }, []);
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-zinc-50 px-6 py-12 text-zinc-900 dark:bg-black dark:text-zinc-50">
+    <div className="bg-zinc-50 px-6 py-12 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
         <header className="space-y-2">
           <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
