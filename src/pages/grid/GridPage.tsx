@@ -1,25 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 
-import { getSampleData } from "@/apis/grid.api";
+import { getSampleDataApi } from "@/apis/grid.api";
 import GridTable from "@/components/grid/GridTable";
+import { useResetStore } from "@/hooks/useResetStore";
 import type { GridRow } from "@/interface/grid.interface";
+import { useGridStore } from "@/stores/gridStore";
 
+// #. Grid 데이터 테이블 페이지 컴포넌트 함수
 const GridPage = () => {
   const [rows, setRows] = useState<GridRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const resetGridStore = useGridStore((state) => state.resetStore);
+
+  // Grid 페이지를 벗어나면 스토어 상태를 초기화합니다.
+  useResetStore("/grid", resetGridStore);
+
+  // #. 데이터를 불러온 뒤 상태를 갱신하는 함수
+  const handleRowsLoaded = useEffectEvent((fetchedRows: GridRow[]) => {
+    setRows(fetchedRows);
+    setIsLoading(false);
+  });
 
   useEffect(() => {
     let isMounted = true;
 
+    // #. 샘플 데이터를 불러오는 함수
     const fetchRows = async () => {
-      const { rows: fetchedRows } = await getSampleData({
+      const { rows: fetchedRows } = await getSampleDataApi({
         page: 1,
         pageSize: 100,
       });
 
+      // 비동기 호출 후 컴포넌트가 마운트되어 있을 때만 상태를 업데이트합니다.
       if (isMounted) {
-        setRows(fetchedRows);
-        setIsLoading(false);
+        handleRowsLoaded(fetchedRows);
       }
     };
 
@@ -31,7 +45,7 @@ const GridPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-zinc-50 px-6 py-12 text-zinc-900 dark:bg-black dark:text-zinc-50">
+    <div className="bg-zinc-50 px-6 py-12 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
         <header className="space-y-2">
           <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
