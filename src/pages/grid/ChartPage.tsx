@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getSampleData } from "@/apis/grid.api";
-import GridTableClient from "@/components/grid/GridTable";
+import GridTable from "@/components/grid/GridTable";
 import type { GridRow } from "@/interface/grid.interface";
 
 const ChartPage = () => {
@@ -49,7 +49,7 @@ const ChartPage = () => {
             데이터를 불러오는 중입니다...
           </p>
         ) : (
-          <GridTableClient initialData={rows} />
+          <GridTable initialData={rows} />
         )}
       </div>
     </div>

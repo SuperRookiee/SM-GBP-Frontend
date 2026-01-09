@@ -4,7 +4,7 @@ import RootLayout from "@/layouts/RootLayout";
 import HomePage from "@/pages/HomePage";
 import ChartPage from "@/pages/grid/ChartPage";
 
-function App() {
+const App = () => {
   return (
     <BrowserRouter>
       <Routes>

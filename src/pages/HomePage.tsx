@@ -16,6 +16,8 @@ const HomePage = () => {
           중첩 라우팅 예시를 위해 Grid 페이지로 이동할 수 있습니다.
         </p>
       </div>
+      <div className="p-6 text-3xl font-bold text-red-500">TAILWIND CHECK</div>
+
       <Button asChild>
         <Link to="/grid">Grid 페이지로 이동</Link>
       </Button>
