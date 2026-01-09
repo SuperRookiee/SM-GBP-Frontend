@@ -2,22 +2,22 @@ import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
+// #. 메인 홈 화면 컴포넌트 함수
 const HomePage = () => {
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center gap-6 px-6 py-12 text-center">
+    <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center gap-6 px-6 py-12 text-center">
       <div className="space-y-2">
+        {/* 홈 화면 안내 문구 */}
         <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
-          App Router Demo
+          GBP Frontend
         </p>
         <h1 className="text-3xl font-semibold tracking-tight">
-          GBP 프론트엔드 라우팅 홈
+          샘플 라우팅 홈
         </h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          중첩 라우팅 예시를 위해 Grid 페이지로 이동할 수 있습니다.
+          Grid 예시 페이지로 이동할 수 있습니다.
         </p>
       </div>
-      <div className="p-6 text-3xl font-bold text-red-500">TAILWIND CHECK</div>
-
       <Button asChild>
         <Link to="/grid">Grid 페이지로 이동</Link>
       </Button>
