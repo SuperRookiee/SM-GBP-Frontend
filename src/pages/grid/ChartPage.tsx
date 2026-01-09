@@ -1,4 +1,4 @@
-import { getSampleData } from "@/fetch/grid.fetch";
+import { getSampleData } from "@/apis/grid.api";
 import GridTableClient from "@/components/grid/GridTable";
 
 const ChartPage = () => {
