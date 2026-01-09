@@ -1,4 +1,6 @@
-// Grid 테이블에서 사용하는 행 데이터 타입입니다.
+/**
+ * Grid 테이블에서 사용하는 행 데이터 타입
+ */
 export interface GridRow {
   id: string;
   customer: string;
@@ -7,7 +9,9 @@ export interface GridRow {
   status: string;
 }
 
-// Grid 테이블 상태 및 액션 타입을 정의합니다.
+/**
+ * Grid 테이블 상태 및 액션 타입
+ */
 export interface GridState {
   data: GridRow[];
   query: string;

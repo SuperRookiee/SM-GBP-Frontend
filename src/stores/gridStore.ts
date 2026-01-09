@@ -13,7 +13,7 @@ const initialState = {
   page: 1,
 };
 
-// 스토어가 기본값에서 변경되었는지 확인합니다.
+// #. 스토어가 기본값에서 변경되었는지 확인하는 함수
 const hasGridState = (state: GridState) =>
   state.data.length > 0 ||
   state.query.trim().length > 0 ||
@@ -21,7 +21,7 @@ const hasGridState = (state: GridState) =>
   state.sortKey !== null ||
   state.page !== 1;
 
-// Grid 상태를 전역으로 관리하는 zustand 스토어입니다.
+// #. Grid 상태를 전역으로 관리하는 스토어 함수
 export const useGridStore = create<GridState>()(
   persist(
     (set) => ({

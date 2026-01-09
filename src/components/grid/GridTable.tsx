@@ -17,7 +17,7 @@ interface GridTableClientProps {
 const PAGE_SIZE = 5;
 const PAGE_WINDOW = 5;
 
-// Grid 데이터를 보여주는 테이블 컴포넌트입니다.
+// #. Grid 데이터를 보여주는 테이블 컴포넌트 함수
 const GridTable = ({ initialData }: GridTableClientProps) => {
   const data = useGridStore((state) => state.data);
   const query = useGridStore((state) => state.query);
@@ -107,6 +107,7 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
     (_, index) => pageWindowStart + index,
   );
 
+  // #. 정렬 방향 표시를 반환하는 함수
   const sortIndicator = (key: string) => {
     if (sortKey !== key) {
       return null;

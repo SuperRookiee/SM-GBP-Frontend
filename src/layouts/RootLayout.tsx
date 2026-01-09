@@ -2,7 +2,7 @@ import { Link, Outlet } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
-// 공통 레이아웃과 헤더를 제공하는 루트 레이아웃입니다.
+// #. 공통 레이아웃과 헤더를 제공하는 루트 레이아웃 함수
 const RootLayout = () => {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-50">
