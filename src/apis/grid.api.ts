@@ -11,6 +11,7 @@ interface GetSampleDataParams {
   pageSize: number;
 }
 
+// 샘플 데이터를 페이지 단위로 반환하는 API 함수입니다.
 export async function getSampleDataApi({
   page,
   pageSize,

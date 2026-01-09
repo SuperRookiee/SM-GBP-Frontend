@@ -10,6 +10,7 @@ const RootLayout = () => {
           <Link className="text-sm font-semibold tracking-tight" to="/">
             GBP Demo
           </Link>
+          {/* 전역 네비게이션 */}
           <nav className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm">
               <Link to="/">홈</Link>

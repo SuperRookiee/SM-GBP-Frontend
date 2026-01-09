@@ -6,6 +6,7 @@ const HomePage = () => {
   return (
     <div className="mx-auto flex min-h-[calc(100vh-64px)] w-full max-w-4xl flex-col items-center justify-center gap-6 px-6 text-center">
       <div className="space-y-2">
+        {/* 홈 화면 안내 문구 */}
         <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
           GBP Frontend
         </p>

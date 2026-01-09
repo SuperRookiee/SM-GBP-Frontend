@@ -11,6 +11,7 @@ const GridPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const resetGridStore = useGridStore((state) => state.resetStore);
 
+  // Grid 페이지를 벗어나면 스토어 상태를 초기화합니다.
   useResetStore("/grid", resetGridStore);
 
   useEffect(() => {
@@ -22,6 +23,7 @@ const GridPage = () => {
         pageSize: 100,
       });
 
+      // 비동기 호출 후 컴포넌트가 마운트되어 있을 때만 상태를 업데이트합니다.
       if (isMounted) {
         setRows(fetchedRows);
         setIsLoading(false);
