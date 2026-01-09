@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 import Header from "@/components/common/Header";
 import { ScrollArea } from "@/components/ui/scroll-area";
