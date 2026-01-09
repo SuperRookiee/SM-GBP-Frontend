@@ -83,12 +83,18 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
     startIndex + GRID_CONSTANTS.pageSize,
   );
 
+  const hasData = data.length > 0;
+
   // 현재 페이지가 범위를 벗어나면 스토어 페이지를 보정합니다.
   useEffect(() => {
+    if (!hasData) {
+      return;
+    }
+
     if (page !== currentPage) {
       setPage(currentPage);
     }
-  }, [currentPage, page, setPage]);
+  }, [currentPage, hasData, page, setPage]);
 
   const previousPage = currentPage > 1 ? currentPage - 1 : null;
   const nextPage = currentPage < totalPages ? currentPage + 1 : null;

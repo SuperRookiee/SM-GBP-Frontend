@@ -2,19 +2,12 @@ import { useEffect, useEffectEvent, useState } from "react";
 
 import { getSampleDataApi } from "@/apis/grid.api";
 import GridTable from "@/components/grid/GridTable";
-import { useResetStore } from "@/hooks/useResetStore";
 import type { GridRow } from "@/interface/grid.interface";
-import { useGridStore } from "@/stores/gridStore";
 
 // #. Grid 데이터 테이블 페이지 컴포넌트 함수
 const GridPage = () => {
   const [rows, setRows] = useState<GridRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const resetGridStore = useGridStore((state) => state.resetStore);
-
-  // Grid 페이지를 벗어나면 스토어 상태를 초기화합니다.
-  useResetStore("/grid", resetGridStore);
-
   // #. 데이터를 불러온 뒤 상태를 갱신하는 함수
   const handleRowsLoaded = useEffectEvent((fetchedRows: GridRow[]) => {
     setRows(fetchedRows);
