@@ -5,6 +5,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import GRID_CONSTANTS from "@/constants/grid.constants";
 import type { GridRow } from "@/interface/grid.interface";
 import { useGridStore } from "../../stores/gridStore";
 
@@ -12,10 +13,6 @@ import { useGridStore } from "../../stores/gridStore";
 interface GridTableClientProps {
   initialData: GridRow[];
 }
-
-// 페이지네이션 기본 설정 값입니다.
-const PAGE_SIZE = 5;
-const PAGE_WINDOW = 5;
 
 // #. Grid 데이터를 보여주는 테이블 컴포넌트 함수
 const GridTable = ({ initialData }: GridTableClientProps) => {
@@ -75,10 +72,16 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
   }, [filteredRows, sortDirection, sortKey]);
 
   // 페이지네이션 계산에 필요한 값들을 준비합니다.
-  const totalPages = Math.max(Math.ceil(sortedRows.length / PAGE_SIZE), 1);
+  const totalPages = Math.max(
+    Math.ceil(sortedRows.length / GRID_CONSTANTS.pageSize),
+    1,
+  );
   const currentPage = Math.min(page, totalPages);
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const rows = sortedRows.slice(startIndex, startIndex + PAGE_SIZE);
+  const startIndex = (currentPage - 1) * GRID_CONSTANTS.pageSize;
+  const rows = sortedRows.slice(
+    startIndex,
+    startIndex + GRID_CONSTANTS.pageSize,
+  );
 
   // 현재 페이지가 범위를 벗어나면 스토어 페이지를 보정합니다.
   useEffect(() => {
@@ -92,8 +95,13 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
 
   // 화면에 표시할 페이지 번호 범위를 계산합니다.
   const pageWindowStart =
-    Math.floor((currentPage - 1) / PAGE_WINDOW) * PAGE_WINDOW + 1;
-  const pageWindowEnd = Math.min(totalPages, pageWindowStart + PAGE_WINDOW - 1);
+    Math.floor((currentPage - 1) / GRID_CONSTANTS.pageWindow) *
+      GRID_CONSTANTS.pageWindow +
+    1;
+  const pageWindowEnd = Math.min(
+    totalPages,
+    pageWindowStart + GRID_CONSTANTS.pageWindow - 1,
+  );
   const pageNumbers = Array.from(
     { length: pageWindowEnd - pageWindowStart + 1 },
     (_, index) => pageWindowStart + index,

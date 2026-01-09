@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 
 import { getSampleDataApi } from "@/apis/grid.api";
 import GridTable from "@/components/grid/GridTable";
@@ -15,6 +15,12 @@ const GridPage = () => {
   // Grid 페이지를 벗어나면 스토어 상태를 초기화합니다.
   useResetStore("/grid", resetGridStore);
 
+  // #. 데이터를 불러온 뒤 상태를 갱신하는 함수
+  const handleRowsLoaded = useEffectEvent((fetchedRows: GridRow[]) => {
+    setRows(fetchedRows);
+    setIsLoading(false);
+  });
+
   useEffect(() => {
     let isMounted = true;
 
@@ -27,8 +33,7 @@ const GridPage = () => {
 
       // 비동기 호출 후 컴포넌트가 마운트되어 있을 때만 상태를 업데이트합니다.
       if (isMounted) {
-        setRows(fetchedRows);
-        setIsLoading(false);
+        handleRowsLoaded(fetchedRows);
       }
     };
 
