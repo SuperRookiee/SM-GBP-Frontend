@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
+import { withDevtools } from "@/utils/devtools.ts";
 import type { GridState } from "@/interface/grid.interface";
 
 // Grid 스토어 초기 상태 값입니다.
@@ -22,9 +22,7 @@ const hasGridState = (state: GridState) =>
   state.page !== 1;
 
 // #. Grid 상태를 전역으로 관리하는 스토어 함수
-export const useGridStore = create<GridState>()(
-  persist(
-    (set) => ({
+export const useGridStore = create<GridState>()(withDevtools(persist((set) => ({
       ...initialState,
       // 데이터 목록을 갱신합니다.
       setData: (data) => set({ data }),
@@ -63,5 +61,5 @@ export const useGridStore = create<GridState>()(
         page: state.page,
       }),
     },
-  ),
+  )),
 );
