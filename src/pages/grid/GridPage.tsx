@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useState } from "react";
 
 import { getSampleDataApi } from "@/apis/grid.api";
-import GridTable from "@/components/grid/GridTable";
+import AGGridTable from "@/components/grid/AGGridTable";
 import type { GridRow } from "@/interface/grid.interface";
 
 // #. Grid 데이터 테이블 페이지 컴포넌트 함수
@@ -56,7 +56,7 @@ const GridPage = () => {
             데이터를 불러오는 중입니다...
           </p>
         ) : (
-          <GridTable initialData={rows} />
+          <AGGridTable initialData={rows} />
         )}
       </div>
     </div>
