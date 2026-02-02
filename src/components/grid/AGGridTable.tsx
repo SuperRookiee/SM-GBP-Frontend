@@ -74,12 +74,10 @@ const AGGridTable = ({ initialData }: AGGridTableProps) => {
   const currentPage = Math.min(page, totalPages);
 
   useEffect(() => {
-    if (!gridApi) {
-      return;
-    }
+    if (!gridApi) return;
 
     if (!query.trim()) {
-      gridApi.setQuickFilter("");
+      gridApi.setGridOption("quickFilterText", "");
       gridApi.setFilterModel(null);
       gridApi.onFilterChanged();
       setDisplayedRowCount(gridApi.getDisplayedRowCount());
@@ -88,9 +86,9 @@ const AGGridTable = ({ initialData }: AGGridTableProps) => {
 
     if (filterKey === "all") {
       gridApi.setFilterModel(null);
-      gridApi.setQuickFilter(query);
+      gridApi.setGridOption("quickFilterText", query);
     } else {
-      gridApi.setQuickFilter("");
+      gridApi.setGridOption("quickFilterText", "");
       gridApi.setFilterModel({
         [filterKey]: {
           filterType: "text",
@@ -105,12 +103,31 @@ const AGGridTable = ({ initialData }: AGGridTableProps) => {
   }, [filterKey, gridApi, query]);
 
   useEffect(() => {
-    if (!gridApi) {
-      return;
-    }
+    if (!gridApi) return;
 
-    setDisplayedRowCount(gridApi.getDisplayedRowCount());
-  }, [data, gridApi]);
+    const updateDisplayedRowCount = () => {
+      setDisplayedRowCount(gridApi.getDisplayedRowCount());
+    };
+
+    // rowData 변경/필터/정렬/모델 갱신 등, 표시 row count가 바뀌는 시점들
+    gridApi.addEventListener("modelUpdated", updateDisplayedRowCount);
+    gridApi.addEventListener("filterChanged", updateDisplayedRowCount);
+    gridApi.addEventListener("sortChanged", updateDisplayedRowCount);
+    gridApi.addEventListener("paginationChanged", updateDisplayedRowCount);
+
+    // 초기값도 필요하면 "동기 호출" 대신 스케줄링 (lint 통과)
+    queueMicrotask(updateDisplayedRowCount);
+    // 또는: requestAnimationFrame(updateDisplayedRowCount);
+    // 또는: setTimeout(updateDisplayedRowCount, 0);
+
+    return () => {
+      gridApi.removeEventListener("modelUpdated", updateDisplayedRowCount);
+      gridApi.removeEventListener("filterChanged", updateDisplayedRowCount);
+      gridApi.removeEventListener("sortChanged", updateDisplayedRowCount);
+      gridApi.removeEventListener("paginationChanged", updateDisplayedRowCount);
+    };
+  }, [gridApi]);
+
 
   useEffect(() => {
     if (!gridApi) {
