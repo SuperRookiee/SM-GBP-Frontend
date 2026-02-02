@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import GRID_CONSTANTS from "@/constants/grid.constants";
 import type { GridRow } from "@/interface/grid.interface";
-import { useGridStore } from "../../stores/gridStore";
+import { useGridStore } from "@/stores/gridStore";
 
 // GridTable 컴포넌트가 받는 props 타입입니다.
 interface GridTableClientProps {
@@ -16,7 +16,8 @@ interface GridTableClientProps {
 
 // #. Grid 데이터를 보여주는 테이블 컴포넌트 함수
 const GridTable = ({ initialData }: GridTableClientProps) => {
-  const data = useGridStore((state) => state.data);
+  const storedData = useGridStore((state) => state.data);
+  const data = storedData.length > 0 ? storedData : initialData;
   const query = useGridStore((state) => state.query);
   const filterKey = useGridStore((state) => state.filterKey);
   const sortKey = useGridStore((state) => state.sortKey);
@@ -30,10 +31,10 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
 
   // 최초 로드 시 스토어 데이터가 비어 있으면 초기 데이터를 주입합니다.
   useEffect(() => {
-    if (data.length === 0) {
+    if (storedData.length === 0) {
       setData(initialData);
     }
-  }, [data.length, initialData, setData]);
+  }, [storedData.length, initialData, setData]);
 
   // 검색어 및 필터 조건에 따라 데이터를 필터링합니다.
   const filteredRows = useMemo(() => {
