@@ -5,61 +5,78 @@ import type { GridState } from "@/interface/grid.interface";
 
 // Grid 스토어 초기 상태 값입니다.
 const initialState = {
-  data: [],
-  query: "",
-  filterKey: "all" as const,
-  sortKey: null,
-  sortDirection: "asc" as const,
-  page: 1,
+    data: [],
+    query: "",
+    filterKey: "all" as const,
+    sortKey: null,
+    sortDirection: "asc" as const,
+    page: 1,
 };
 
-// #. 스토어가 기본값에서 변경되었는지 확인하는 함수
+// 스토어가 기본값에서 변경되었는지 확인하는 함수
 const hasGridState = (state: GridState) =>
-  state.data.length > 0 ||
-  state.query.trim().length > 0 ||
-  state.filterKey !== "all" ||
-  state.sortKey !== null ||
-  state.page !== 1;
+    state.data.length > 0 ||
+    state.query.trim().length > 0 ||
+    state.filterKey !== "all" ||
+    state.sortKey !== null ||
+    state.page !== 1;
 
-// #. Grid 상태를 전역으로 관리하는 스토어 함수
-export const useGridStore = create<GridState>()(withDevtools(persist((set) => ({
-      ...initialState,
-      // 데이터 목록을 갱신합니다.
-      setData: (data) => set({ data }),
-      // 검색어를 업데이트하고 페이지를 초기화합니다.
-      setQuery: (query) => set({ query, page: 1 }),
-      // 필터 키를 업데이트하고 페이지를 초기화합니다.
-      setFilterKey: (filterKey) => set({ filterKey, page: 1 }),
-      // 정렬 기준을 토글하거나 변경합니다.
-      setSort: (key) =>
-        set((state) => {
-          if (state.sortKey === key) {
-            return {
-              sortDirection: state.sortDirection === "asc" ? "desc" : "asc",
-              page: 1,
-            };
-          }
+// Grid 상태를 전역으로 관리하는 스토어 함수
+export const useGridStore = create<GridState>()(withDevtools(persist((set, get) => {
+    // 공통: 변경 없으면 set 생략하는 헬퍼
+    const setIfChanged = (partial: Partial<GridState>) => {
+        const state = get();
+        for (const key in partial) {
+            if (!Object.is(state[key as keyof GridState], partial[key as keyof GridState])) {
+                set(partial);
+                return;
+            }
+        }
+    };
 
-          return { sortKey: key, sortDirection: "asc", page: 1 };
-        }),
-      // 페이지 번호를 설정합니다.
-      setPage: (page) => set({ page }),
-      // 강제로 초기 상태로 되돌립니다.
-      reset: () => set({ ...initialState }),
-      // 변경된 상태가 있을 때만 초기화합니다.
-      resetStore: () =>
-        set((state) => (hasGridState(state) ? { ...initialState } : state)),
-    }),
-    {
-      name: "grid-state",
-      // 필요한 필드만 localStorage에 저장합니다.
-      partialize: (state) => ({
+    // 공통: page를 1로 리셋하면서 업데이트 (변경 없으면 set 생략)
+    const setWithPageReset = (partial: Partial<GridState>) => setIfChanged({ ...partial, page: 1 });
+
+    // 공통: 초기화 (변경 없으면 set 생략)
+    const resetIfDirty = () => {
+        if (!hasGridState(get())) return;
+        set({ ...initialState });
+    };
+
+    return {
+        ...initialState,
+        // #. 데이터 목록 갱신 핸들러 함수
+        setData: (data) => setIfChanged({ data }),
+        // #. 검색어 업데이트 핸들러 함수
+        setQuery: (query) => setWithPageReset({ query }),
+        // #. 필터 키 업데이트 핸들러 함수
+        setFilterKey: (filterKey) => setWithPageReset({ filterKey }),
+        // #. 정렬 기준 토글/변경 핸들러 함수
+        setSort: (key) => {
+            const { sortKey, sortDirection } = get();
+            const nextSortDirection: "asc" | "desc" =
+                sortDirection === "asc" ? "desc" : "asc";
+            const next: Partial<GridState> =
+                sortKey === key
+                    ? { sortDirection: nextSortDirection }
+                    : { sortKey: key, sortDirection: "asc" };
+            setWithPageReset(next);
+        },
+        // #. 페이지 번호 설정 핸들러 함수
+        setPage: (page) => setIfChanged({ page }),
+        // #. 초기 상태로 되돌리기 핸들러 함수
+        reset: resetIfDirty,
+        // #. 변경된 상태가 있을 때만 초기화 핸들러 함수
+        resetStore: resetIfDirty,
+    };
+}, {
+    name: "grid-state",
+    // 필요한 필드만 localStorage에 저장합니다.
+    partialize: (state) => ({
         query: state.query,
         filterKey: state.filterKey,
         sortKey: state.sortKey,
         sortDirection: state.sortDirection,
         page: state.page,
-      }),
-    },
-  )),
-);
+    })
+})));

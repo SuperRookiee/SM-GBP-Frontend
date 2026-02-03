@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
-// #. 전역 헤더 컴포넌트 함수
+// 전역 헤더 컴포넌트 함수
 const Header = () => {
   return (
     <header className="border-b border-zinc-200/70 bg-white/70 backdrop-blur dark:border-zinc-800/80 dark:bg-zinc-950/70">

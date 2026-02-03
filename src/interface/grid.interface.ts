@@ -19,7 +19,7 @@ export interface GridState {
   sortKey: keyof GridRow | null;
   sortDirection: "asc" | "desc";
   page: number;
-  // 상태 변경용 액션들입니다.
+  // 상태 변경용 액션
   setData: (data: GridRow[]) => void;
   setQuery: (query: string) => void;
   setFilterKey: (filterKey: "all" | keyof GridRow) => void;

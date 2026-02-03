@@ -9,12 +9,11 @@ import GRID_CONSTANTS from "@/constants/grid.constants";
 import type { GridRow } from "@/interface/grid.interface";
 import { useGridStore } from "@/stores/gridStore";
 
-// GridTable 컴포넌트가 받는 props 타입입니다.
 interface GridTableClientProps {
   initialData: GridRow[];
 }
 
-// #. Grid 데이터를 보여주는 테이블 컴포넌트 함수
+// Grid 데이터를 보여주는 테이블 컴포넌트 함수
 const GridTable = ({ initialData }: GridTableClientProps) => {
   const storedData = useGridStore((state) => state.data);
   const data = storedData.length > 0 ? storedData : initialData;
@@ -29,14 +28,14 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
   const setSort = useGridStore((state) => state.setSort);
   const setPage = useGridStore((state) => state.setPage);
 
-  // 최초 로드 시 스토어 데이터가 비어 있으면 초기 데이터를 주입합니다.
+  // #. 최초 로드 시 스토어 데이터가 비어 있으면 초기 데이터를 주입합니다.
   useEffect(() => {
     if (storedData.length === 0) {
       setData(initialData);
     }
   }, [storedData.length, initialData, setData]);
 
-  // 검색어 및 필터 조건에 따라 데이터를 필터링합니다.
+  // #. 검색어 및 필터 조건에 따라 데이터를 필터링합니다.
   const filteredRows = useMemo(() => {
     if (!query.trim()) {
       return data;
@@ -57,7 +56,7 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
     );
   }, [data, filterKey, query]);
 
-  // 선택된 정렬 기준으로 데이터를 정렬합니다.
+  // #. 선택된 정렬 기준으로 데이터를 정렬합니다.
   const sortedRows = useMemo(() => {
     if (!sortKey) {
       return filteredRows;
@@ -72,7 +71,7 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
     return sortDirection === "asc" ? sorted : sorted.reverse();
   }, [filteredRows, sortDirection, sortKey]);
 
-  // 페이지네이션 계산에 필요한 값들을 준비합니다.
+  // #. 페이지네이션 계산에 필요한 값들을 준비합니다.
   const totalPages = Math.max(
     Math.ceil(sortedRows.length / GRID_CONSTANTS.pageSize),
     1,
@@ -86,7 +85,7 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
 
   const hasData = data.length > 0;
 
-  // 현재 페이지가 범위를 벗어나면 스토어 페이지를 보정합니다.
+  // #. 현재 페이지가 범위를 벗어나면 스토어 페이지를 보정합니다.
   useEffect(() => {
     if (!hasData) {
       return;
@@ -100,7 +99,7 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
   const previousPage = currentPage > 1 ? currentPage - 1 : null;
   const nextPage = currentPage < totalPages ? currentPage + 1 : null;
 
-  // 화면에 표시할 페이지 번호 범위를 계산합니다.
+  // #. 화면에 표시할 페이지 번호 범위를 계산합니다.
   const pageWindowStart =
     Math.floor((currentPage - 1) / GRID_CONSTANTS.pageWindow) *
       GRID_CONSTANTS.pageWindow +
