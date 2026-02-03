@@ -1,5 +1,5 @@
 import type { GridRow } from "@/interface/grid.interface";
-import { GRID_SAMPLE_DATA } from "@/tests/gridSampleData";
+import { GRID_SAMPLE_DATA } from "@/tests/gridSampleData.test.ts";
 
 /**
  * Grid API 응답 데이터 형식
@@ -29,6 +29,9 @@ export async function getSampleDataApi({
 }: GetSampleDataParams): Promise<GridResponse> {
   const startIndex = (page - 1) * pageSize;
   const rows = GRID_SAMPLE_DATA.slice(startIndex, startIndex + pageSize);
+
+  // 인위적으로 3초 지연
+  await new Promise((res) => setTimeout(res, 2000));
 
   return {
     rows,
