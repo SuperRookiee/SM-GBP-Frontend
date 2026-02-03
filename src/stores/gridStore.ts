@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import type { GridRow } from "@/interface/grid.interface";
 import { devtool } from "@/utils/devtools";
 import { createResetIfDirty, createSetIfChanged, createSetWithPageReset } from "@/utils/storeUtils";
+import { hasChanged } from "@/stores/hasChanged";
 
 type GridState = {
     data: GridRow[];
@@ -30,13 +31,30 @@ const initialState = {
     page: 1,
 };
 
+type GridStateSnapshot = Pick<GridState, "data" | "query" | "filterKey" | "sortKey" | "page">;
+
+const gridDefaults: GridStateSnapshot = {
+    data: [],
+    query: "",
+    filterKey: "all",
+    sortKey: null,
+    page: 1,
+};
+
 // 스토어가 기본값에서 변경되었는지 확인하는 함수
 const hasGridState = (state: GridState) =>
-    state.data.length > 0 ||
-    state.query.trim().length > 0 ||
-    state.filterKey !== "all" ||
-    state.sortKey !== null ||
-    state.page !== 1;
+    hasChanged<GridStateSnapshot>({
+        data: state.data,
+        query: state.query,
+        filterKey: state.filterKey,
+        sortKey: state.sortKey,
+        page: state.page,
+    }, gridDefaults, {
+        comparators: {
+            data: (current, defaults) => current.length === defaults.length,
+            query: (current, defaults) => current.trim() === defaults.trim(),
+        },
+    });
 
 // Grid 상태를 전역으로 관리하는 스토어 함수
 export const useGridStore = create<GridState>()(devtool(persist((set, get) => {
