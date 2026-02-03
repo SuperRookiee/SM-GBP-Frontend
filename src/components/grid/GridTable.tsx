@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import GRID_CONSTANTS from "@/constants/grid.constants";
 import type { GridRow } from "@/interface/grid.interface";
@@ -11,10 +12,11 @@ import { useGridStore } from "@/stores/gridStore";
 
 interface GridTableClientProps {
   initialData: GridRow[];
+  isLoading?: boolean;
 }
 
 // Grid 데이터를 보여주는 테이블 컴포넌트 함수
-const GridTable = ({ initialData }: GridTableClientProps) => {
+const GridTable = ({ initialData, isLoading = false }: GridTableClientProps) => {
   const storedData = useGridStore((state) => state.data);
   const data = storedData.length > 0 ? storedData : initialData;
   const query = useGridStore((state) => state.query);
@@ -126,6 +128,8 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
     );
   };
 
+  const skeletonRows = Array.from({ length: 6 }, (_, index) => `skeleton-${index}`);
+
   return (
     <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -176,7 +180,16 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
       </div>
 
       <Table>
-        <TableCaption>총 {sortedRows.length}건의 거래 내역</TableCaption>
+        <TableCaption>
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-4 w-12" />
+            </div>
+          ) : (
+            <>총 {sortedRows.length}건의 거래 내역</>
+          )}
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>
@@ -237,19 +250,39 @@ const GridTable = ({ initialData }: GridTableClientProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell className="font-medium">{row.id}</TableCell>
-              <TableCell>{row.customer}</TableCell>
-              <TableCell>{row.email}</TableCell>
-              <TableCell>{row.role}</TableCell>
-              <TableCell>
-                <span className="inline-flex items-center rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-200">
-                  {row.status}
-                </span>
-              </TableCell>
-            </TableRow>
-          ))}
+          {isLoading
+            ? skeletonRows.map((key) => (
+                <TableRow key={key}>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-6 w-20 rounded-full" />
+                  </TableCell>
+                </TableRow>
+              ))
+            : rows.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell className="font-medium">{row.id}</TableCell>
+                  <TableCell>{row.customer}</TableCell>
+                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.role}</TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-200">
+                      {row.status}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
         </TableBody>
       </Table>
 

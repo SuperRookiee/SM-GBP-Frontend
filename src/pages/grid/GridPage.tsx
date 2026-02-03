@@ -51,13 +51,7 @@ const GridPage = () => {
             서버에서 페이지 인덱스를 받아오는 형태의 간단한 데이터테이블 예시입니다.
           </p>
         </header>
-        {isLoading ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            데이터를 불러오는 중입니다...
-          </p>
-        ) : (
-          <GridTable initialData={rows} />
-        )}
+        <GridTable initialData={rows} isLoading={isLoading} />
       </div>
     </div>
   );

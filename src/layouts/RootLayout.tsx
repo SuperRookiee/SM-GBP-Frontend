@@ -1,3 +1,4 @@
+import { Activity, Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "@/components/common/Header";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,7 +18,15 @@ const RootLayout = () => {
             <ScrollArea className="h-full">
                 <Header/>
                 <main className="min-h-0 flex-1">
-                    <Outlet/>
+                    <Suspense
+                        fallback={
+                            <div className="flex min-h-[200px] items-center justify-center">
+                                <Activity/>
+                            </div>
+                        }
+                    >
+                        <Outlet/>
+                    </Suspense>
                 </main>
             </ScrollArea>
         </div>
