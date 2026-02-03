@@ -3,9 +3,7 @@ import type { StoreApi } from "zustand";
 type SetState<T> = StoreApi<T>["setState"];
 type GetState<T> = StoreApi<T>["getState"];
 
-/**
- * 변경된 값이 있을 때만 set 수행
- */
+// 변경된 값이 있을 때만 set 수행
 export const createSetIfChanged = <T>(
     set: SetState<T>,
     get: GetState<T>
@@ -22,9 +20,7 @@ export const createSetIfChanged = <T>(
     };
 };
 
-/**
- * 상태가 변경된 경우에만 초기화
- */
+// 상태가 변경된 경우에만 초기화
 export const createResetIfDirty = <T, I extends Partial<T>>(
     set: SetState<T>,
     get: GetState<T>,
@@ -37,9 +33,7 @@ export const createResetIfDirty = <T, I extends Partial<T>>(
     };
 };
 
-/**
- * page를 기본값으로 리셋하면서 업데이트
- */
+// page를 기본값으로 리셋하면서 업데이트
 export const createSetWithPageReset = <T extends { page: number }>(
     setIfChanged: (partial: Partial<T>) => void,
     page = 1
@@ -48,25 +42,35 @@ export const createSetWithPageReset = <T extends { page: number }>(
         setIfChanged({ ...partial, page });
 };
 
-/**
- * 선택 사항: set/get 기반 유틸을 한 번에 묶고 싶을 때
- * (강제 아님)
- */
-export const createStoreCtx = <T, I extends Partial<T>>(
-    set: SetState<T>,
-    get: GetState<T>,
-    initialState: I,
-    hasState: (state: T) => boolean
-) => {
-    const setIfChanged = createSetIfChanged<T>(set, get);
 
-    return {
-        setIfChanged,
-        resetIfDirty: createResetIfDirty<T, I>(
-            set,
-            get,
-            initialState,
-            hasState
-        ),
-    };
+type HasChangedOptions<T extends Record<string, unknown>> = {
+    excludeKeys?: (keyof T)[];
+    includeKeys?: (keyof T)[];
+    comparators?: Partial<{ [K in keyof T]: (a: T[K], b: T[K]) => boolean }>;
+};
+
+// 스토어가 기본값에서 변경되었는지 확인
+export const hasChanged = <T extends Record<string, unknown>>(
+    state: T,
+    defaults: T,
+    options: HasChangedOptions<T> = {}
+) => {
+    const { excludeKeys = [], includeKeys } = options;
+    const comparators: NonNullable<HasChangedOptions<T>["comparators"]> =
+        options.comparators ?? {};
+
+    const keys = (includeKeys ?? (Object.keys(defaults) as (keyof T)[])).filter(
+        (key) => !excludeKeys.includes(key)
+    );
+
+    for (const key of keys) {
+        const comparator = comparators[key];
+        const isEqual = comparator
+            ? comparator(state[key], defaults[key])
+            : Object.is(state[key], defaults[key]);
+
+        if (!isEqual) return true;
+    }
+
+    return false;
 };

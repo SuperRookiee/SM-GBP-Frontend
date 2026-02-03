@@ -2,8 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { GridRow } from "@/interface/grid.interface";
 import { devtool } from "@/utils/devtools";
-import { createResetIfDirty, createSetIfChanged, createSetWithPageReset } from "@/utils/storeUtils";
-import { hasChanged } from "@/stores/hasChanged";
+import { createResetIfDirty, createSetIfChanged, createSetWithPageReset, hasChanged } from "@/utils/storeUtils";
 
 type GridState = {
     data: GridRow[];
@@ -42,19 +41,18 @@ const gridDefaults: GridStateSnapshot = {
 };
 
 // 스토어가 기본값에서 변경되었는지 확인하는 함수
-const hasGridState = (state: GridState) =>
-    hasChanged<GridStateSnapshot>({
-        data: state.data,
-        query: state.query,
-        filterKey: state.filterKey,
-        sortKey: state.sortKey,
-        page: state.page,
-    }, gridDefaults, {
-        comparators: {
-            data: (current, defaults) => current.length === defaults.length,
-            query: (current, defaults) => current.trim() === defaults.trim(),
-        },
-    });
+const hasGridState = (state: GridState) => hasChanged<GridStateSnapshot>({
+    data: state.data,
+    query: state.query,
+    filterKey: state.filterKey,
+    sortKey: state.sortKey,
+    page: state.page,
+}, gridDefaults, {
+    comparators: {
+        data: (current, defaults) => current.length === defaults.length,
+        query: (current, defaults) => current.trim() === defaults.trim(),
+    }
+});
 
 // Grid 상태를 전역으로 관리하는 스토어 함수
 export const useGridStore = create<GridState>()(devtool(persist((set, get) => {

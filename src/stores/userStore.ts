@@ -2,8 +2,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { devtool } from "@/utils/devtools";
-import { createResetIfDirty, createSetIfChanged } from "@/utils/storeUtils";
-import { hasChanged } from "@/stores/hasChanged";
+import { createResetIfDirty, createSetIfChanged, hasChanged } from "@/utils/storeUtils";
 
 export type User = {
     id: string;
@@ -34,11 +33,10 @@ const userDefaults: UserStateSnapshot = {
 };
 
 // 스토어가 기본값에서 변경되었는지 확인
-const hasUserState = (state: UserState) =>
-    hasChanged<UserStateSnapshot>({
-        user: state.user,
-        isAuthenticated: state.isAuthenticated,
-    }, userDefaults);
+const hasUserState = (state: UserState) => hasChanged<UserStateSnapshot>({
+    user: state.user,
+    isAuthenticated: state.isAuthenticated,
+}, userDefaults);
 
 // User 상태를 전역으로 관리하는 스토어 함수
 export const useUserStore = create<UserState>()(
