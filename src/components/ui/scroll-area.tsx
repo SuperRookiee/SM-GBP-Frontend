@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
-
 import { cn } from "@/utils/utils";
 
 // #. 스크롤 영역 컴포넌트 함수

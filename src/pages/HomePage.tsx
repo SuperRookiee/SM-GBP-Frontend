@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-
 import { Button } from "@/components/ui/button";
 
 // #. 메인 홈 화면 컴포넌트 함수

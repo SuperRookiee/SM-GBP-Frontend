@@ -1,8 +1,7 @@
 import { Route, Routes } from "react-router-dom";
-
 import RootLayout from "@/layouts/RootLayout";
-import HomePage from "@/pages/HomePage";
 import GridPage from "@/pages/grid/GridPage.tsx";
+import HomePage from "@/pages/HomePage";
 
 const App = () => {
   return (

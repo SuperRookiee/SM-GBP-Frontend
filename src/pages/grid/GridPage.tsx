@@ -1,5 +1,4 @@
 import { useEffect, useEffectEvent, useState } from "react";
-
 import { getSampleDataApi } from "@/apis/grid.api";
 import GridTable from "@/components/grid/GridTable";
 import type { GridRow } from "@/interface/grid.interface";

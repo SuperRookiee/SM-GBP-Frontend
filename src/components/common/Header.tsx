@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-
 import { Button } from "@/components/ui/button";
 
 // 전역 헤더 컴포넌트 함수
