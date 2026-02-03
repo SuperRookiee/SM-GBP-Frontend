@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { withDevtools } from "@/utils/devtools.ts";
 import type { GridState } from "@/interface/grid.interface";
+import { createResetIfDirty, createSetIfChanged } from "@/stores/storeUtils";
 
 // Grid 스토어 초기 상태 값입니다.
 const initialState = {
@@ -24,24 +25,13 @@ const hasGridState = (state: GridState) =>
 // Grid 상태를 전역으로 관리하는 스토어 함수
 export const useGridStore = create<GridState>()(withDevtools(persist((set, get) => {
     // 공통: 변경 없으면 set 생략하는 헬퍼
-    const setIfChanged = (partial: Partial<GridState>) => {
-        const state = get();
-        for (const key in partial) {
-            if (!Object.is(state[key as keyof GridState], partial[key as keyof GridState])) {
-                set(partial);
-                return;
-            }
-        }
-    };
+    const setIfChanged = createSetIfChanged<GridState>(set, get);
 
     // 공통: page를 1로 리셋하면서 업데이트 (변경 없으면 set 생략)
     const setWithPageReset = (partial: Partial<GridState>) => setIfChanged({ ...partial, page: 1 });
 
     // 공통: 초기화 (변경 없으면 set 생략)
-    const resetIfDirty = () => {
-        if (!hasGridState(get())) return;
-        set({ ...initialState });
-    };
+    const resetIfDirty = createResetIfDirty(set, get, initialState, hasGridState);
 
     return {
         ...initialState,
