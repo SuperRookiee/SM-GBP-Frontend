@@ -1,4 +1,4 @@
-// #. Grid 테이블 관련 상수
+// Grid 테이블 관련 상수
 const DEMO_GRID_CONSTANTS = {
   pageSize: 5,
   pageWindow: 5,

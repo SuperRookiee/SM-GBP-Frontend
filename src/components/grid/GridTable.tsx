@@ -1,12 +1,12 @@
 import { Activity, type ReactNode, useEffect, useMemo } from "react";
+import DEMO_GRID_CONSTANTS from "@/constants/demoGrid.constants";
+import { useDemoGridStore } from "@/stores/demoGridStore";
+import type { DemoGridColumn, DemoGridFilterOption, DemoGridRow } from "@/interface/demoGrid.interface";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import DEMO_GRID_CONSTANTS from "@/constants/demoGrid.constants";
-import type { DemoGridColumn, DemoGridFilterOption, DemoGridRow } from "@/interface/demoGrid.interface";
-import { useDemoGridStore } from "@/stores/demoGridStore";
 
 interface GridTableClientProps {
     initialData: DemoGridRow[];
@@ -23,17 +23,13 @@ interface GridTableClientProps {
 
 // Grid 데이터를 보여주는 테이블 컴포넌트 함수
 const GridTable = ({
-                       initialData,
-                       isLoading = false,
-                       title,
-                       description,
-                       columns,
-                       filterOptions,
-                       searchLabel = "검색",
-                       searchPlaceholder = "검색어를 입력하세요",
-                       filterLabel = "검색 조건",
-                       captionRenderer = (count) => `총 ${count} 건`,
-                   }: GridTableClientProps) => {
+   initialData, title, description, columns, filterOptions,
+   isLoading = false,
+   searchLabel = "검색",
+   searchPlaceholder = "검색어를 입력하세요",
+   filterLabel = "검색 조건",
+   captionRenderer = (count) => `총 ${count} 건`,
+}: GridTableClientProps) => {
     const storedData = useDemoGridStore((state) => state.data);
     const data = storedData.length > 0 ? storedData : initialData;
     const query = useDemoGridStore((state) => state.query);
@@ -236,7 +232,7 @@ const GridTable = ({
                 </TableBody>
             </Table>
 
-            <div className="mt-6 flex flex-col gap-4 border-t border-zinc-200 pt-4 text-sm text-zinc-500
+            <div className="mt-4 flex flex-col gap-4 border-t border-zinc-200 pt-4 text-sm text-zinc-500
                             dark:border-zinc-800 dark:text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
                 <span>
                   Page {currentPage} of {totalPages}

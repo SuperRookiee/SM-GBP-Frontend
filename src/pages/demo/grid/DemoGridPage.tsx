@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useState } from "react";
 import { getDemoGridSampleDataApi } from "@/apis/demoGrid.api.ts";
-import GridTable from "@/components/grid/GridTable.tsx";
 import type { DemoGridColumn, DemoGridFilterOption, DemoGridRow } from "@/interface/demoGrid.interface.ts";
+import GridTable from "@/components/grid/GridTable.tsx";
 
 // Grid 데이터 테이블 페이지 컴포넌트 함수
 const DemoGridPage = () => {
@@ -64,8 +64,8 @@ const DemoGridPage = () => {
   ]
 
   return (
-    <div className="bg-zinc-50 px-4 text-zinc-900 dark:bg-black dark:text-zinc-50">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+      <div className="flex min-h-full items-center justify-center">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
         <header className="space-y-2">
           <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
             Demo Grid

@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { DemoGridRow } from "@/interface/demoGrid.interface";
 import { devtool } from "@/utils/devtools";
 import { createResetIfDirty, createSetIfChanged, createSetWithPageReset, hasChanged } from "@/utils/storeUtils";
+import type { DemoGridRow } from "@/interface/demoGrid.interface";
 
 type DemoGridState = {
     data: DemoGridRow[];
