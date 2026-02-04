@@ -28,6 +28,7 @@ const AppSidebar = () => {
                     { title: "Grid", url: "/demo/grid" },
                     { title: "Chart", url: "/demo/chart" },
                     { title: "Popup", url: "/demo/popup" },
+                    { title: "Form", url: "/demo/form" },
                     { title: "404", url: "/demo/not_found" },
                 ],
             },
