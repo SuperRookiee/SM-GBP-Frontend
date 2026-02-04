@@ -5,18 +5,19 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { useResetStore } from "@/hooks/useResetStore";
 import { useGridStore } from "@/stores/gridStore";
 
-// 공통 레이아웃과 헤더를 제공하는 루트 레이아웃 함수
+// 공통 레이아웃
 const RootLayout = () => {
+    // #. 페이지를 벗어나면 스토어 상태를 초기화
     const resetGridStore = useGridStore((state) => state.resetStore);
-
-    // Grid 페이지를 벗어나면 스토어 상태를 초기화합니다.
     useResetStore("/grid", resetGridStore);
 
     return (
-        <SidebarProvider>
+        <SidebarProvider className="bg-background">
             <AppSidebar/>
             <SidebarInset>
-                <SidebarTrigger className="-ml-1" />
+                <header className="flex h-16 shrink-0 items-center gap-2 px-4">
+                    <SidebarTrigger className="-ml-1" />
+                </header>
                 <ScrollArea className="h-full">
                     <main className="min-h-0 flex-1">
                         <Outlet/>

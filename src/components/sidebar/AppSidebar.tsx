@@ -1,6 +1,10 @@
 import { MoreHorizontalIcon } from "lucide-react";
+import { Button } from "@/components/ui/button.tsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger, } from '@/components/ui/dropdown-menu'
-import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { Field } from "@/components/ui/field.tsx";
+import { Item, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item.tsx";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarInput, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '@/components/ui/sidebar'
 
 const AppSidebar = () => {
     const data = {
@@ -135,6 +139,22 @@ const AppSidebar = () => {
 
     return (
         <Sidebar variant="floating">
+            <SidebarHeader>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton size="lg" asChild>
+                            <a href="#">
+                                <Item className="p-0" size="xs">
+                                    <ItemContent>
+                                        <ItemTitle className="text-sm">Documentation</ItemTitle>
+                                        <ItemDescription>v1.0.0</ItemDescription>
+                                    </ItemContent>
+                                </Item>
+                            </a>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarMenu>
@@ -142,10 +162,9 @@ const AppSidebar = () => {
                             <DropdownMenu key={item.title}>
                                 <SidebarMenuItem>
                                     <DropdownMenuTrigger asChild>
-                                        <SidebarMenuButton
-                                            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                                        <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
                                             {item.title}{" "}
-                                            <MoreHorizontalIcon className="ml-auto"/>
+                                            <MoreHorizontalIcon className="ml-auto" />
                                         </SidebarMenuButton>
                                     </DropdownMenuTrigger>
                                     {item.items?.length ? (
@@ -165,6 +184,34 @@ const AppSidebar = () => {
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>
+            <SidebarFooter>
+                <SidebarGroup>
+                    <Card size="sm" className="-mx-2">
+                        <CardHeader>
+                            <CardTitle className="text-sm">
+                                Subscribe to our newsletter
+                            </CardTitle>
+                            <CardDescription>
+                                Opt-in to receive updates and news about the sidebar.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form>
+                                <Field>
+                                    <SidebarInput type="email" placeholder="Email" />
+                                    <Button
+                                        className="bg-sidebar-primary text-sidebar-primary-foreground w-full"
+                                        size="sm"
+                                    >
+                                        Subscribe
+                                    </Button>
+                                </Field>
+                            </form>
+                        </CardContent>
+                    </Card>
+                </SidebarGroup>
+            </SidebarFooter>
+            <SidebarRail />
         </Sidebar>
     );
 };

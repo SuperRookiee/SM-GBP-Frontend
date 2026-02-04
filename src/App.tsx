@@ -4,16 +4,17 @@ import GridPage from "@/pages/grid/GridPage.tsx";
 import HomePage from "@/pages/HomePage";
 
 const App = () => {
-  return (
-    <Routes>
-      <Route path="/" element={<RootLayout />}>
-        <Route index element={<HomePage />} />
-          <Route path='/demo'>
-            <Route path="grid" element={<GridPage />} />
-          </Route>
-      </Route>
-    </Routes>
-  );
+    return (
+        <Routes>
+            {/* LNB */}
+            <Route path="/" element={<RootLayout/>}>
+                <Route index element={<HomePage/>}/>
+                <Route path='/demo'>
+                    <Route path="grid" element={<GridPage/>}/>
+                </Route>
+            </Route>
+        </Routes>
+    );
 }
 
 export default App;
