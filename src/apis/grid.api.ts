@@ -23,10 +23,10 @@ interface GetSampleDataParams {
  * @param pageSize 페이지 크기
  * @returns 샘플 데이터와 전체 건수
  */
-export async function getSampleDataApi({
+export const getSampleDataApi = async ({
   page,
   pageSize,
-}: GetSampleDataParams): Promise<GridResponse> {
+}: GetSampleDataParams): Promise<GridResponse> => {
   const startIndex = (page - 1) * pageSize;
   const rows = GRID_SAMPLE_DATA.slice(startIndex, startIndex + pageSize);
 
