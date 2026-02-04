@@ -5,9 +5,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@/components/ui/collapsible'
 import { Field } from "@/components/ui/field.tsx";
 import { Item, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item.tsx";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarMenu, SidebarMenuAction, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from '@/components/ui/sidebar'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarMenu, SidebarMenuAction, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail, useSidebar } from '@/components/ui/sidebar'
 
 const AppSidebar = () => {
+    const { isMobile, setOpenMobile } = useSidebar();
+
+    const handleMenuClick = () => {
+        if (isMobile) {
+            setOpenMobile(false);
+        }
+    }
+
     const menu = {
         navMain: [
             {
@@ -56,7 +64,7 @@ const AppSidebar = () => {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link to="/">
+                            <Link to="/" onClick={handleMenuClick}>
                                 <Item className="p-0" size="xs">
                                     <ItemContent>
                                         <ItemTitle className="text-sm">GBP</ItemTitle>
@@ -90,7 +98,7 @@ const AppSidebar = () => {
                                     ) : (
                                         // 서브가 없으면: 기존처럼 링크 이동
                                         <SidebarMenuButton asChild tooltip={item.title} isActive={item.isActive}>
-                                            <Link to={item.url}>
+                                            <Link to={item.url} onClick={handleMenuClick}>
                                                 {item.icon}
                                                 <span>{item.title}</span>
                                             </Link>
@@ -109,7 +117,7 @@ const AppSidebar = () => {
                                                     {item.items.map(subItem =>
                                                         <SidebarMenuSubItem key={subItem.title}>
                                                             <SidebarMenuSubButton asChild>
-                                                                <Link to={subItem.url}>
+                                                                <Link to={subItem.url} onClick={handleMenuClick}>
                                                                     <span>{subItem.title}</span>
                                                                 </Link>
                                                             </SidebarMenuSubButton>
@@ -130,7 +138,7 @@ const AppSidebar = () => {
                             {menu.navSecondary.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild size="sm">
-                                        <Link to={item.url}>
+                                        <Link to={item.url} onClick={handleMenuClick}>
                                             {item.icon}
                                             <span>{item.title}</span>
                                         </Link>

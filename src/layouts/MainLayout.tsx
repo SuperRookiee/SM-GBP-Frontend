@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 
 // 공통 레이아웃
-const RootLayout = () => {
+const MainLayout = () => {
     const { logout } = useLogout();
 
     // #. 페이지를 벗어나면 스토어 상태를 초기화
@@ -19,7 +19,7 @@ const RootLayout = () => {
     return (
         <SidebarProvider>
             <AppSidebar />
-            <SidebarInset className="flex min-h-svh flex-col">
+            <SidebarInset className="flex h-svh flex-col">
                 <header className="flex h-12 shrink-0 items-center gap-2 px-4 justify-between">
                     <SidebarTrigger className="-ml-1" />
                     <div className="flex items-center gap-2">
@@ -28,8 +28,8 @@ const RootLayout = () => {
                     </div>
                 </header>
 
-                <ScrollArea className="flex-1 overflow-auto">
-                    <main className="h-full px-4 py-2">
+                <ScrollArea className="flex-1">
+                    <main className="px-4 py-2">
                         <Outlet />
                     </main>
                 </ScrollArea>
@@ -38,4 +38,4 @@ const RootLayout = () => {
     );
 };
 
-export default RootLayout;
+export default MainLayout;

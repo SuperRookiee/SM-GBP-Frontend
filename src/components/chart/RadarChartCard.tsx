@@ -35,7 +35,7 @@ const RadarChartCard = ({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="pb-0">
-        <ChartContainer config={config} className="mx-auto aspect-square max-h-[250px]">
+        <ChartContainer config={config} className="mx-auto aspect-square max-h-62.5">
           <RadarChart data={data}>
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
             <PolarAngleAxis dataKey="month" />

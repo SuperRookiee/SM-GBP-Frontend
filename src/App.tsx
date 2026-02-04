@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import RootLayout from "@/layouts/RootLayout";
+import MainLayout from "@/layouts/MainLayout.tsx";
 import NotFound from "@/components/errors/NotFound.tsx";
 import DemoChartPage from "@/pages/demo/chart/DemoChartPage.tsx";
 import DemoGridPage from "@/pages/demo/grid/DemoGridPage.tsx";
@@ -15,7 +15,7 @@ const App = () => {
 
             {/* 보호 Route */}
             <Route element={<AuthRouter />}>
-                <Route path="/" element={<RootLayout/>}>
+                <Route path="/" element={<MainLayout/>}>
                     <Route index element={<IndexPage/>}/>
 
                     {/* Demo*/}

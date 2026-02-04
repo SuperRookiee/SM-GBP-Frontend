@@ -6,9 +6,6 @@ import RadarChartCard from "@/components/chart/RadarChartCard";
 import RadialChartCard from "@/components/chart/RadialChartCard";
 import { type ChartConfig } from "@/components/ui/chart";
 
-/**
- * Demo Chart Page
- */
 const DemoChartPage = () => {
     return (
         <div className="p-6 space-y-6">
