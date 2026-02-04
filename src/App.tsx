@@ -10,6 +10,7 @@ const App = () => {
             <Route path="/" element={<RootLayout/>}>
                 <Route index element={<IndexPage/>}/>
                 <Route path='/demo'>
+                    <Route path={"index"} element={<IndexPage/>}/>
                     <Route path="grid" element={<GridPage/>}/>
                 </Route>
             </Route>

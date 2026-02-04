@@ -8,3 +8,17 @@ export interface GridRow {
   role: string;
   status: string;
 }
+
+export type GridColumn<T = GridRow> = {
+  key: keyof T;
+  label: string;
+  sortable?: boolean;
+  headerClassName?: string;
+  cellClassName?: string;
+  render?: (row: T) => React.ReactNode;
+};
+
+export type GridFilterOption<T = GridRow> = {
+  value: "all" | keyof T;
+  label: string;
+};

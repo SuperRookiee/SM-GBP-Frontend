@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useState } from "react";
 import { getSampleDataApi } from "@/apis/grid.api.ts";
 import GridTable from "@/components/grid/GridTable.tsx";
-import type { GridRow } from "@/interface/grid.interface.ts";
+import type { GridColumn, GridFilterOption, GridRow } from "@/interface/grid.interface.ts";
 
 // Grid 데이터 테이블 페이지 컴포넌트 함수
 const GridPage = () => {
@@ -37,6 +37,32 @@ const GridPage = () => {
     };
   }, []);
 
+  const filterOptions: GridFilterOption[] = [
+    { value: "all", label: "전체" },
+    { value: "id", label: "문서 번호" },
+    { value: "customer", label: "담당자" },
+    { value: "email", label: "이메일" },
+    { value: "role", label: "역할" },
+    { value: "status", label: "상태" },
+  ]
+
+  const columns: GridColumn[] = [
+    { key: "id", label: "문서 번호", cellClassName: "font-medium" },
+    { key: "customer", label: "담당자" },
+    { key: "email", label: "이메일" },
+    { key: "role", label: "역할" },
+    {
+      key: "status",
+      label: "상태",
+      render: (row) => (
+          <span className="inline-flex items-center rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-700
+                          dark:border-zinc-800 dark:text-zinc-200">
+            {row.status}
+          </span>
+      ),
+    },
+  ]
+
   return (
     <div className="bg-zinc-50 px-6 py-6 text-zinc-900 dark:bg-black dark:text-zinc-50">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
@@ -56,29 +82,8 @@ const GridPage = () => {
           description="검색 조건은 저장되어 새로고침 후에도 유지됩니다."
           initialData={rows}
           isLoading={isLoading}
-          filterOptions={[
-            { value: "all", label: "전체" },
-            { value: "id", label: "문서 번호" },
-            { value: "customer", label: "담당자" },
-            { value: "email", label: "이메일" },
-            { value: "role", label: "역할" },
-            { value: "status", label: "상태" },
-          ]}
-          columns={[
-            { key: "id", label: "문서 번호", cellClassName: "font-medium" },
-            { key: "customer", label: "담당자" },
-            { key: "email", label: "이메일" },
-            { key: "role", label: "역할" },
-            {
-              key: "status",
-              label: "상태",
-              render: (row) => (
-                <span className="inline-flex items-center rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-200">
-                  {row.status}
-                </span>
-              ),
-            },
-          ]}
+          filterOptions={filterOptions}
+          columns={columns}
         />
       </div>
     </div>

@@ -1,4 +1,5 @@
-import { ChartLineIcon, ChevronRightIcon, FileIcon, HomeIcon, LifeBuoy, Send, Settings2Icon, ShoppingBagIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
+import { ChartLineIcon, ChevronRightIcon, HomeIcon, LifeBuoy, Send, Settings2Icon, ShoppingCartIcon, UserIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@/components/ui/collapsible'
@@ -10,123 +11,66 @@ const AppSidebar = () => {
     const data = {
         navMain: [
             {
-                title: "Dashboard",
+                title: "Demo",
                 url: "#",
-                icon: (
-                    <HomeIcon
-                    />
-                ),
+                icon: <HomeIcon/>,
                 isActive: true,
                 items: [
-                    {
-                        title: "Overview",
-                        url: "#",
-                    },
-                    {
-                        title: "Analytics",
-                        url: "#",
-                    },
+                    { title: "Index", url: "/demo/index" },
+                    { title: "Grid", url: "/demo/grid" },
                 ],
             },
             {
-                title: "Analytics",
+                title: "Sample 1",
                 url: "#",
-                icon: (
-                    <ChartLineIcon
-                    />
-                ),
+                icon: <ChartLineIcon/>,
                 items: [
                     {
-                        title: "Reports",
+                        title: "Sample 1-1",
                         url: "#",
                     },
                     {
-                        title: "Metrics",
+                        title: "Sample 1-2",
                         url: "#",
                     },
                 ],
             },
             {
-                title: "Orders",
+                title: "Sample 2",
                 url: "#",
-                icon: (
-                    <ShoppingBagIcon
-                    />
-                ),
+                icon: <ShoppingCartIcon/>,
                 items: [
                     {
-                        title: "All Orders",
+                        title: "Sample 2-1",
                         url: "#",
                     },
                     {
-                        title: "Pending",
-                        url: "#",
-                    },
-                    {
-                        title: "Completed",
+                        title: "Sample 2-2",
                         url: "#",
                     },
                 ],
             },
             {
-                title: "Products",
+                title: "User",
                 url: "#",
-                icon: (
-                    <ShoppingCartIcon
-                    />
-                ),
-                items: [
-                    {
-                        title: "All Products",
-                        url: "#",
-                    },
-                    {
-                        title: "Categories",
-                        url: "#",
-                    },
-                ],
-            },
-            {
-                title: "Invoices",
-                url: "#",
-                icon: (
-                    <FileIcon
-                    />
-                ),
-            },
-            {
-                title: "Customers",
-                url: "#",
-                icon: (
-                    <UserIcon
-                    />
-                ),
+                icon: <UserIcon/>,
             },
             {
                 title: "Settings",
                 url: "#",
-                icon: (
-                    <Settings2Icon
-                    />
-                ),
+                icon: <Settings2Icon/>,
             },
         ],
         navSecondary: [
             {
-                title: "Support",
+                title: "sample_secondary 1",
                 url: "#",
-                icon: (
-                    <LifeBuoy
-                    />
-                ),
+                icon: <LifeBuoy/>,
             },
             {
-                title: "Feedback",
+                title: "sample_secondary 2",
                 url: "#",
-                icon: (
-                    <Send
-                    />
-                ),
+                icon: <Send/>,
             },
         ],
     }
@@ -137,21 +81,21 @@ const AppSidebar = () => {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <a href="#">
+                            <Link to="/">
                                 <Item className="p-0" size="xs">
                                     <ItemContent>
-                                        <ItemTitle className="text-sm">Documentation</ItemTitle>
+                                        <ItemTitle className="text-sm">GBP</ItemTitle>
                                         <ItemDescription>v1.0.0</ItemDescription>
                                     </ItemContent>
                                 </Item>
-                            </a>
+                            </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+                    <SidebarGroupLabel>Demo</SidebarGroupLabel>
                     <SidebarMenu>
                         {data.navMain.map((item) => (
                             <Collapsible
@@ -165,16 +109,16 @@ const AppSidebar = () => {
                                         tooltip={item.title}
                                         isActive={item.isActive}
                                     >
-                                        <a href={item.url}>
+                                        <Link to={item.url}>
                                             {item.icon}
                                             <span>{item.title}</span>
-                                        </a>
+                                        </Link>
                                     </SidebarMenuButton>
                                     {item.items?.length ? (
                                         <>
                                             <CollapsibleTrigger asChild>
                                                 <SidebarMenuAction className="data-[state=open]:rotate-90">
-                                                    <ChevronRightIcon />
+                                                    <ChevronRightIcon/>
                                                     <span className="sr-only">Toggle</span>
                                                 </SidebarMenuAction>
                                             </CollapsibleTrigger>
@@ -183,9 +127,9 @@ const AppSidebar = () => {
                                                     {item.items.map((subItem) => (
                                                         <SidebarMenuSubItem key={subItem.title}>
                                                             <SidebarMenuSubButton asChild>
-                                                                <a href={subItem.url}>
+                                                                <Link to={subItem.url}>
                                                                     <span>{subItem.title}</span>
-                                                                </a>
+                                                                </Link>
                                                             </SidebarMenuSubButton>
                                                         </SidebarMenuSubItem>
                                                     ))}
@@ -204,10 +148,10 @@ const AppSidebar = () => {
                             {data.navSecondary.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild size="sm">
-                                        <a href={item.url}>
+                                        <Link to={item.url}>
                                             {item.icon}
                                             <span>{item.title}</span>
-                                        </a>
+                                        </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
@@ -220,10 +164,11 @@ const AppSidebar = () => {
                     <Card size="sm" className="-mx-2">
                         <CardHeader>
                             <CardTitle className="text-sm">
-                                Subscribe to our newsletter
+                                Lorem ipsum dolor sit amet
                             </CardTitle>
                             <CardDescription>
-                                Opt-in to receive updates and news about the sidebar.
+                                consectetur adipiscing elit. Integer semper, ante at malesuada aliquam, metus ante
+                                condimentum arcu
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -234,7 +179,7 @@ const AppSidebar = () => {
                                         className="bg-sidebar-primary text-sidebar-primary-foreground w-full"
                                         size="sm"
                                     >
-                                        Subscribe
+                                        Lorem ipsum
                                     </Button>
                                 </Field>
                             </form>

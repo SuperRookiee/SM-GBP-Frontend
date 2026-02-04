@@ -5,22 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import GRID_CONSTANTS from "@/constants/grid.constants";
-import type { GridRow } from "@/interface/grid.interface";
+import type { GridColumn, GridFilterOption, GridRow } from "@/interface/grid.interface";
 import { useGridStore } from "@/stores/gridStore";
-
-type GridColumn = {
-    key: keyof GridRow;
-    label: string;
-    sortable?: boolean;
-    headerClassName?: string;
-    cellClassName?: string;
-    render?: (row: GridRow) => ReactNode;
-};
-
-type GridFilterOption = {
-    value: "all" | keyof GridRow;
-    label: string;
-};
 
 interface GridTableClientProps {
     initialData: GridRow[];
