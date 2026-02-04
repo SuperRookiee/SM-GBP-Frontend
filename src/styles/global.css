@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 body {
   min-height: 100vh;
   background-color: #fafafa;
@@ -8,10 +10,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.dark body {
-  background-color: #09090b;
-  color: #fafafa;
-}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
