@@ -1,11 +1,11 @@
-import type { GridRow } from "@/interface/grid.interface";
-import { GRID_SAMPLE_DATA } from "@/tests/gridSampleData.test.ts";
+import type { DemoGridRow } from "@/interface/demoGrid.interface";
+import { DEMO_GRID_SAMPLE_DATA } from "@/tests/demoGridSampleData.test.ts";
 
 /**
  * Grid API 응답 데이터 형식
  */
-interface GridResponse {
-  rows: GridRow[];
+interface DemoGridResponse {
+  rows: DemoGridRow[];
   total: number;
 }
 
@@ -23,18 +23,18 @@ interface GetSampleDataParams {
  * @param pageSize 페이지 크기
  * @returns 샘플 데이터와 전체 건수
  */
-export const getSampleDataApi = async ({
+export const getDemoGridSampleDataApi = async ({
   page,
   pageSize,
-}: GetSampleDataParams): Promise<GridResponse> => {
+}: GetSampleDataParams): Promise<DemoGridResponse> => {
   const startIndex = (page - 1) * pageSize;
-  const rows = GRID_SAMPLE_DATA.slice(startIndex, startIndex + pageSize);
+  const rows = DEMO_GRID_SAMPLE_DATA.slice(startIndex, startIndex + pageSize);
 
   // 인위적으로 3초 지연
   await new Promise((res) => setTimeout(res, 2000));
 
   return {
     rows,
-    total: GRID_SAMPLE_DATA.length,
+    total: DEMO_GRID_SAMPLE_DATA.length,
   };
 }

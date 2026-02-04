@@ -3,12 +3,12 @@ import AppSidebar from "@/components/sidebar/AppSidebar.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { useResetStore } from "@/hooks/useResetStore";
-import { useGridStore } from "@/stores/gridStore";
+import { useDemoGridStore } from "@/stores/demoGridStore";
 
 // 공통 레이아웃
 const RootLayout = () => {
     // #. 페이지를 벗어나면 스토어 상태를 초기화
-    const resetGridStore = useGridStore((state) => state.resetStore);
+    const resetGridStore = useDemoGridStore((state) => state.resetStore);
     useResetStore("/grid", resetGridStore);
 
     return (

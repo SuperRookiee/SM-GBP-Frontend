@@ -4,17 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import GRID_CONSTANTS from "@/constants/grid.constants";
-import type { GridColumn, GridFilterOption, GridRow } from "@/interface/grid.interface";
-import { useGridStore } from "@/stores/gridStore";
+import DEMO_GRID_CONSTANTS from "@/constants/demoGrid.constants";
+import type { DemoGridColumn, DemoGridFilterOption, DemoGridRow } from "@/interface/demoGrid.interface";
+import { useDemoGridStore } from "@/stores/demoGridStore";
 
 interface GridTableClientProps {
-    initialData: GridRow[];
+    initialData: DemoGridRow[];
     isLoading?: boolean;
     title: string;
     description?: string;
-    columns: GridColumn[];
-    filterOptions: GridFilterOption[];
+    columns: DemoGridColumn[];
+    filterOptions: DemoGridFilterOption[];
     searchLabel?: string;
     searchPlaceholder?: string;
     filterLabel?: string;
@@ -34,18 +34,18 @@ const GridTable = ({
     filterLabel = "검색 조건",
     captionRenderer = (count) => `총 ${count} 건`,
 }: GridTableClientProps) => {
-    const storedData = useGridStore((state) => state.data);
+    const storedData = useDemoGridStore((state) => state.data);
     const data = storedData.length > 0 ? storedData : initialData;
-    const query = useGridStore((state) => state.query);
-    const filterKey = useGridStore((state) => state.filterKey);
-    const sortKey = useGridStore((state) => state.sortKey);
-    const sortDirection = useGridStore((state) => state.sortDirection);
-    const page = useGridStore((state) => state.page);
-    const setData = useGridStore((state) => state.setData);
-    const setQuery = useGridStore((state) => state.setQuery);
-    const setFilterKey = useGridStore((state) => state.setFilterKey);
-    const setSort = useGridStore((state) => state.setSort);
-    const setPage = useGridStore((state) => state.setPage);
+    const query = useDemoGridStore((state) => state.query);
+    const filterKey = useDemoGridStore((state) => state.filterKey);
+    const sortKey = useDemoGridStore((state) => state.sortKey);
+    const sortDirection = useDemoGridStore((state) => state.sortDirection);
+    const page = useDemoGridStore((state) => state.page);
+    const setData = useDemoGridStore((state) => state.setData);
+    const setQuery = useDemoGridStore((state) => state.setQuery);
+    const setFilterKey = useDemoGridStore((state) => state.setFilterKey);
+    const setSort = useDemoGridStore((state) => state.setSort);
+    const setPage = useDemoGridStore((state) => state.setPage);
 
     // #. 최초 로드 시 스토어 데이터가 비어 있으면 초기 데이터를 주입합니다.
     useEffect(() => {
@@ -58,7 +58,7 @@ const GridTable = ({
         if (!query.trim()) return data;
 
         const normalized = query.toLowerCase();
-        const fields: Array<keyof GridRow> =
+        const fields: Array<keyof DemoGridRow> =
             filterKey === "all" ? ["id", "customer", "email", "role", "status"] : [filterKey];
 
         return data.filter((row) =>
@@ -84,10 +84,10 @@ const GridTable = ({
     }, [filteredRows, sortDirection, sortKey]);
 
     // #. 페이지네이션 계산에 필요한 값들을 준비합니다.
-    const totalPages = Math.max(Math.ceil(sortedRows.length / GRID_CONSTANTS.pageSize), 1);
+    const totalPages = Math.max(Math.ceil(sortedRows.length / DEMO_GRID_CONSTANTS.pageSize), 1);
     const currentPage = Math.min(page, totalPages);
-    const startIndex = (currentPage - 1) * GRID_CONSTANTS.pageSize;
-    const rows = sortedRows.slice(startIndex, startIndex + GRID_CONSTANTS.pageSize,);
+    const startIndex = (currentPage - 1) * DEMO_GRID_CONSTANTS.pageSize;
+    const rows = sortedRows.slice(startIndex, startIndex + DEMO_GRID_CONSTANTS.pageSize,);
     const hasData = data.length > 0;
 
     // #. 현재 페이지가 범위를 벗어나면 스토어 페이지를 보정합니다.
@@ -101,12 +101,12 @@ const GridTable = ({
 
     // #. 화면에 표시할 페이지 번호 범위를 계산합니다.
     const pageWindowStart =
-        Math.floor((currentPage - 1) / GRID_CONSTANTS.pageWindow) *
-        GRID_CONSTANTS.pageWindow +
+        Math.floor((currentPage - 1) / DEMO_GRID_CONSTANTS.pageWindow) *
+        DEMO_GRID_CONSTANTS.pageWindow +
         1;
     const pageWindowEnd = Math.min(
         totalPages,
-        pageWindowStart + GRID_CONSTANTS.pageWindow - 1,
+        pageWindowStart + DEMO_GRID_CONSTANTS.pageWindow - 1,
     );
     const pageNumbers = Array.from(
         { length: pageWindowEnd - pageWindowStart + 1 },
@@ -114,7 +114,7 @@ const GridTable = ({
     );
 
     // #. 정렬 방향 표시를 반환하는 함수
-    const sortIndicator = (key: keyof GridRow) => {
+    const sortIndicator = (key: keyof DemoGridRow) => {
         if (sortKey !== key) return null;
 
         return (
@@ -147,7 +147,7 @@ const GridTable = ({
                         </label>
                         <Select
                             value={filterKey}
-                            onValueChange={(value) => setFilterKey(value as "all" | keyof GridRow)}
+                            onValueChange={(value) => setFilterKey(value as "all" | keyof DemoGridRow)}
                         >
                             <SelectTrigger className="mt-2">
                                 <SelectValue placeholder="검색 조건 선택"/>

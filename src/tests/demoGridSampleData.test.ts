@@ -1,6 +1,6 @@
-import type { GridRow } from "@/interface/grid.interface";
+import type { DemoGridRow } from "@/interface/demoGrid.interface";
 
-export const GRID_SAMPLE_DATA: GridRow[] = [
+export const DEMO_GRID_SAMPLE_DATA: DemoGridRow[] = [
   {
     id: "INV-001",
     customer: "Sarah Kim",

@@ -1,20 +1,20 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { GridRow } from "@/interface/grid.interface";
+import type { DemoGridRow } from "@/interface/demoGrid.interface";
 import { devtool } from "@/utils/devtools";
 import { createResetIfDirty, createSetIfChanged, createSetWithPageReset, hasChanged } from "@/utils/storeUtils";
 
-type GridState = {
-    data: GridRow[];
+type DemoGridState = {
+    data: DemoGridRow[];
     query: string;
-    filterKey: "all" | keyof GridRow;
-    sortKey: keyof GridRow | null;
+    filterKey: "all" | keyof DemoGridRow;
+    sortKey: keyof DemoGridRow | null;
     sortDirection: "asc" | "desc";
     page: number;
-    setData: (data: GridRow[]) => void;
+    setData: (data: DemoGridRow[]) => void;
     setQuery: (query: string) => void;
-    setFilterKey: (filterKey: "all" | keyof GridRow) => void;
-    setSort: (key: keyof GridRow) => void;
+    setFilterKey: (filterKey: "all" | keyof DemoGridRow) => void;
+    setSort: (key: keyof DemoGridRow) => void;
     setPage: (page: number) => void;
     reset: () => void;
     resetStore: () => void;
@@ -30,9 +30,9 @@ const initialState = {
     page: 1,
 };
 
-type GridStateSnapshot = Pick<GridState, "data" | "query" | "filterKey" | "sortKey" | "page">;
+type DemoGridStateSnapshot = Pick<DemoGridState, "data" | "query" | "filterKey" | "sortKey" | "page">;
 
-const gridDefaults: GridStateSnapshot = {
+const demoGridDefaults: DemoGridStateSnapshot = {
     data: [],
     query: "",
     filterKey: "all",
@@ -41,13 +41,13 @@ const gridDefaults: GridStateSnapshot = {
 };
 
 // 스토어가 기본값에서 변경되었는지 확인하는 함수
-const hasGridState = (state: GridState) => hasChanged<GridStateSnapshot>({
+const hasDemoGridState = (state: DemoGridState) => hasChanged<DemoGridStateSnapshot>({
     data: state.data,
     query: state.query,
     filterKey: state.filterKey,
     sortKey: state.sortKey,
     page: state.page,
-}, gridDefaults, {
+}, demoGridDefaults, {
     comparators: {
         data: (current, defaults) => current.length === defaults.length,
         query: (current, defaults) => current.trim() === defaults.trim(),
@@ -55,13 +55,13 @@ const hasGridState = (state: GridState) => hasChanged<GridStateSnapshot>({
 });
 
 // Grid 상태를 전역으로 관리하는 스토어 함수
-export const useGridStore = create<GridState>()(devtool(persist((set, get) => {
+export const useDemoGridStore = create<DemoGridState>()(devtool(persist((set, get) => {
     // #. 공통: 변경 없으면 set 생략하는 헬퍼
-    const setIfChanged = createSetIfChanged<GridState>(set, get);
+    const setIfChanged = createSetIfChanged<DemoGridState>(set, get);
     // #. 공통: page를 1로 리셋하면서 업데이트 (변경 없으면 set 생략)
-    const setWithPageReset = createSetWithPageReset<GridState>(setIfChanged, 1);
+    const setWithPageReset = createSetWithPageReset<DemoGridState>(setIfChanged, 1);
     // #. 공통: 초기화 (변경 없으면 set 생략)
-    const resetIfDirty = createResetIfDirty(set, get, initialState, hasGridState);
+    const resetIfDirty = createResetIfDirty(set, get, initialState, hasDemoGridState);
 
     return {
         ...initialState,
@@ -74,8 +74,8 @@ export const useGridStore = create<GridState>()(devtool(persist((set, get) => {
         // 정렬 기준 토글/변경 핸들러 함수
         setSort: (key) => {
             const { sortKey, sortDirection } = get();
-            const nextSortDirection: GridState["sortDirection"] = sortDirection === "asc" ? "desc" : "asc";
-            const next: Partial<GridState> =
+            const nextSortDirection: DemoGridState["sortDirection"] = sortDirection === "asc" ? "desc" : "asc";
+            const next: Partial<DemoGridState> =
                 sortKey === key ? { sortDirection: nextSortDirection } : { sortKey: key, sortDirection: "asc" };
             setWithPageReset(next);
         },
@@ -87,7 +87,7 @@ export const useGridStore = create<GridState>()(devtool(persist((set, get) => {
         resetStore: resetIfDirty,
     };
 }, {
-    name: "grid-state",
+    name: "demo-grid-state",
     // 필요한 필드만 localStorage에 저장합니다.
     partialize: (state) => ({
         query: state.query,
