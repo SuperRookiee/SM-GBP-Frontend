@@ -1,5 +1,7 @@
 import { Outlet } from "react-router-dom";
+import ThemeToggle from "@/components/common/ThemeToggle.tsx";
 import AppSidebar from "@/components/sidebar/AppSidebar.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { useResetStore } from "@/hooks/useResetStore";
@@ -12,16 +14,18 @@ const RootLayout = () => {
     useResetStore("/grid", resetGridStore);
 
     return (
-        <SidebarProvider className="bg-background">
+        <SidebarProvider>
             <AppSidebar/>
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 px-4">
+                <header className="flex h-12 shrink-0 items-center gap-2 px-4 justify-between">
                     <SidebarTrigger className="-ml-1" />
+                    <div className="flex items-center gap-2">
+                        <ThemeToggle/>
+                        <Button size='xs'>Logout</Button>
+                    </div>
                 </header>
-                <ScrollArea className="h-full">
-                    <main className="min-h-0 flex-1">
-                        <Outlet/>
-                    </main>
+                <ScrollArea className="h-full min-w-xl">
+                    <Outlet/>
                 </ScrollArea>
             </SidebarInset>
         </SidebarProvider>

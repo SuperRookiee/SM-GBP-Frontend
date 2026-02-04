@@ -23,17 +23,17 @@ interface GridTableClientProps {
 
 // Grid 데이터를 보여주는 테이블 컴포넌트 함수
 const GridTable = ({
-    initialData,
-    isLoading = false,
-    title,
-    description,
-    columns,
-    filterOptions,
-    searchLabel = "검색",
-    searchPlaceholder = "검색어를 입력하세요",
-    filterLabel = "검색 조건",
-    captionRenderer = (count) => `총 ${count} 건`,
-}: GridTableClientProps) => {
+                       initialData,
+                       isLoading = false,
+                       title,
+                       description,
+                       columns,
+                       filterOptions,
+                       searchLabel = "검색",
+                       searchPlaceholder = "검색어를 입력하세요",
+                       filterLabel = "검색 조건",
+                       captionRenderer = (count) => `총 ${count} 건`,
+                   }: GridTableClientProps) => {
     const storedData = useDemoGridStore((state) => state.data);
     const data = storedData.length > 0 ? storedData : initialData;
     const query = useDemoGridStore((state) => state.query);
@@ -128,7 +128,7 @@ const GridTable = ({
 
     return (
         <section
-            className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+            className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
