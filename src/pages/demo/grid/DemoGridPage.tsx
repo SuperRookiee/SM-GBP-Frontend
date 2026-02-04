@@ -1,15 +1,15 @@
 import { useEffect, useEffectEvent, useState } from "react";
-import { getSampleDataApi } from "@/apis/grid.api.ts";
+import { getDemoGridSampleDataApi } from "@/apis/demoGrid.api.ts";
 import GridTable from "@/components/grid/GridTable.tsx";
-import type { GridColumn, GridFilterOption, GridRow } from "@/interface/grid.interface.ts";
+import type { DemoGridColumn, DemoGridFilterOption, DemoGridRow } from "@/interface/demoGrid.interface.ts";
 
 // Grid 데이터 테이블 페이지 컴포넌트 함수
-const GridPage = () => {
-  const [rows, setRows] = useState<GridRow[]>([]);
+const DemoGridPage = () => {
+  const [rows, setRows] = useState<DemoGridRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // #. 데이터를 불러온 뒤 상태를 갱신하는 함수
-  const handleRowsLoaded = useEffectEvent((fetchedRows: GridRow[]) => {
+  const handleRowsLoaded = useEffectEvent((fetchedRows: DemoGridRow[]) => {
     setRows(fetchedRows);
     setIsLoading(false);
   });
@@ -19,7 +19,7 @@ const GridPage = () => {
 
     // #. 샘플 데이터를 불러오는 함수
     const fetchRows = async () => {
-      const { rows: fetchedRows } = await getSampleDataApi({
+      const { rows: fetchedRows } = await getDemoGridSampleDataApi({
         page: 1,
         pageSize: 100,
       });
@@ -37,7 +37,7 @@ const GridPage = () => {
     };
   }, []);
 
-  const filterOptions: GridFilterOption[] = [
+  const filterOptions: DemoGridFilterOption[] = [
     { value: "all", label: "전체" },
     { value: "id", label: "문서 번호" },
     { value: "customer", label: "담당자" },
@@ -46,7 +46,7 @@ const GridPage = () => {
     { value: "status", label: "상태" },
   ]
 
-  const columns: GridColumn[] = [
+  const columns: DemoGridColumn[] = [
     { key: "id", label: "문서 번호", cellClassName: "font-medium" },
     { key: "customer", label: "담당자" },
     { key: "email", label: "이메일" },
@@ -90,4 +90,4 @@ const GridPage = () => {
   );
 };
 
-export default GridPage;
+export default DemoGridPage;
