@@ -1,4 +1,4 @@
-import { Activity, useEffect, useMemo } from "react";
+import { Activity, type ReactNode, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,13 +8,46 @@ import GRID_CONSTANTS from "@/constants/grid.constants";
 import type { GridRow } from "@/interface/grid.interface";
 import { useGridStore } from "@/stores/gridStore";
 
+type GridColumn = {
+    key: keyof GridRow;
+    label: string;
+    sortable?: boolean;
+    headerClassName?: string;
+    cellClassName?: string;
+    render?: (row: GridRow) => ReactNode;
+};
+
+type GridFilterOption = {
+    value: "all" | keyof GridRow;
+    label: string;
+};
+
 interface GridTableClientProps {
     initialData: GridRow[];
     isLoading?: boolean;
+    title: string;
+    description?: string;
+    columns: GridColumn[];
+    filterOptions: GridFilterOption[];
+    searchLabel?: string;
+    searchPlaceholder?: string;
+    filterLabel?: string;
+    captionRenderer?: (count: number) => ReactNode;
 }
 
 // Grid 데이터를 보여주는 테이블 컴포넌트 함수
-const GridTable = ({ initialData, isLoading = false }: GridTableClientProps) => {
+const GridTable = ({
+    initialData,
+    isLoading = false,
+    title,
+    description,
+    columns,
+    filterOptions,
+    searchLabel = "검색",
+    searchPlaceholder = "검색어를 입력하세요",
+    filterLabel = "검색 조건",
+    captionRenderer = (count) => `총 ${count} 건`,
+}: GridTableClientProps) => {
     const storedData = useGridStore((state) => state.data);
     const data = storedData.length > 0 ? storedData : initialData;
     const query = useGridStore((state) => state.query);
@@ -95,7 +128,7 @@ const GridTable = ({ initialData, isLoading = false }: GridTableClientProps) => 
     );
 
     // #. 정렬 방향 표시를 반환하는 함수
-    const sortIndicator = (key: string) => {
+    const sortIndicator = (key: keyof GridRow) => {
         if (sortKey !== key) return null;
 
         return (
@@ -113,16 +146,18 @@ const GridTable = ({ initialData, isLoading = false }: GridTableClientProps) => 
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-                        거래 내역 목록
+                        {title}
                     </h2>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                        검색 조건은 저장되어 새로고침 후에도 유지됩니다.
-                    </p>
+                    {description && (
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                            {description}
+                        </p>
+                    )}
                 </div>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
                     <div className="w-full sm:w-40">
                         <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                            검색 조건
+                            {filterLabel}
                         </label>
                         <Select
                             value={filterKey}
@@ -132,22 +167,21 @@ const GridTable = ({ initialData, isLoading = false }: GridTableClientProps) => 
                                 <SelectValue placeholder="검색 조건 선택"/>
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">전체</SelectItem>
-                                <SelectItem value="id">문서 번호</SelectItem>
-                                <SelectItem value="customer">담당자</SelectItem>
-                                <SelectItem value="email">이메일</SelectItem>
-                                <SelectItem value="role">역할</SelectItem>
-                                <SelectItem value="status">상태</SelectItem>
+                                {filterOptions.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="w-full sm:w-72">
                         <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                            검색
+                            {searchLabel}
                         </label>
                         <Input
                             className="mt-2"
-                            placeholder="검색어를 입력하세요"
+                            placeholder={searchPlaceholder}
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
                         />
@@ -164,101 +198,53 @@ const GridTable = ({ initialData, isLoading = false }: GridTableClientProps) => 
                         </div>
                     </Activity>
                     <Activity mode={isLoading ? "hidden" : "visible"}>
-                        <>총 {sortedRows.length}건의 거래 내역</>
+                        {captionRenderer(sortedRows.length)}
                     </Activity>
                 </TableCaption>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>
-                            <Button
-                                className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-                                type="button"
-                                variant="ghost"
-                                onClick={() => setSort("id")}
-                            >
-                                문서 번호
-                                {sortIndicator("id")}
-                            </Button>
-                        </TableHead>
-                        <TableHead>
-                            <Button
-                                className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-                                type="button"
-                                variant="ghost"
-                                onClick={() => setSort("customer")}
-                            >
-                                담당자
-                                {sortIndicator("customer")}
-                            </Button>
-                        </TableHead>
-                        <TableHead>
-                            <Button
-                                className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-                                type="button"
-                                variant="ghost"
-                                onClick={() => setSort("email")}
-                            >
-                                이메일
-                                {sortIndicator("email")}
-                            </Button>
-                        </TableHead>
-                        <TableHead>
-                            <Button
-                                className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-                                type="button"
-                                variant="ghost"
-                                onClick={() => setSort("role")}
-                            >
-                                역할
-                                {sortIndicator("role")}
-                            </Button>
-                        </TableHead>
-                        <TableHead>
-                            <Button
-                                className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-                                type="button"
-                                variant="ghost"
-                                onClick={() => setSort("status")}
-                            >
-                                상태
-                                {sortIndicator("status")}
-                            </Button>
-                        </TableHead>
+                        {columns.map((column) => {
+                            const isSortable = column.sortable ?? true;
+                            return (
+                                <TableHead key={column.key} className={column.headerClassName}>
+                                    {isSortable ? (
+                                        <Button
+                                            className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() => setSort(column.key)}
+                                        >
+                                            {column.label}
+                                            {sortIndicator(column.key)}
+                                        </Button>
+                                    ) : (
+                                        <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                                            {column.label}
+                                        </span>
+                                    )}
+                                </TableHead>
+                            );
+                        })}
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {isLoading
                         ? skeletonRows.map((key) => (
                             <TableRow key={key}>
-                                <TableCell>
-                                    <Skeleton className="h-4 w-20"/>
-                                </TableCell>
-                                <TableCell>
-                                    <Skeleton className="h-4 w-24"/>
-                                </TableCell>
-                                <TableCell>
-                                    <Skeleton className="h-4 w-32"/>
-                                </TableCell>
-                                <TableCell>
-                                    <Skeleton className="h-4 w-16"/>
-                                </TableCell>
-                                <TableCell>
-                                    <Skeleton className="h-6 w-20 rounded-full"/>
-                                </TableCell>
+                                {columns.map((column) => (
+                                    <TableCell key={`${key}-${column.key}`}>
+                                        <Skeleton className="h-4 w-24"/>
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         ))
                         : rows.map((row) => (
                             <TableRow key={row.id}>
-                                <TableCell className="font-medium">{row.id}</TableCell>
-                                <TableCell>{row.customer}</TableCell>
-                                <TableCell>{row.email}</TableCell>
-                                <TableCell>{row.role}</TableCell>
-                                <TableCell>
-                                    <span className="inline-flex items-center rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-700
-                                                    dark:border-zinc-800 dark:text-zinc-200">
-                                      {row.status}
-                                    </span>
-                                </TableCell>
+                                {columns.map((column) => (
+                                    <TableCell key={`${row.id}-${column.key}`} className={column.cellClassName}>
+                                        {column.render ? column.render(row) : String(row[column.key])}
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         ))}
                 </TableBody>

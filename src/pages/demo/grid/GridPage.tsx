@@ -51,7 +51,35 @@ const GridPage = () => {
             서버에서 페이지 인덱스를 받아오는 형태의 간단한 데이터테이블 예시입니다.
           </p>
         </header>
-        <GridTable initialData={rows} isLoading={isLoading} />
+        <GridTable
+          title="거래 내역 목록"
+          description="검색 조건은 저장되어 새로고침 후에도 유지됩니다."
+          initialData={rows}
+          isLoading={isLoading}
+          filterOptions={[
+            { value: "all", label: "전체" },
+            { value: "id", label: "문서 번호" },
+            { value: "customer", label: "담당자" },
+            { value: "email", label: "이메일" },
+            { value: "role", label: "역할" },
+            { value: "status", label: "상태" },
+          ]}
+          columns={[
+            { key: "id", label: "문서 번호", cellClassName: "font-medium" },
+            { key: "customer", label: "담당자" },
+            { key: "email", label: "이메일" },
+            { key: "role", label: "역할" },
+            {
+              key: "status",
+              label: "상태",
+              render: (row) => (
+                <span className="inline-flex items-center rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:border-zinc-800 dark:text-zinc-200">
+                  {row.status}
+                </span>
+              ),
+            },
+          ]}
+        />
       </div>
     </div>
   );
