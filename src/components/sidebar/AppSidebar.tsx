@@ -1,138 +1,132 @@
-import { MoreHorizontalIcon } from "lucide-react";
+import { ChartLineIcon, ChevronRightIcon, FileIcon, HomeIcon, LifeBuoy, Send, Settings2Icon, ShoppingBagIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger, } from '@/components/ui/dropdown-menu'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@/components/ui/collapsible'
 import { Field } from "@/components/ui/field.tsx";
 import { Item, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item.tsx";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarInput, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from '@/components/ui/sidebar'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarMenu, SidebarMenuAction, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from '@/components/ui/sidebar'
 
 const AppSidebar = () => {
     const data = {
         navMain: [
             {
-                title: "Getting Started",
+                title: "Dashboard",
                 url: "#",
+                icon: (
+                    <HomeIcon
+                    />
+                ),
+                isActive: true,
                 items: [
                     {
-                        title: "Installation",
+                        title: "Overview",
                         url: "#",
                     },
                     {
-                        title: "Project Structure",
+                        title: "Analytics",
                         url: "#",
                     },
                 ],
             },
             {
-                title: "Building Your Application",
+                title: "Analytics",
                 url: "#",
+                icon: (
+                    <ChartLineIcon
+                    />
+                ),
                 items: [
                     {
-                        title: "Routing",
+                        title: "Reports",
                         url: "#",
                     },
                     {
-                        title: "Data Fetching",
-                        url: "#",
-                        isActive: true,
-                    },
-                    {
-                        title: "Rendering",
-                        url: "#",
-                    },
-                    {
-                        title: "Caching",
-                        url: "#",
-                    },
-                    {
-                        title: "Styling",
-                        url: "#",
-                    },
-                    {
-                        title: "Optimizing",
-                        url: "#",
-                    },
-                    {
-                        title: "Configuring",
-                        url: "#",
-                    },
-                    {
-                        title: "Testing",
-                        url: "#",
-                    },
-                    {
-                        title: "Authentication",
-                        url: "#",
-                    },
-                    {
-                        title: "Deploying",
-                        url: "#",
-                    },
-                    {
-                        title: "Upgrading",
-                        url: "#",
-                    },
-                    {
-                        title: "Examples",
+                        title: "Metrics",
                         url: "#",
                     },
                 ],
             },
             {
-                title: "API Reference",
+                title: "Orders",
                 url: "#",
+                icon: (
+                    <ShoppingBagIcon
+                    />
+                ),
                 items: [
                     {
-                        title: "Components",
+                        title: "All Orders",
                         url: "#",
                     },
                     {
-                        title: "File Conventions",
+                        title: "Pending",
                         url: "#",
                     },
                     {
-                        title: "Functions",
-                        url: "#",
-                    },
-                    {
-                        title: "next.config.js Options",
-                        url: "#",
-                    },
-                    {
-                        title: "CLI",
-                        url: "#",
-                    },
-                    {
-                        title: "Edge Runtime",
+                        title: "Completed",
                         url: "#",
                     },
                 ],
             },
             {
-                title: "Architecture",
+                title: "Products",
                 url: "#",
+                icon: (
+                    <ShoppingCartIcon
+                    />
+                ),
                 items: [
                     {
-                        title: "Accessibility",
+                        title: "All Products",
                         url: "#",
                     },
                     {
-                        title: "Fast Refresh",
-                        url: "#",
-                    },
-                    {
-                        title: "Next.js Compiler",
-                        url: "#",
-                    },
-                    {
-                        title: "Supported Browsers",
-                        url: "#",
-                    },
-                    {
-                        title: "Turbopack",
+                        title: "Categories",
                         url: "#",
                     },
                 ],
+            },
+            {
+                title: "Invoices",
+                url: "#",
+                icon: (
+                    <FileIcon
+                    />
+                ),
+            },
+            {
+                title: "Customers",
+                url: "#",
+                icon: (
+                    <UserIcon
+                    />
+                ),
+            },
+            {
+                title: "Settings",
+                url: "#",
+                icon: (
+                    <Settings2Icon
+                    />
+                ),
+            },
+        ],
+        navSecondary: [
+            {
+                title: "Support",
+                url: "#",
+                icon: (
+                    <LifeBuoy
+                    />
+                ),
+            },
+            {
+                title: "Feedback",
+                url: "#",
+                icon: (
+                    <Send
+                    />
+                ),
             },
         ],
     }
@@ -157,31 +151,68 @@ const AppSidebar = () => {
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
+                    <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
                     <SidebarMenu>
                         {data.navMain.map((item) => (
-                            <DropdownMenu key={item.title}>
+                            <Collapsible
+                                key={item.title}
+                                asChild
+                                defaultOpen={item.isActive}
+                            >
                                 <SidebarMenuItem>
-                                    <DropdownMenuTrigger asChild>
-                                        <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                                            {item.title}{" "}
-                                            <MoreHorizontalIcon className="ml-auto" />
-                                        </SidebarMenuButton>
-                                    </DropdownMenuTrigger>
+                                    <SidebarMenuButton
+                                        asChild
+                                        tooltip={item.title}
+                                        isActive={item.isActive}
+                                    >
+                                        <a href={item.url}>
+                                            {item.icon}
+                                            <span>{item.title}</span>
+                                        </a>
+                                    </SidebarMenuButton>
                                     {item.items?.length ? (
-                                        <DropdownMenuContent side="right" align="start">
-                                            <DropdownMenuGroup>
-                                                {item.items.map((subItem) => (
-                                                    <DropdownMenuItem asChild key={subItem.title}>
-                                                        <a href={subItem.url}>{subItem.title}</a>
-                                                    </DropdownMenuItem>
-                                                ))}
-                                            </DropdownMenuGroup>
-                                        </DropdownMenuContent>
+                                        <>
+                                            <CollapsibleTrigger asChild>
+                                                <SidebarMenuAction className="data-[state=open]:rotate-90">
+                                                    <ChevronRightIcon />
+                                                    <span className="sr-only">Toggle</span>
+                                                </SidebarMenuAction>
+                                            </CollapsibleTrigger>
+                                            <CollapsibleContent>
+                                                <SidebarMenuSub>
+                                                    {item.items.map((subItem) => (
+                                                        <SidebarMenuSubItem key={subItem.title}>
+                                                            <SidebarMenuSubButton asChild>
+                                                                <a href={subItem.url}>
+                                                                    <span>{subItem.title}</span>
+                                                                </a>
+                                                            </SidebarMenuSubButton>
+                                                        </SidebarMenuSubItem>
+                                                    ))}
+                                                </SidebarMenuSub>
+                                            </CollapsibleContent>
+                                        </>
                                     ) : null}
                                 </SidebarMenuItem>
-                            </DropdownMenu>
+                            </Collapsible>
                         ))}
                     </SidebarMenu>
+                </SidebarGroup>
+                <SidebarGroup className="mt-auto">
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {data.navSecondary.map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton asChild size="sm">
+                                        <a href={item.url}>
+                                            {item.icon}
+                                            <span>{item.title}</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
             <SidebarFooter>
@@ -198,7 +229,7 @@ const AppSidebar = () => {
                         <CardContent>
                             <form>
                                 <Field>
-                                    <SidebarInput type="email" placeholder="Email" />
+                                    <SidebarInput type="email" placeholder="Email"/>
                                     <Button
                                         className="bg-sidebar-primary text-sidebar-primary-foreground w-full"
                                         size="sm"
@@ -211,7 +242,7 @@ const AppSidebar = () => {
                     </Card>
                 </SidebarGroup>
             </SidebarFooter>
-            <SidebarRail />
+            <SidebarRail/>
         </Sidebar>
     );
 };
