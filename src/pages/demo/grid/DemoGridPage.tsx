@@ -55,8 +55,7 @@ const DemoGridPage = () => {
       key: "status",
       label: "상태",
       render: (row) => (
-          <span className="inline-flex items-center rounded-full border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-700
-                          dark:border-zinc-800 dark:text-zinc-200">
+          <span className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground">
             {row.status}
           </span>
       ),
@@ -67,13 +66,13 @@ const DemoGridPage = () => {
       <div className="flex min-h-full items-center justify-center">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
         <header className="space-y-2">
-          <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm font-semibold text-muted-foreground">
             Demo Grid
           </p>
           <h1 className="text-3xl font-semibold tracking-tight">
             거래 내역 데이터 테이블 (Demo)
           </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-muted-foreground">
             서버에서 페이지 인덱스를 받아오는 형태의 간단한 데이터테이블 예시입니다.
           </p>
         </header>
