@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { bootstrapSession } from "@/auth/sessionManager.ts";
 import { useUserStore } from "@/stores/userStore.ts";
 
+// 앱 최초 진입 시 세션 복구를 실행한다.
 const useBootstrapAuth = () => {
     const setUser = useUserStore((s) => s.setUser);
     const clearUser = useUserStore((s) => s.clearUser);

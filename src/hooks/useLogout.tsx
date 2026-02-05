@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { logout as logoutAction } from "@/services/authActions.ts";
 
+// 로그아웃 후 로그인 페이지로 이동한다.
 const UseLogout = () => {
     const navigate = useNavigate();
 

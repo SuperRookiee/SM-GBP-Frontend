@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input.tsx";
 import { login as loginAction, logout as logoutAction } from "@/services/authActions.ts";
 import { useUserStore } from "@/stores/userStore.ts";
 
+// 세션 동작을 확인하기 위한 데모 페이지
 const AuthDemoPage = () => {
     const user = useUserStore((s) => s.user);
     const [username, setUsername] = useState("");

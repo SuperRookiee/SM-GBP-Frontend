@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import LoginForm from "@/components/sign/demo/LoginForm.tsx";
 import { login as loginAction } from "@/services/authActions.ts";
 
+// 데모 로그인 페이지
 const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();

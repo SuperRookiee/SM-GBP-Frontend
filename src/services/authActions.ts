@@ -2,6 +2,7 @@ import { buildSessionId, demoLogin, demoLogout } from "@/apis/demo/auth.ts";
 import { broadcastLogout, clearSession, setSession } from "@/auth/sessionManager.ts";
 import { useUserStore } from "@/stores/userStore.ts";
 
+// 로그인 처리: 세션 발급 + 저장 + 스토어 반영
 export const login = async (username: string, password: string) => {
     const { user } = await demoLogin(username, password);
     const sessionId = buildSessionId(user.id);
@@ -12,6 +13,7 @@ export const login = async (username: string, password: string) => {
     return user;
 };
 
+// 로그아웃 처리: 세션 삭제 + 스토어 초기화 + 브로드캐스트
 export const logout = async () => {
     await demoLogout();
     clearSession();
