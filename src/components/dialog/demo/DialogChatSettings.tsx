@@ -13,37 +13,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@/components/ui/tabs.
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Tooltip, TooltipContent, TooltipTrigger, } from '@/components/ui/tooltip.tsx'
 
-const spokenLanguages = [
-    { label: "English", value: "en" },
-    { label: "Spanish", value: "es" },
-    { label: "French", value: "fr" },
-    { label: "German", value: "de" },
-    { label: "Italian", value: "it" },
-    { label: "Portuguese", value: "pt" },
-    { label: "Russian", value: "ru" },
-    { label: "Chinese", value: "zh" },
-    { label: "Japanese", value: "ja" },
-    { label: "Korean", value: "ko" },
-    { label: "Arabic", value: "ar" },
-    { label: "Hindi", value: "hi" },
-    { label: "Bengali", value: "bn" },
-    { label: "Telugu", value: "te" },
-    { label: "Marathi", value: "mr" },
-    { label: "Kannada", value: "kn" },
-    { label: "Malayalam", value: "ml" },
-]
-
-const voices = [
-    { label: "Samantha", value: "samantha" },
-    { label: "Alex", value: "alex" },
-    { label: "Fred", value: "fred" },
-    { label: "Victoria", value: "victoria" },
-    { label: "Tom", value: "tom" },
-    { label: "Karen", value: "karen" },
-    { label: "Sam", value: "sam" },
-    { label: "Daniel", value: "daniel" },
-]
-
 const DialogChatSettings = () => {
     const [tab, setTab] = React.useState("general")
     const [theme, setTheme] = React.useState("system")
@@ -88,7 +57,7 @@ const DialogChatSettings = () => {
                             </TabsTrigger>
                             <TabsTrigger value="security">Security</TabsTrigger>
                         </TabsList>
-                        <div className="style-nova:p-4 style-vega:p-6 style-maia:p-6 style-mira:p-4 style-lyra:p-4 style-vega:min-h-[550px] style-maia:min-h-[550px] style-mira:min-h-[450px] style-lyra:min-h-[450px] style-nova:min-h-[460px] style-nova:rounded-lg style-vega:rounded-lg style-maia:rounded-xl style-mira:rounded-md style-lyra:rounded-none border [&_[data-slot=select-trigger]]:min-w-[125px]">
+                        <div className="mt-4 rounded-xl border p-6 min-h-135 **:data-[slot=select-trigger]:min-w-31.25">
                             <TabsContent value="general">
                                 <FieldSet>
                                     <FieldGroup>
@@ -96,7 +65,7 @@ const DialogChatSettings = () => {
                                             <FieldLabel htmlFor="theme">Theme</FieldLabel>
                                             <Select value={theme} onValueChange={setTheme}>
                                                 <SelectTrigger id="theme">
-                                                    <SelectValue placeholder="Select" />
+                                                    <SelectValue placeholder="Select"/>
                                                 </SelectTrigger>
                                                 <SelectContent align="end">
                                                     <SelectGroup>
@@ -107,7 +76,7 @@ const DialogChatSettings = () => {
                                                 </SelectContent>
                                             </Select>
                                         </Field>
-                                        <FieldSeparator />
+                                        <FieldSeparator/>
                                         <Field orientation="horizontal">
                                             <FieldLabel htmlFor="accent-color">
                                                 Accent Color
@@ -117,39 +86,57 @@ const DialogChatSettings = () => {
                                                 onValueChange={setAccentColor}
                                             >
                                                 <SelectTrigger id="accent-color">
-                                                    <SelectValue placeholder="Select" />
+                                                    <SelectValue placeholder="Select"/>
                                                 </SelectTrigger>
                                                 <SelectContent align="end">
                                                     <SelectGroup>
                                                         <SelectItem value="default">
-                                                            <div className="size-3 rounded-full bg-neutral-500 dark:bg-neutral-400" />
-                                                            Default
+                                                            <div className="flex items-center gap-2">
+                                                                <div
+                                                                    className="size-3 rounded-full bg-neutral-500 dark:bg-neutral-400"/>
+                                                                <span>Default</span>
+                                                            </div>
                                                         </SelectItem>
                                                         <SelectItem value="red">
-                                                            <div className="size-3 rounded-full bg-red-500 dark:bg-red-400" />
-                                                            Red
+                                                            <div className="flex items-center gap-2">
+                                                                <div
+                                                                    className="size-3 rounded-full bg-red-500 dark:bg-red-400"/>
+                                                                <span>Red</span>
+                                                            </div>
                                                         </SelectItem>
                                                         <SelectItem value="blue">
-                                                            <div className="size-3 rounded-full bg-blue-500 dark:bg-blue-400" />
-                                                            Blue
+                                                            <div className="flex items-center gap-2">
+                                                                <div
+                                                                    className="size-3 rounded-full bg-blue-500 dark:bg-blue-400"/>
+                                                                <span>Blue</span>
+                                                            </div>
                                                         </SelectItem>
                                                         <SelectItem value="green">
-                                                            <div className="size-3 rounded-full bg-green-500 dark:bg-green-400" />
-                                                            Green
+                                                            <div className="flex items-center gap-2">
+                                                                <div
+                                                                    className="size-3 rounded-full bg-green-500 dark:bg-green-400"/>
+                                                                <span>Green</span>
+                                                            </div>
                                                         </SelectItem>
                                                         <SelectItem value="purple">
-                                                            <div className="size-3 rounded-full bg-purple-500 dark:bg-purple-400" />
-                                                            Purple
+                                                            <div className="flex items-center gap-2">
+                                                                <div
+                                                                    className="size-3 rounded-full bg-purple-500 dark:bg-purple-400"/>
+                                                                <span>Purple</span>
+                                                            </div>
                                                         </SelectItem>
                                                         <SelectItem value="pink">
-                                                            <div className="size-3 rounded-full bg-pink-500 dark:bg-pink-400" />
-                                                            Pink
+                                                            <div className="flex items-center gap-2">
+                                                                <div
+                                                                    className="size-3 rounded-full bg-pink-500 dark:bg-pink-400"/>
+                                                                <span>Pink</span>
+                                                            </div>
                                                         </SelectItem>
                                                     </SelectGroup>
                                                 </SelectContent>
                                             </Select>
                                         </Field>
-                                        <FieldSeparator />
+                                        <FieldSeparator/>
                                         <Field orientation="responsive">
                                             <FieldContent>
                                                 <FieldLabel htmlFor="spoken-language">
@@ -166,13 +153,13 @@ const DialogChatSettings = () => {
                                                 onValueChange={setSpokenLanguage}
                                             >
                                                 <SelectTrigger id="spoken-language">
-                                                    <SelectValue placeholder="Select" />
+                                                    <SelectValue placeholder="Select"/>
                                                 </SelectTrigger>
                                                 <SelectContent align="end" position="item-aligned">
                                                     <SelectGroup>
                                                         <SelectItem value="auto">Auto</SelectItem>
                                                     </SelectGroup>
-                                                    <SelectSeparator />
+                                                    <SelectSeparator/>
                                                     <SelectGroup>
                                                         {spokenLanguages.map((language) => (
                                                             <SelectItem
@@ -186,12 +173,12 @@ const DialogChatSettings = () => {
                                                 </SelectContent>
                                             </Select>
                                         </Field>
-                                        <FieldSeparator />
+                                        <FieldSeparator/>
                                         <Field orientation="horizontal">
                                             <FieldLabel htmlFor="voice">Voice</FieldLabel>
                                             <Select value={voice} onValueChange={setVoice}>
                                                 <SelectTrigger id="voice">
-                                                    <SelectValue placeholder="Select" />
+                                                    <SelectValue placeholder="Select"/>
                                                 </SelectTrigger>
                                                 <SelectContent align="end" position="item-aligned">
                                                     <SelectGroup>
@@ -220,14 +207,14 @@ const DialogChatSettings = () => {
                                         </FieldDescription>
                                         <FieldGroup data-slot="checkbox-group">
                                             <Field orientation="horizontal">
-                                                <Checkbox id="push" defaultChecked disabled />
+                                                <Checkbox id="push" defaultChecked disabled/>
                                                 <FieldLabel htmlFor="push" className="font-normal">
                                                     Push notifications
                                                 </FieldLabel>
                                             </Field>
                                         </FieldGroup>
                                     </FieldSet>
-                                    <FieldSeparator />
+                                    <FieldSeparator/>
                                     <FieldSet>
                                         <FieldLabel>Tasks</FieldLabel>
                                         <FieldDescription>
@@ -236,7 +223,7 @@ const DialogChatSettings = () => {
                                         </FieldDescription>
                                         <FieldGroup data-slot="checkbox-group">
                                             <Field orientation="horizontal">
-                                                <Checkbox id="push-tasks" />
+                                                <Checkbox id="push-tasks"/>
                                                 <FieldLabel
                                                     htmlFor="push-tasks"
                                                     className="font-normal"
@@ -245,7 +232,7 @@ const DialogChatSettings = () => {
                                                 </FieldLabel>
                                             </Field>
                                             <Field orientation="horizontal">
-                                                <Checkbox id="email-tasks" />
+                                                <Checkbox id="email-tasks"/>
                                                 <FieldLabel
                                                     htmlFor="email-tasks"
                                                     className="font-normal"
@@ -265,7 +252,7 @@ const DialogChatSettings = () => {
                                             <InputGroupInput
                                                 id="nickname"
                                                 placeholder="Broski"
-                                                className="@md/field-group:max-w-[200px]"
+                                                className="@md/field-group:max-w-50"
                                             />
                                             <InputGroupAddon align="inline-end">
                                                 <Tooltip>
@@ -282,7 +269,7 @@ const DialogChatSettings = () => {
                                             </InputGroupAddon>
                                         </InputGroup>
                                     </Field>
-                                    <FieldSeparator />
+                                    <FieldSeparator/>
                                     <Field
                                         orientation="responsive"
                                         className="@md/field-group:flex-col @2xl/field-group:flex-row"
@@ -297,10 +284,10 @@ const DialogChatSettings = () => {
                                         <Textarea
                                             id="about"
                                             placeholder="I'm a software engineer..."
-                                            className="min-h-[120px] @md/field-group:min-w-full @2xl/field-group:min-w-[300px]"
+                                            className="min-h-30 @md/field-group:min-w-full @2xl/field-group:min-w-75"
                                         />
                                     </Field>
-                                    <FieldSeparator />
+                                    <FieldSeparator/>
                                     <FieldLabel>
                                         <Field orientation="horizontal">
                                             <FieldContent>
@@ -312,7 +299,7 @@ const DialogChatSettings = () => {
                                                     personalized.
                                                 </FieldDescription>
                                             </FieldContent>
-                                            <Switch id="customization" defaultChecked />
+                                            <Switch id="customization" defaultChecked/>
                                         </Field>
                                     </FieldLabel>
                                 </FieldGroup>
@@ -331,9 +318,9 @@ const DialogChatSettings = () => {
                                                 sent to your email.
                                             </FieldDescription>
                                         </FieldContent>
-                                        <Switch id="2fa" />
+                                        <Switch id="2fa"/>
                                     </Field>
-                                    <FieldSeparator />
+                                    <FieldSeparator/>
                                     <Field orientation="horizontal">
                                         <FieldContent>
                                             <FieldTitle>Log out</FieldTitle>
@@ -345,7 +332,7 @@ const DialogChatSettings = () => {
                                             Log Out
                                         </Button>
                                     </Field>
-                                    <FieldSeparator />
+                                    <FieldSeparator/>
                                     <Field orientation="horizontal">
                                         <FieldContent>
                                             <FieldTitle>Log out of all devices</FieldTitle>
@@ -368,5 +355,36 @@ const DialogChatSettings = () => {
         </Dialog>
     )
 }
+
+const spokenLanguages = [
+    { label: "English", value: "en" },
+    { label: "Spanish", value: "es" },
+    { label: "French", value: "fr" },
+    { label: "German", value: "de" },
+    { label: "Italian", value: "it" },
+    { label: "Portuguese", value: "pt" },
+    { label: "Russian", value: "ru" },
+    { label: "Chinese", value: "zh" },
+    { label: "Japanese", value: "ja" },
+    { label: "Korean", value: "ko" },
+    { label: "Arabic", value: "ar" },
+    { label: "Hindi", value: "hi" },
+    { label: "Bengali", value: "bn" },
+    { label: "Telugu", value: "te" },
+    { label: "Marathi", value: "mr" },
+    { label: "Kannada", value: "kn" },
+    { label: "Malayalam", value: "ml" },
+]
+
+const voices = [
+    { label: "Samantha", value: "samantha" },
+    { label: "Alex", value: "alex" },
+    { label: "Fred", value: "fred" },
+    { label: "Victoria", value: "victoria" },
+    { label: "Tom", value: "tom" },
+    { label: "Karen", value: "karen" },
+    { label: "Sam", value: "sam" },
+    { label: "Daniel", value: "daniel" },
+]
 
 export default DialogChatSettings;
