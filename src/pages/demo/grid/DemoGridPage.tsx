@@ -1,15 +1,15 @@
 import { useEffect, useEffectEvent, useState } from "react";
 import { getDemoGridSampleDataApi } from "@/apis/demoGrid.api.ts";
-import type { DemoGridColumn, DemoGridFilterOption, DemoGridRow } from "@/interface/demoGrid.interface.ts";
+import type { DemoGridColumn, DemoGridFilterOption, IDemoGridRow } from "@/interface/demoGrid.interface.ts";
 import GridTable from "@/components/grid/GridTable.tsx";
 
 // Grid 데이터 테이블 페이지 컴포넌트 함수
 const DemoGridPage = () => {
-  const [rows, setRows] = useState<DemoGridRow[]>([]);
+  const [rows, setRows] = useState<IDemoGridRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // #. 데이터를 불러온 뒤 상태를 갱신하는 함수
-  const handleRowsLoaded = useEffectEvent((fetchedRows: DemoGridRow[]) => {
+  const handleRowsLoaded = useEffectEvent((fetchedRows: IDemoGridRow[]) => {
     setRows(fetchedRows);
     setIsLoading(false);
   });

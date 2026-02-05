@@ -1,7 +1,7 @@
 /**
  * Grid 테이블에서 사용하는 행 데이터 타입
  */
-export interface DemoGridRow {
+export interface IDemoGridRow {
   id: string;
   customer: string;
   email: string;
@@ -9,7 +9,7 @@ export interface DemoGridRow {
   status: string;
 }
 
-export type DemoGridColumn<T = DemoGridRow> = {
+export type DemoGridColumn<T = IDemoGridRow> = {
   key: keyof T;
   label: string;
   sortable?: boolean;
@@ -18,7 +18,7 @@ export type DemoGridColumn<T = DemoGridRow> = {
   render?: (row: T) => React.ReactNode;
 };
 
-export type DemoGridFilterOption<T = DemoGridRow> = {
+export type DemoGridFilterOption<T = IDemoGridRow> = {
   value: "all" | keyof T;
   label: string;
 };
