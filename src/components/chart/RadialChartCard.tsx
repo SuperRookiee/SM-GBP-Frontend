@@ -18,26 +18,16 @@ export type RadialChartCardProps = {
     centerLabel: string;
 };
 
-const RadialChartCard = ({
-    title,
-    description,
-    footerTitle,
-    footerSubtitle,
-    data,
-    config,
-    dataKey,
-    rateKey,
-    centerLabel,
-}: RadialChartCardProps) => {
-    const firstData = data[0] ?? {};
-    const centerValue = Number(firstData[dataKey] ?? 0);
+const RadialChartCard = (props: RadialChartCardProps) => {
+    const firstData = props.data[0] ?? {};
+    const centerValue = Number(firstData[props.dataKey] ?? 0);
 
     /**
      * 비율(rate) 계산 로직:
      * 1. rateKey가 명시적으로 들어오면 해당 키의 값을 사용합니다.
      * 2. rateKey가 없으면 dataKey의 값을 그대로 비율로 사용합니다.
      */
-    const currentRate = Number(firstData[rateKey ?? dataKey] ?? 0);
+    const currentRate = Number(firstData[props.rateKey ?? props.dataKey] ?? 0);
 
     // 12시 방향(90도)에서 시작하여 시계 방향으로 비율만큼 회전
     // 100%일 때 360도를 다 채우도록 계산
@@ -47,13 +37,13 @@ const RadialChartCard = ({
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle>{title}</CardTitle>
-                <CardDescription>{description}</CardDescription>
+                <CardTitle>{props.title}</CardTitle>
+                <CardDescription>{props.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
-                <ChartContainer config={config} className="mx-auto aspect-square max-h-45">
+                <ChartContainer config={props.config} className="mx-auto aspect-square max-h-45">
                     <RadialBarChart
-                        data={data}
+                        data={props.data}
                         startAngle={startAngle}
                         endAngle={endAngle}
                         innerRadius={70}
@@ -67,7 +57,7 @@ const RadialChartCard = ({
                             polarRadius={[86, 74]}
                         />
                         <RadialBar
-                            dataKey={dataKey}
+                            dataKey={props.dataKey}
                             background
                             cornerRadius={10}
                             activeShape={false}
@@ -95,7 +85,7 @@ const RadialChartCard = ({
                                                     y={(viewBox.cy || 0) + 24}
                                                     className="fill-muted-foreground"
                                                 >
-                                                    {centerLabel}
+                                                    {props.centerLabel}
                                                 </tspan>
                                             </text>
                                         );
@@ -109,9 +99,9 @@ const RadialChartCard = ({
             </CardContent>
             <CardFooter className="flex-col gap-2">
                 <div className="flex items-center gap-2 leading-none font-medium">
-                    {footerTitle} <TrendingUpIcon className="size-4"/>
+                    {props.footerTitle} <TrendingUpIcon className="size-4"/>
                 </div>
-                <div className="text-muted-foreground leading-none">{footerSubtitle}</div>
+                <div className="text-muted-foreground leading-none">{props.footerSubtitle}</div>
             </CardFooter>
         </Card>
     );

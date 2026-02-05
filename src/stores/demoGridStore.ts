@@ -2,19 +2,19 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { devtool } from "@/utils/devtools";
 import { createResetIfDirty, createSetIfChanged, createSetWithPageReset, hasChanged } from "@/utils/storeUtils";
-import type { DemoGridRow } from "@/interface/demoGrid.interface";
+import type { IDemoGridRow } from "@/interface/demoGrid.interface";
 
 type DemoGridState = {
-    data: DemoGridRow[];
+    data: IDemoGridRow[];
     query: string;
-    filterKey: "all" | keyof DemoGridRow;
-    sortKey: keyof DemoGridRow | null;
+    filterKey: "all" | keyof IDemoGridRow;
+    sortKey: keyof IDemoGridRow | null;
     sortDirection: "asc" | "desc";
     page: number;
-    setData: (data: DemoGridRow[]) => void;
+    setData: (data: IDemoGridRow[]) => void;
     setQuery: (query: string) => void;
-    setFilterKey: (filterKey: "all" | keyof DemoGridRow) => void;
-    setSort: (key: keyof DemoGridRow) => void;
+    setFilterKey: (filterKey: "all" | keyof IDemoGridRow) => void;
+    setSort: (key: keyof IDemoGridRow) => void;
     setPage: (page: number) => void;
     reset: () => void;
     resetStore: () => void;

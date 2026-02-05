@@ -1,15 +1,15 @@
 import { Activity, type ReactNode, useEffect, useMemo } from "react";
 import DEMO_GRID_CONSTANTS from "@/constants/demoGrid.constants";
 import { useDemoGridStore } from "@/stores/demoGridStore";
-import type { DemoGridColumn, DemoGridFilterOption, DemoGridRow } from "@/interface/demoGrid.interface";
+import type { DemoGridColumn, DemoGridFilterOption, IDemoGridRow } from "@/interface/demoGrid.interface";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-interface GridTableClientProps {
-    initialData: DemoGridRow[];
+interface IGridTableClientProps {
+    initialData: IDemoGridRow[];
     isLoading?: boolean;
     title: string;
     description?: string;
@@ -29,7 +29,7 @@ const GridTable = ({
    searchPlaceholder = "검색어를 입력하세요",
    filterLabel = "검색 조건",
    captionRenderer = (count) => `총 ${count} 건`,
-}: GridTableClientProps) => {
+}: IGridTableClientProps) => {
     const storedData = useDemoGridStore((state) => state.data);
     const data = storedData.length > 0 ? storedData : initialData;
     const query = useDemoGridStore((state) => state.query);
@@ -54,7 +54,7 @@ const GridTable = ({
         if (!query.trim()) return data;
 
         const normalized = query.toLowerCase();
-        const fields: Array<keyof DemoGridRow> =
+        const fields: Array<keyof IDemoGridRow> =
             filterKey === "all" ? ["id", "customer", "email", "role", "status"] : [filterKey];
 
         return data.filter((row) =>
@@ -110,7 +110,7 @@ const GridTable = ({
     );
 
     // #. 정렬 방향 표시를 반환하는 함수
-    const sortIndicator = (key: keyof DemoGridRow) => {
+    const sortIndicator = (key: keyof IDemoGridRow) => {
         if (sortKey !== key) return null;
 
         return (
@@ -143,7 +143,7 @@ const GridTable = ({
                         </label>
                         <Select
                             value={filterKey}
-                            onValueChange={(value) => setFilterKey(value as "all" | keyof DemoGridRow)}
+                            onValueChange={(value) => setFilterKey(value as "all" | keyof IDemoGridRow)}
                         >
                             <SelectTrigger className="mt-2">
                                 <SelectValue placeholder="검색 조건 선택"/>
