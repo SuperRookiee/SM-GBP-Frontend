@@ -70,7 +70,7 @@ const DemoGridPage = () => {
             Demo Grid
           </p>
           <h1 className="text-3xl font-semibold tracking-tight">
-            거래 내역 데이터 테이블 (Demo)
+            Demo Data Table
           </h1>
           <p className="text-sm text-muted-foreground">
             서버에서 페이지 인덱스를 받아오는 형태의 간단한 데이터테이블 예시입니다.

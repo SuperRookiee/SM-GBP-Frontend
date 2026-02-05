@@ -7,88 +7,114 @@ import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 export type RadialChartDatum = Record<string, number | string>;
 
 export type RadialChartCardProps = {
-  title: string;
-  description: string;
-  footerTitle: ReactNode;
-  footerSubtitle: ReactNode;
-  data: RadialChartDatum[];
-  config: ChartConfig;
-  dataKey: string;
-  centerLabel: string;
+    title: string;
+    description: string;
+    footerTitle: ReactNode;
+    footerSubtitle: ReactNode;
+    data: RadialChartDatum[];
+    config: ChartConfig;
+    dataKey: string;    // 중앙에 표시할 메인 데이터 키
+    rateKey?: string;   // 호의 비율을 결정할 데이터 키
+    centerLabel: string;
 };
 
 const RadialChartCard = ({
-  title,
-  description,
-  footerTitle,
-  footerSubtitle,
-  data,
-  config,
-  dataKey,
-  centerLabel,
+    title,
+    description,
+    footerTitle,
+    footerSubtitle,
+    data,
+    config,
+    dataKey,
+    rateKey,
+    centerLabel,
 }: RadialChartCardProps) => {
-  const centerValue = Number(data[0]?.[dataKey] ?? 0);
+    const firstData = data[0] ?? {};
+    const centerValue = Number(firstData[dataKey] ?? 0);
 
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer config={config} className="mx-auto aspect-square max-h-[210px]">
-          <RadialBarChart data={data} endAngle={100} innerRadius={80} outerRadius={140}>
-            <PolarGrid
-              gridType="circle"
-              radialLines={false}
-              stroke="none"
-              className="first:fill-muted last:fill-background"
-              polarRadius={[86, 74]}
-            />
-            <RadialBar dataKey={dataKey} background />
-            <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-4xl font-bold"
-                        >
-                          {centerValue.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          {centerLabel}
-                        </tspan>
-                      </text>
-                    );
-                  }
-                  return null;
-                }}
-              />
-            </PolarRadiusAxis>
-          </RadialBarChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col gap-2">
-        <div className="flex items-center gap-2 leading-none font-medium">
-          {footerTitle} <TrendingUpIcon className="size-4" />
-        </div>
-        <div className="text-muted-foreground leading-none">{footerSubtitle}</div>
-      </CardFooter>
-    </Card>
-  );
+    /**
+     * 비율(rate) 계산 로직:
+     * 1. rateKey가 명시적으로 들어오면 해당 키의 값을 사용합니다.
+     * 2. rateKey가 없으면 dataKey의 값을 그대로 비율로 사용합니다.
+     */
+    const currentRate = Number(firstData[rateKey ?? dataKey] ?? 0);
+
+    // 12시 방향(90도)에서 시작하여 시계 방향으로 비율만큼 회전
+    // 100%일 때 360도를 다 채우도록 계산
+    const startAngle = 90;
+    const endAngle = 90 - (Math.min(currentRate, 100) / 100) * 360;
+
+    return (
+        <Card className="w-full">
+            <CardHeader>
+                <CardTitle>{title}</CardTitle>
+                <CardDescription>{description}</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1 pb-0">
+                <ChartContainer config={config} className="mx-auto aspect-square max-h-45">
+                    <RadialBarChart
+                        data={data}
+                        startAngle={startAngle}
+                        endAngle={endAngle}
+                        innerRadius={70}
+                        outerRadius={90}
+                    >
+                        <PolarGrid
+                            gridType="circle"
+                            radialLines={false}
+                            stroke="none"
+                            className="first:fill-muted last:fill-background"
+                            polarRadius={[86, 74]}
+                        />
+                        <RadialBar
+                            dataKey={dataKey}
+                            background
+                            cornerRadius={10}
+                            activeShape={false}
+                        />
+                        <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
+                            <Label
+                                content={({ viewBox }) => {
+                                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                        return (
+                                            <text
+                                                x={viewBox.cx}
+                                                y={viewBox.cy}
+                                                textAnchor="middle"
+                                                dominantBaseline="middle"
+                                            >
+                                                <tspan
+                                                    x={viewBox.cx}
+                                                    y={viewBox.cy}
+                                                    className="fill-foreground text-4xl font-bold"
+                                                >
+                                                    {centerValue.toLocaleString()}
+                                                </tspan>
+                                                <tspan
+                                                    x={viewBox.cx}
+                                                    y={(viewBox.cy || 0) + 24}
+                                                    className="fill-muted-foreground"
+                                                >
+                                                    {centerLabel}
+                                                </tspan>
+                                            </text>
+                                        );
+                                    }
+                                    return null;
+                                }}
+                            />
+                        </PolarRadiusAxis>
+                    </RadialBarChart>
+                </ChartContainer>
+            </CardContent>
+            <CardFooter className="flex-col gap-2">
+                <div className="flex items-center gap-2 leading-none font-medium">
+                    {footerTitle} <TrendingUpIcon className="size-4"/>
+                </div>
+                <div className="text-muted-foreground leading-none">{footerSubtitle}</div>
+            </CardFooter>
+        </Card>
+    );
 };
 
 export default RadialChartCard;

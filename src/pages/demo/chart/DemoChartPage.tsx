@@ -55,6 +55,7 @@ const DemoChartPage = () => {
                     data={radialChartData}
                     config={radialChartConfig}
                     dataKey="visitors"
+                    rateKey="visitor_rate"
                     centerLabel="Visitors"
                 />
                 <RadarChartCard
@@ -171,7 +172,12 @@ const radarChartConfig = {
     mobile: { label: "Mobile", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
-const radialChartData = [{ browser: "safari", visitors: 1260, fill: "var(--color-safari)" }];
+const radialChartData = [{
+        browser: "safari",
+        visitors: 1260,
+        visitor_rate: 75,
+        fill: "var(--color-safari)"
+}];
 
 const radialChartConfig = {
     visitors: { label: "Visitors" },
