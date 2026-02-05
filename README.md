@@ -20,7 +20,6 @@ GBP 프로젝트의 프론트엔드 환경 설정 및 기술 스택 가이드입
 | **Styling** | `Tailwind CSS` | Utility-first 전역 스타일링 |
 | **UI Kit** | `shadcn/ui` | 프로젝트 공통 UI 패턴 (Radix UI 기반) |
 | **Utilities** | `cva`, `clsx`, `tw-merge` | Variant 기반 스타일 관리 및 클래스 병합 |
-| **Animation** | `tailwindcss-animate` | 일관된 공통 애니메이션 효과 |
 | **Icons** | `lucide-react` | 일관된 디자인의 SVG 아이콘 세트 |
 | **Typography** | `Inter Variable` | 기본 타이포그래피 설정 |
 
