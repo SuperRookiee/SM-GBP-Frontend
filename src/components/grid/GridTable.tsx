@@ -1,5 +1,5 @@
 import { Activity, type ReactNode, useEffect, useMemo } from "react";
-import DEMO_GRID_CONSTANTS from "@/constants/demoGrid.constants";
+import { GRID_CONSTANTS } from "@/constants/demoGrid.constants";
 import { useDemoGridStore } from "@/stores/demoGridStore";
 import type { DemoGridColumn, DemoGridFilterOption, IDemoGridRow } from "@/interface/demoGrid.interface";
 import { Button } from "@/components/ui/button";
@@ -80,10 +80,10 @@ const GridTable = ({
     }, [filteredRows, sortDirection, sortKey]);
 
     // #. 페이지네이션 계산에 필요한 값들을 준비합니다.
-    const totalPages = Math.max(Math.ceil(sortedRows.length / DEMO_GRID_CONSTANTS.pageSize), 1);
+    const totalPages = Math.max(Math.ceil(sortedRows.length / GRID_CONSTANTS.pageSize), 1);
     const currentPage = Math.min(page, totalPages);
-    const startIndex = (currentPage - 1) * DEMO_GRID_CONSTANTS.pageSize;
-    const rows = sortedRows.slice(startIndex, startIndex + DEMO_GRID_CONSTANTS.pageSize,);
+    const startIndex = (currentPage - 1) * GRID_CONSTANTS.pageSize;
+    const rows = sortedRows.slice(startIndex, startIndex + GRID_CONSTANTS.pageSize,);
     const hasData = data.length > 0;
 
     // #. 현재 페이지가 범위를 벗어나면 스토어 페이지를 보정합니다.
@@ -97,12 +97,12 @@ const GridTable = ({
 
     // #. 화면에 표시할 페이지 번호 범위를 계산합니다.
     const pageWindowStart =
-        Math.floor((currentPage - 1) / DEMO_GRID_CONSTANTS.pageWindow) *
-        DEMO_GRID_CONSTANTS.pageWindow +
+        Math.floor((currentPage - 1) / GRID_CONSTANTS.pageWindow) *
+        GRID_CONSTANTS.pageWindow +
         1;
     const pageWindowEnd = Math.min(
         totalPages,
-        pageWindowStart + DEMO_GRID_CONSTANTS.pageWindow - 1,
+        pageWindowStart + GRID_CONSTANTS.pageWindow - 1,
     );
     const pageNumbers = Array.from(
         { length: pageWindowEnd - pageWindowStart + 1 },

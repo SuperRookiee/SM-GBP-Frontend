@@ -1,5 +1,6 @@
-import { ChartLineIcon, ChevronRightIcon, HomeIcon, LifeBuoy, Send, Settings2Icon, ShoppingCartIcon, UserIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import { Link } from "react-router";
+import { MENU } from "@/constants/menu.constants.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@/components/ui/collapsible'
@@ -11,51 +12,7 @@ const AppSidebar = () => {
     const { isMobile, setOpenMobile } = useSidebar();
 
     const handleMenuClick = () => {
-        if (isMobile)
-            setOpenMobile(false);
-    }
-
-    const menu = {
-        navMain: [
-            {
-                title: "Demo",
-                url: "#",
-                icon: <HomeIcon/>,
-                isActive: true,
-                items: [
-                    { title: "Index", url: "/demo/index" },
-                    { title: "Grid", url: "/demo/grid" },
-                    { title: "Chart", url: "/demo/chart" },
-                    { title: "Form", url: "/demo/form" },
-                    { title: "Dialog", url: "/demo/dialog" },
-                    { title: "404", url: "/demo/not_found" },
-                ],
-            },
-            {
-                title: "Sample 1",
-                url: "#",
-                icon: <ChartLineIcon/>,
-                items: [
-                    { title: "Sample 1-1", url: "#" },
-                    { title: "Sample 1-2", url: "#" },
-                ],
-            },
-            {
-                title: "Sample 2",
-                url: "#",
-                icon: <ShoppingCartIcon/>,
-                items: [
-                    { title: "Sample 2-1", url: "#" },
-                    { title: "Sample 2-2", url: "#" },
-                ],
-            },
-            { title: "User", url: "#", icon: <UserIcon/> },
-            { title: "Settings", url: "#", icon: <Settings2Icon/> },
-        ],
-        navSecondary: [
-            { title: "sample_secondary 1", url: "#", icon: <LifeBuoy/> },
-            { title: "sample_secondary 2", url: "#", icon: <Send/> },
-        ],
+        if (isMobile) setOpenMobile(false);
     }
 
     return (
@@ -80,7 +37,7 @@ const AppSidebar = () => {
                 <SidebarGroup>
                     <SidebarGroupLabel>Demo</SidebarGroupLabel>
                     <SidebarMenu>
-                        {menu.navMain.map((item) =>
+                        {MENU.navMain.map(item =>
                             <Collapsible
                                 key={item.title}
                                 asChild
@@ -96,7 +53,7 @@ const AppSidebar = () => {
                                             </SidebarMenuButton>
                                         </CollapsibleTrigger>
                                     ) : (
-                                        // 서브가 없으면: 기존처럼 링크 이동
+                                        // 서브가 없으면: 링크 이동
                                         <SidebarMenuButton asChild tooltip={item.title} isActive={item.isActive}>
                                             <Link to={item.url} onClick={handleMenuClick}>
                                                 {item.icon}
@@ -135,7 +92,7 @@ const AppSidebar = () => {
                 <SidebarGroup className="mt-auto">
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {menu.navSecondary.map((item) =>
+                            {MENU.navSecondary.map(item =>
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild size="sm">
                                         <Link to={item.url} onClick={handleMenuClick}>
