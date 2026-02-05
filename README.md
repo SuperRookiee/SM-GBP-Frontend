@@ -1,75 +1,76 @@
-# React + TypeScript + Vite
+# 🚀 GBP Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+GBP 프로젝트의 프론트엔드 환경 설정 및 기술 스택 가이드입니다.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠 Tech Stack
 
-## React Compiler
+### ⚡ Core & Build
+| 영역 | 기술                | 사용 용도 |
+|:----|:------------------|:---|
+| **UI Rendering** | `React 19`        | 전체 UI 렌더링 및 컴포넌트 아키텍처 |
+| **Language** | `TypeScript`      | 정적 타입 정의 및 런타임 안정성 확보 |
+| **Build Tool** | `Vite (Rolldown)` | 초고속 개발 서버 및 최적화된 프로덕션 빌드 |
+| **Routing** | `React Router`    | SPA 라우팅 및 중첩 레이아웃 구성 |
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### 🎨 UI & Styling
+| 영역 | 기술 | 사용 용도 |
+|:----|:---|:---|
+| **Styling** | `Tailwind CSS` | Utility-first 전역 스타일링 |
+| **UI Kit** | `shadcn/ui` | 프로젝트 공통 UI 패턴 (Radix UI 기반) |
+| **Utilities** | `cva`, `clsx`, `tw-merge` | Variant 기반 스타일 관리 및 클래스 병합 |
+| **Animation** | `tailwindcss-animate` | 일관된 공통 애니메이션 효과 |
+| **Icons** | `lucide-react` | 일관된 디자인의 SVG 아이콘 세트 |
+| **Typography** | `Inter Variable` | 기본 타이포그래피 설정 |
 
-Note: This will impact Vite dev & build performances.
+### 🏗 State & Infrastructure
+| 영역 | 기술 | 사용 용도                       |
+|:----|:---|:----------------------------|
+| **State** | `Zustand` | 전역 상태 관리                    |
+| **Validation** | `Zod` | Schema 기반 Form 및 API 데이터 검증 |
+| **Chart** | `Recharts` | 차트 라이브러리                    |
+| **Linting** | `ESLint` | 코드 규칙 준수 및 정적 분석            |
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🏃 Run & Build
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### ✅ Requirements
+- **Node.js**: `v24.x` 이상 (LTS 권장)
+- **Package Manager**: `npm`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### ⚙️ Installation & Development
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**1. 의존성 설치**
+```bash
+npm install
+# npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**2. 개발 환경 실행**
+```bash
+npm run dev
+# npm run dev
+```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**3. 코드 품질 관리**
+```bash
+# Lint 검사 + fix 자동 적용
+npm run lint
+# npm run lint
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Lint 검사 후 리포트 생성
+npm run lint:report
+# npm run lint:report
+
+```
+
+**4. 프로덕션 빌드**
+```bash
+npm run build
+# npm run build
+
+npm run preview
+# npm run preview
 ```

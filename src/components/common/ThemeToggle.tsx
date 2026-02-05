@@ -1,6 +1,6 @@
 import { useEffect, useEffectEvent, useState } from "react"
-import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import ThemeToggleIcon from "@/assets/icons/theme-toggle-icon.svg?react"
 
 const initDark = () => {
     const theme = localStorage.theme
@@ -20,8 +20,8 @@ const ThemeToggle = () => {
     }, [dark])
 
     return (
-        <Button variant="ghost" size="icon-xs" onClick={() => setDark(d => !d)} aria-label="Toggle theme">
-            {dark ? <Moon className="size-4.5"/> : <Sun className="size-4.5"/>}
+        <Button variant="ghost" size="icon-xs" onClick={() => setDark(dark => !dark)} aria-label="Toggle theme">
+            <ThemeToggleIcon className="size-4.5 text-foreground" />
         </Button>
     )
 }

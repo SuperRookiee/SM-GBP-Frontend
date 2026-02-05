@@ -30,8 +30,8 @@ export const getDemoGridSampleDataApi = async ({
   const startIndex = (page - 1) * pageSize;
   const rows = DEMO_GRID_SAMPLE_DATA.slice(startIndex, startIndex + pageSize);
 
-  // 인위적으로 3초 지연
-  await new Promise((res) => setTimeout(res, 2000));
+  // 인위적으로 1초 지연
+  await new Promise((res) => setTimeout(res, 1000));
 
   return {
     rows,

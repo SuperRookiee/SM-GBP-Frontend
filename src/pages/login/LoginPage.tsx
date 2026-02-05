@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
-import LoginForm from "@/components/sign/LoginForm.tsx";
+import LoginForm from "@/components/sign/demo/LoginForm.tsx";
 
 const LoginPage = () => {
     const navigate = useNavigate();

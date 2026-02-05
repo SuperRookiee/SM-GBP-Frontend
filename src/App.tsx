@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import MainLayout from "@/layouts/MainLayout.tsx";
 import NotFound from "@/components/errors/NotFound.tsx";
 import DemoChartPage from "@/pages/demo/chart/DemoChartPage.tsx";
+import DemoDialogPage from "@/pages/demo/dialog/DemoDialogPage.tsx";
 import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
 import DemoGridPage from "@/pages/demo/grid/DemoGridPage.tsx";
 import IndexPage from "@/pages/demo/index/IndexPage.tsx";
@@ -25,6 +26,7 @@ const App = () => {
                         <Route path="grid" element={<DemoGridPage/>}/>
                         <Route path="chart" element={<DemoChartPage/>}/>
                         <Route path="form" element={<DemoFormPage/>}/>
+                        <Route path="dialog" element={<DemoDialogPage/>}/>
                     </Route>
 
                     {/* Error */}

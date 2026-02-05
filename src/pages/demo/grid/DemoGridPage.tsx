@@ -73,7 +73,7 @@ const DemoGridPage = () => {
             Demo Data Table
           </h1>
           <p className="text-sm text-muted-foreground">
-            서버에서 페이지 인덱스를 받아오는 형태의 간단한 데이터테이블 예시입니다.
+            서버에서 페이지 인덱스를 받아오는 형태의 간단한 데이터테이블 예시입니다. : 강제 Delay 1s
           </p>
         </header>
         <GridTable

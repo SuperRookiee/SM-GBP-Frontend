@@ -11,9 +11,8 @@ const AppSidebar = () => {
     const { isMobile, setOpenMobile } = useSidebar();
 
     const handleMenuClick = () => {
-        if (isMobile) {
+        if (isMobile)
             setOpenMobile(false);
-        }
     }
 
     const menu = {
@@ -27,8 +26,8 @@ const AppSidebar = () => {
                     { title: "Index", url: "/demo/index" },
                     { title: "Grid", url: "/demo/grid" },
                     { title: "Chart", url: "/demo/chart" },
-                    { title: "Popup", url: "/demo/popup" },
                     { title: "Form", url: "/demo/form" },
+                    { title: "Dialog", url: "/demo/dialog" },
                     { title: "404", url: "/demo/not_found" },
                 ],
             },
@@ -81,7 +80,7 @@ const AppSidebar = () => {
                 <SidebarGroup>
                     <SidebarGroupLabel>Demo</SidebarGroupLabel>
                     <SidebarMenu>
-                        {menu.navMain.map((item) => (
+                        {menu.navMain.map((item) =>
                             <Collapsible
                                 key={item.title}
                                 asChild
@@ -130,13 +129,13 @@ const AppSidebar = () => {
                                     ) : null}
                                 </SidebarMenuItem>
                             </Collapsible>
-                        ))}
+                        )}
                     </SidebarMenu>
                 </SidebarGroup>
                 <SidebarGroup className="mt-auto">
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {menu.navSecondary.map((item) => (
+                            {menu.navSecondary.map((item) =>
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild size="sm">
                                         <Link to={item.url} onClick={handleMenuClick}>
@@ -145,7 +144,7 @@ const AppSidebar = () => {
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
-                            ))}
+                            )}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>

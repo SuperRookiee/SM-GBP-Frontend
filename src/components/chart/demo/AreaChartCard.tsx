@@ -1,33 +1,33 @@
 import type { ReactNode } from "react";
 import { TrendingUpIcon } from "lucide-react";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart.tsx";
 
-export type LineChartDatum = {
+export type AreaChartDatum = {
   month: string;
   [key: string]: number | string;
 };
 
-export type LineChartCardProps = {
+export type AreaChartCardProps = {
   title: string;
   description: string;
   footerTitle: ReactNode;
   footerSubtitle: ReactNode;
-  data: LineChartDatum[];
+  data: AreaChartDatum[];
   config: ChartConfig;
-  seriesKeys: string[];
+  dataKey: string;
 };
 
-const LineChartCard = ({
+const AreaChartCard = ({
   title,
   description,
   footerTitle,
   footerSubtitle,
   data,
   config,
-  seriesKeys,
-}: LineChartCardProps) => {
+  dataKey,
+}: AreaChartCardProps) => {
   return (
     <Card className="w-full">
       <CardHeader>
@@ -36,7 +36,7 @@ const LineChartCard = ({
       </CardHeader>
       <CardContent>
         <ChartContainer config={config}>
-          <LineChart accessibilityLayer data={data} margin={{ left: 12, right: 12 }}>
+          <AreaChart accessibilityLayer data={data} margin={{ left: 12, right: 12 }}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="month"
@@ -45,18 +45,15 @@ const LineChartCard = ({
               tickMargin={8}
               tickFormatter={(value) => String(value).slice(0, 3)}
             />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            {seriesKeys.map((key) => (
-              <Line
-                key={key}
-                dataKey={key}
-                type="monotone"
-                stroke={`var(--color-${key})`}
-                strokeWidth={2}
-                dot={false}
-              />
-            ))}
-          </LineChart>
+            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
+            <Area
+              dataKey={dataKey}
+              type="natural"
+              fill={`var(--color-${dataKey})`}
+              fillOpacity={0.4}
+              stroke={`var(--color-${dataKey})`}
+            />
+          </AreaChart>
         </ChartContainer>
       </CardContent>
       <CardFooter>
@@ -73,4 +70,4 @@ const LineChartCard = ({
   );
 };
 
-export default LineChartCard;
+export default AreaChartCard;

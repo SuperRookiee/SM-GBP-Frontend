@@ -1,9 +1,9 @@
 import * as React from "react"
 import { GalleryVerticalEnd } from "lucide-react"
-import { cn } from "@/utils/utils"
-import { Button } from "@/components/ui/button"
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator, } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { cn } from "@/utils/utils.ts"
+import { Button } from "@/components/ui/button.tsx"
+import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator, } from "@/components/ui/field.tsx"
+import { Input } from "@/components/ui/input.tsx"
 
 type LoginFormProps = React.ComponentProps<"div"> & {
     id: string
