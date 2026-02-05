@@ -8,12 +8,17 @@ import DemoGridPage from "@/pages/demo/grid/DemoGridPage.tsx";
 import IndexPage from "@/pages/demo/index/IndexPage.tsx";
 import LoginPage from "@/pages/login/LoginPage.tsx";
 import AuthRouter from "@/routes/AuthRouter.tsx";
+import useBootstrapAuth from "@/hooks/useBootstrapAuth.ts";
+import AuthDemoPage from "@/pages/demo/auth/AuthDemoPage.tsx";
 
 const App = () => {
+    useBootstrapAuth();
+
     return (
         <Routes>
             {/* 공개 Route */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/demo/auth" element={<AuthDemoPage />} />
 
             {/* 보호 Route */}
             <Route element={<AuthRouter />}>

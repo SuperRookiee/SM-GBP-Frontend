@@ -3,7 +3,12 @@ import { useUserStore } from "@/stores/userStore";
 
 const AuthRouter = () => {
     const user = useUserStore((s) => s.user);
+    const isInitialized = useUserStore((s) => s.isInitialized);
     const location = useLocation();
+
+    if (!isInitialized) {
+        return null;
+    }
 
     if (!user) {
         // 로그인 후 원래 가려던 곳으로 돌아오게 하기위한 state 저장

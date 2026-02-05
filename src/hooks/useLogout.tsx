@@ -1,13 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { useUserStore } from "@/stores/userStore";
+import { logout as logoutAction } from "@/services/authActions.ts";
 
 const UseLogout = () => {
     const navigate = useNavigate();
-    const clearUser = useUserStore((s) => s.clearUser);
 
-    const logout = () => {
-        clearUser(); // Store 초기화
-        navigate("/login", { replace: true }); // 로그인 화면으로 이동
+    const logout = async () => {
+        await logoutAction();
+        navigate("/login", { replace: true });
     };
 
     return { logout };

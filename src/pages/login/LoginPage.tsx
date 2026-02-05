@@ -1,30 +1,23 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useUserStore } from "@/stores/userStore";
 import LoginForm from "@/components/sign/demo/LoginForm.tsx";
+import { login as loginAction } from "@/services/authActions.ts";
 
 const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const setUser = useUserStore((s) => s.setUser);
     const [id, setId] = useState("");
     const [password, setPassword] = useState("");
 
     const from = location.state?.from?.pathname || "/";
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // FIXME: 실제 로그인 로직으로 교체 필요
-        if (id === "1" && password === "1") {
-            setUser({
-                id: "1",
-                name: "관리자",
-                role: "ADMIN",
-            });
-
+        try {
+            await loginAction(id, password);
             navigate(from, { replace: true });
-        } else {
+        } catch {
             alert("아이디 또는 비밀번호가 틀렸습니다.");
         }
     };
