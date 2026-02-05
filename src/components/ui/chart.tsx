@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
+import type { DefaultLegendContentProps, LegendPayload, TooltipContentProps } from "recharts"
 import * as RechartsPrimitive from "recharts"
-
 import { cn } from "@/utils/utils"
 
 // Format: { THEME_NAME: CSS_SELECTOR }
@@ -58,9 +58,9 @@ const ChartContainer = React.forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
-          {children}
-        </RechartsPrimitive.ResponsiveContainer>
+          <RechartsPrimitive.ResponsiveContainer initialDimension={{ width: 1, height: 1 }}>
+            {children}
+          </RechartsPrimitive.ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   )
@@ -103,15 +103,15 @@ ${colorConfig
 const ChartTooltip = RechartsPrimitive.Tooltip
 
 const ChartTooltipContent = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
+    HTMLDivElement,
+    TooltipContentProps<string | number, string | number> &
     React.ComponentProps<"div"> & {
-      hideLabel?: boolean
-      hideIndicator?: boolean
-      indicator?: "line" | "dot" | "dashed"
-      nameKey?: string
-      labelKey?: string
-    }
+    hideLabel?: boolean
+    hideIndicator?: boolean
+    indicator?: "line" | "dot" | "dashed"
+    nameKey?: string
+    labelKey?: string
+}
 >(
   (
     {
@@ -210,7 +210,7 @@ const ChartTooltipContent = React.forwardRef<
                         !hideIndicator && (
                           <div
                             className={cn(
-                              "shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
+                                "shrink-0 rounded-[2px] border bg-[var(--color-bg)] border-[var(--color-border)]",
                               {
                                 "h-2.5 w-2.5": indicator === "dot",
                                 "w-1": indicator === "line",
@@ -261,33 +261,28 @@ ChartTooltipContent.displayName = "ChartTooltip"
 const ChartLegend = RechartsPrimitive.Legend
 
 const ChartLegendContent = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
-      hideIcon?: boolean
-      nameKey?: string
-    }
->(
-  (
-    { className, hideIcon = false, payload, verticalAlign = "bottom", nameKey },
-    ref
-  ) => {
+    HTMLDivElement,
+    React.ComponentProps<"div"> &
+    Pick<DefaultLegendContentProps, "payload" | "verticalAlign"> & {
+    hideIcon?: boolean
+    nameKey?: string
+}
+>(({ className, hideIcon = false, payload, verticalAlign = "bottom", nameKey }, ref) => {
     const { config } = useChart()
 
-    if (!payload?.length) {
-      return null
-    }
+    const typedPayload = (payload ?? []) as ReadonlyArray<LegendPayload>
+    if (!typedPayload.length) return null
 
     return (
-      <div
-        ref={ref}
-        className={cn(
-          "flex items-center justify-center gap-4",
-          verticalAlign === "top" ? "pb-3" : "pt-3",
-          className
-        )}
-      >
-        {payload
+        <div
+            ref={ref}
+            className={cn(
+                "flex items-center justify-center gap-4",
+                verticalAlign === "top" ? "pb-3" : "pt-3",
+                className
+            )}
+        >
+        {typedPayload
           .filter((item) => item.type !== "none")
           .map((item) => {
             const key = `${nameKey || item.dataKey || "value"}`
