@@ -10,7 +10,7 @@ export const MENU = {
             isActive: true,
             items: [
                 { title: "Index", url: "/demo/index" },
-                { title: "Grid", url: "/demo/grid" },
+                { title: "DataTable", url: "/demo/data_table" },
                 { title: "Chart", url: "/demo/chart" },
                 { title: "Form", url: "/demo/form" },
                 { title: "Dialog", url: "/demo/dialog" },
