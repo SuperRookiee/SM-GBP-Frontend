@@ -1,40 +1,42 @@
 import { MoreHorizontal } from "lucide-react";
-import type { ActionItem } from "@/types/ActionItem.type.ts";
+import type { ActionItem } from "@/types/ActionItem.type";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
 
-type ActionMenuProps<T> = {
+interface IActionMenuProps<T> {
     row: T;
     actions: ActionItem<T>[];
     label?: string;
-};
+    maxItems?: number;
+}
 
-export function ActionMenu<T>({ row, actions, label = "Actions" }: ActionMenuProps<T>) {
-    if (!actions.length) return null;
+const ActionMenu = <T, >({ row, actions, label = "Actions", maxItems }: IActionMenuProps<T>) => {
+    if (!actions?.length) return null;
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                    <span className="sr-only">Open menu</span>
+                <Button variant="ghost" className="h-8 w-8 p-0" aria-label={label}>
                     <MoreHorizontal className="h-4 w-4"/>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>{label}</DropdownMenuLabel>
-                {actions.map(action =>
-                    <div key={action.id}>
-                        {action.separatorBefore && <DropdownMenuSeparator/>}
+                {(maxItems ? actions.slice(0, maxItems) : actions).map((a, i) =>
+                    <div key={a.id}>
+                        {!!a.separatorBefore && i > 0 && <DropdownMenuSeparator/>}
                         <DropdownMenuItem
-                            disabled={action.disabled}
-                            className={action.destructive ? "text-destructive" : undefined}
-                            onClick={() => action.onSelect(row)}
+                            disabled={a.disabled}
+                            className={a.destructive ? "text-destructive" : undefined}
+                            onSelect={() => !a.disabled && a.onSelect(row)}
                         >
-                            {action.label}
+                            {a.label}
                         </DropdownMenuItem>
                     </div>
                 )}
             </DropdownMenuContent>
         </DropdownMenu>
     );
-}
+};
+
+export default ActionMenu;

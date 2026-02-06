@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
-import { USER_TABLE_COLUMNS, USER_TABLE_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
+import { USER_TABLE_COLUMNS, USER_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useUserPageStore } from "@/stores/page/userPage.store.ts";
 import DataTable from "@/components/table/DataTable";
 
@@ -57,7 +57,7 @@ const UserPage = () => {
                     total={total}
                     pageSize={pageSize}
                     isLoading={isLoading || isFetching}
-                    filterOptions={USER_TABLE_FILTER_OPTIONS}
+                    filterOptions={USER_TABLE_FILTER}
                     columns={USER_TABLE_COLUMNS}
                     query={query}
                     filterKey={filterKey}
