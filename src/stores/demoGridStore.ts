@@ -84,7 +84,7 @@ export const useDemoGridStore = create<DemoGridState>()(devtool(persist((set, ge
         // 초기 상태로 되돌리기 핸들러 함수
         reset: resetIfDirty,
         // 변경된 상태가 있을 때만 초기화 핸들러 함수
-        resetStore: resetIfDirty,
+        resetStore: () => setIfChanged({ data: [], page: 1 }),
     };
 }, {
     name: "demo-grid-state",

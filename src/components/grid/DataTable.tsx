@@ -48,8 +48,11 @@ const DataTable = ({
 
     // #. page가 범위 벗어나면 보정
     useEffect(() => {
+        if (isLoading) return;  // 서버 응답(total)이 준비되기 전에는 clamp로 page를 덮어쓰지 않음
+        if (total <= 0) return; // 데이터 0건일 땐 굳이 보정 X
+
         if (page !== currentPage) setPage(currentPage);
-    }, [currentPage, page, setPage]);
+    }, [currentPage, isLoading, page, setPage, total]);
 
     const previousPage = currentPage > 1 ? currentPage - 1 : null;
     const nextPage = currentPage < totalPages ? currentPage + 1 : null;
