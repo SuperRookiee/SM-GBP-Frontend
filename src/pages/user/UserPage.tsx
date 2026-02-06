@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import { USER_TABLE_COLUMNS, USER_TABLE_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
 import type { IUser } from "@/interface/IUser.ts";
 import DataTable from "@/components/table/DataTable";
+import { useUserPageStore } from "@/stores/user.page.store.ts";
 
 const UserPage = () => {
-    const [query, setQuery] = useState("");
-    const [filterKey, setFilterKey] = useState<"all" | keyof IUser>("all");
-    const [sortKey, setSortKey] = useState<keyof IUser | null>(null);
-    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-    const [page, setPage] = useState(1);
+    const {
+        query,
+        filterKey,
+        sortKey,
+        sortDirection,
+        page,
+        setQuery,
+        setFilterKey,
+        setSort,
+        setPage,
+        reset,
+    } = useUserPageStore();
     const pageSize = GRID_CONSTANTS.pageSize;
 
     const { data, isLoading, isFetching, isError } = useQuery({
@@ -27,14 +35,7 @@ const UserPage = () => {
     const rows = data?.rows ?? [];
     const total = data?.total ?? 0;
 
-    const onSortChange = (key: keyof IUser) => {
-        if (sortKey === key) {
-            setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
-        } else {
-            setSortKey(key);
-            setSortDirection("asc");
-        }
-    };
+    useEffect(() => () => reset(), [reset]);
 
     if (isError) {
         return (
@@ -70,7 +71,7 @@ const UserPage = () => {
                     page={page}
                     onQueryChange={setQuery}
                     onFilterChange={setFilterKey}
-                    onSortChange={onSortChange}
+                    onSortChange={setSort}
                     onPageChange={setPage}
                     searchPlaceholder="이름, 권한, User ID로 검색"
                 />

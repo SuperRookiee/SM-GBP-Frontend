@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useUserStore } from "@/stores/user.store.ts";
+import { useUserStore } from "@/stores/auth.store.ts";
 
 const AuthRouter = () => {
     const user = useUserStore((s) => s.user);
