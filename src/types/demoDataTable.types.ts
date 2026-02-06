@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { IDemoDataTableRow } from "@/interface/IDemoDataTable.interface.ts";
 
 export type DemoDataTableColumn<T = IDemoDataTableRow> = {
-  key: keyof T;
+  key: keyof T | string;
   label: string;
   sortable?: boolean;
   headerClassName?: string;
