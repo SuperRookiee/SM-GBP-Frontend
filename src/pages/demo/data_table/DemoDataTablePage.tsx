@@ -5,7 +5,7 @@ import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import { DEMO_GRID_COLUMNS, DEMO_GRID_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
 import { useDemoGridStore } from "@/stores/demoGrid.store.ts";
 import type { DemoGridResponse } from "@/types/demoGrid.types";
-import DataTable from "@/components/grid/DataTable";
+import DataTable from "@/components/table/DataTable";
 
 const DemoDataTablePage = () => {
     const query = useDemoGridStore((s) => s.query);

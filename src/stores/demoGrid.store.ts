@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { devtool } from "@/utils/devtools";
+import { canonicalizeQuery } from "@/utils/queryCanonicalize.ts";
 import { createResetIfDirty, createSetIfChanged, createSetWithPageReset, hasChanged } from "@/utils/storeUtils";
 import type { IDemoGridRow } from "@/interface/IDemoGrid.interface.ts";
 
@@ -41,18 +42,22 @@ const demoGridDefaults: DemoGridStateSnapshot = {
 };
 
 // 스토어가 기본값에서 변경되었는지 확인하는 함수
-const hasDemoGridState = (state: DemoGridState) => hasChanged<DemoGridStateSnapshot>({
-    data: state.data,
-    query: state.query,
-    filterKey: state.filterKey,
-    sortKey: state.sortKey,
-    page: state.page,
-}, demoGridDefaults, {
-    comparators: {
-        data: (current, defaults) => current.length === defaults.length,
-        query: (current, defaults) => current.trim() === defaults.trim(),
+const hasDemoGridState = (state: DemoGridState) => hasChanged<DemoGridStateSnapshot>(
+    {
+        data: state.data,
+        query: state.query,
+        filterKey: state.filterKey,
+        sortKey: state.sortKey,
+        page: state.page,
+    },
+    demoGridDefaults,
+    {
+        comparators: {
+            data: (current, defaults) => current.length === defaults.length,
+            query: (current, defaults) => canonicalizeQuery(current) === canonicalizeQuery(defaults),
+        }
     }
-});
+);
 
 // Grid 상태를 전역으로 관리하는 스토어 함수
 export const useDemoGridStore = create<DemoGridState>()(devtool(persist((set, get) => {
@@ -88,7 +93,6 @@ export const useDemoGridStore = create<DemoGridState>()(devtool(persist((set, ge
     };
 }, {
     name: "demo-grid-state",
-    // 필요한 필드만 localStorage에 저장합니다.
     partialize: (state) => ({
         query: state.query,
         filterKey: state.filterKey,

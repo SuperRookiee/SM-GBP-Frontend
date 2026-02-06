@@ -4,7 +4,7 @@ import { getUserSampleDataApi } from "@/apis/user.api";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import { USER_TABLE_COLUMNS, USER_TABLE_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
 import type { IUser } from "@/interface/IUser.ts";
-import DataTable from "@/components/grid/DataTable";
+import DataTable from "@/components/table/DataTable";
 
 const UserPage = () => {
     const [query, setQuery] = useState("");
