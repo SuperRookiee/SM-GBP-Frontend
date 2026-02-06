@@ -1,4 +1,5 @@
-import type { DemoGridResponse, DemoGridSampleDataParams, } from "@/interface/demoGrid.interface";
+import type { DemoGridSampleDataParams } from "@/interface/demoGrid.interface";
+import type { DemoGridResponse } from "@/types/demoGrid.types";
 import { DEMO_GRID_SAMPLE_DATA } from "@/tests/demoGridSampleData.test.ts";
 
 /**
