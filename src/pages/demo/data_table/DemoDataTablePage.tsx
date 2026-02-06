@@ -7,7 +7,7 @@ import { useDemoGridStore } from "@/stores/demoGrid.store.ts";
 import type { DemoGridResponse } from "@/types/demoGrid.types";
 import DataTable from "@/components/grid/DataTable";
 
-const DemoGridPage = () => {
+const DemoDataTablePage = () => {
     const query = useDemoGridStore((s) => s.query);
     const filterKey = useDemoGridStore((s) => s.filterKey);
     const sortKey = useDemoGridStore((s) => s.sortKey);
@@ -52,8 +52,8 @@ const DemoGridPage = () => {
         <div className="flex min-h-full items-center justify-center">
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
                 <header className="space-y-2">
-                    <p className="text-sm font-semibold text-muted-foreground">Demo Grid</p>
-                    <h1 className="text-3xl font-semibold tracking-tight">Demo Data Table</h1>
+                    <p className="text-sm font-semibold text-muted-foreground">Demo DataTable</p>
+                    <h1 className="text-3xl font-semibold tracking-tight">Demo DataTable</h1>
                     <p className="text-sm text-muted-foreground">
                         서버에서 페이지 단위로 rows를 받고, total은 전체 건수를 받는 예시입니다.
                     </p>
@@ -82,4 +82,4 @@ const DemoGridPage = () => {
     );
 };
 
-export default DemoGridPage;
+export default DemoDataTablePage;

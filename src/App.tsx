@@ -4,7 +4,7 @@ import NotFound from "@/components/errors/NotFound.tsx";
 import DemoChartPage from "@/pages/demo/chart/DemoChartPage.tsx";
 import DemoDialogPage from "@/pages/demo/dialog/DemoDialogPage.tsx";
 import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
-import DemoGridPage from "@/pages/demo/grid/DemoGridPage.tsx";
+import DemoDataTablePage from "@/pages/demo/data_table/DemoDataTablePage.tsx";
 import IndexPage from "@/pages/demo/index/IndexPage.tsx";
 import LoginPage from "@/pages/login/LoginPage.tsx";
 import UserPage from "@/pages/user/UserPage.tsx";
@@ -24,7 +24,7 @@ const App = () => {
                     {/* Demo*/}
                     <Route path='/demo'>
                         <Route path="index" element={<IndexPage/>}/>
-                        <Route path="grid" element={<DemoGridPage/>}/>
+                        <Route path="data_table" element={<DemoDataTablePage/>}/>
                         <Route path="chart" element={<DemoChartPage/>}/>
                         <Route path="form" element={<DemoFormPage/>}/>
                         <Route path="dialog" element={<DemoDialogPage/>}/>
@@ -41,5 +41,4 @@ const App = () => {
 }
 
 export default App;
-
 

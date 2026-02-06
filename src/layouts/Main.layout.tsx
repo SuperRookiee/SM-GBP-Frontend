@@ -14,7 +14,7 @@ const MainLayout = () => {
 
     // #. 페이지를 벗어나면 스토어 상태를 초기화
     const resetGridStore = useDemoGridStore((state) => state.resetStore);
-    useResetStore("/demo/grid", resetGridStore);
+    useResetStore("/demo/data_table", resetGridStore);
 
     return (
         <SidebarProvider>
