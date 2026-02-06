@@ -1,16 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDemoGridSampleDataApi } from "@/apis/demoGrid.api";
 import { GRID_CONSTANTS } from "@/constants/demoGrid.constants";
+import { DEMO_GRID_COLUMNS, DEMO_GRID_FILTER_OPTIONS } from "@/constants/demoGridPage.constants";
 import { useDemoGridStore } from "@/stores/demoGridStore";
-import type { DemoGridColumn, DemoGridFilterOption, IDemoGridRow } from "@/interface/demoGrid.interface";
+import type { DemoGridResponse } from "@/interface/demoGrid.interface";
 import DataTable from "@/components/grid/DataTable";
-
-// API 응답 타입
-type DemoGridResponse = {
-    rows: IDemoGridRow[];
-    total: number;
-};
 
 const DemoGridPage = () => {
     const query = useDemoGridStore((s) => s.query);
@@ -39,30 +34,6 @@ const DemoGridPage = () => {
     const rows = data?.rows ?? [];
     const total = data?.total ?? 0;
 
-    const filterOptions: DemoGridFilterOption[] = useMemo(() => [
-        { value: "all", label: "전체" },
-        { value: "id", label: "문서 번호" },
-        { value: "customer", label: "담당자" },
-        { value: "email", label: "이메일" },
-        { value: "role", label: "역할" },
-        { value: "status", label: "상태" },
-    ], []);
-
-    const columns: DemoGridColumn[] = useMemo(() => [
-        { key: "id", label: "문서 번호", cellClassName: "font-medium" },
-        { key: "customer", label: "담당자" },
-        { key: "email", label: "이메일" },
-        { key: "role", label: "역할" },
-        {
-            key: "status",
-            label: "상태",
-            render: row =>
-            <span className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground">
-                {row.status}
-            </span>
-        },
-    ],[]);
-
     if (isError) {
         return (
             <div className="p-6">
@@ -88,8 +59,8 @@ const DemoGridPage = () => {
                     total={total}
                     pageSize={pageSize}
                     isLoading={isLoading || isFetching}
-                    filterOptions={filterOptions}
-                    columns={columns}
+                    filterOptions={DEMO_GRID_FILTER_OPTIONS}
+                    columns={DEMO_GRID_COLUMNS}
                 />
             </div>
         </div>
