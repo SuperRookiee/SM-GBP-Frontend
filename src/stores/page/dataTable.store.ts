@@ -1,5 +1,5 @@
-import type { BasePageStore } from "@/stores/page/basePage.store";
-import { createTablePageStore } from "@/stores/page/basePage.store";
+import type { BasePageStore } from "@/stores/page/base.store.ts";
+import { createTablePageStore } from "@/stores/page/base.store.ts";
 import type { IDemoDataTableRow } from "@/interface/IDemoDataTable.interface";
 
 export const useDemoDataTableStore = createTablePageStore<IDemoDataTableRow>({

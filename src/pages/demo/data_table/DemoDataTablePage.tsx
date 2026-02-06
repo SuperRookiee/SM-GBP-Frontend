@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getDemoDataTableSampleDataApi } from "@/apis/demoDataTable.api";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import { DEMO_DATA_TABLE_COLUMNS, DEMO_DATA_TABLE_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
-import { useDemoDataTableStore } from "@/stores/page/demoDataTable.store.ts";
+import { useDemoDataTableStore } from "@/stores/page/dataTable.store.ts";
 import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
 import DataTable from "@/components/table/DataTable";
 
