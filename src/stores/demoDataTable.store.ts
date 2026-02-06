@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { devtool } from "@/utils/devtools";
 import { canonicalizeQuery } from "@/utils/queryCanonicalize.ts";
-import { createResetIfDirty, createSetIfChanged, createSetWithPageReset, hasChanged } from "@/utils/storeUtils";
+import { createPageStoreHelpers } from "@/utils/storeUtils";
 import type { IDemoDataTableRow } from "@/interface/IDemoDataTable.interface.ts";
 
 type DemoDataTableState = {
@@ -33,40 +33,28 @@ const initialState = {
 
 type DemoDataTableStateSnapshot = Pick<DemoDataTableState, "data" | "query" | "filterKey" | "sortKey" | "page">;
 
-const demoDataTableDefaults: DemoDataTableStateSnapshot = {
-    data: [],
-    query: "",
-    filterKey: "all",
-    sortKey: null,
-    page: 1,
-};
-
-// 스토어가 기본값에서 변경되었는지 확인하는 함수
-const hasDemoDataTableState = (state: DemoDataTableState) => hasChanged<DemoDataTableStateSnapshot>(
-    {
-        data: state.data,
-        query: state.query,
-        filterKey: state.filterKey,
-        sortKey: state.sortKey,
-        page: state.page,
-    },
-    demoDataTableDefaults,
-    {
+// Grid 상태를 전역으로 관리하는 스토어 함수
+export const useDemoDataTableStore = create<DemoDataTableState>()(devtool(persist((set, get) => {
+    const { setIfChanged, setWithPageReset, reset, resetStore } = createPageStoreHelpers<
+        DemoDataTableState,
+        DemoDataTableStateSnapshot
+    >({
+        set,
+        get,
+        initialState,
+        snapshot: (state) => ({
+            data: state.data,
+            query: state.query,
+            filterKey: state.filterKey,
+            sortKey: state.sortKey,
+            page: state.page,
+        }),
         comparators: {
             data: (current, defaults) => current.length === defaults.length,
             query: (current, defaults) => canonicalizeQuery(current) === canonicalizeQuery(defaults),
-        }
-    }
-);
-
-// Grid 상태를 전역으로 관리하는 스토어 함수
-export const useDemoDataTableStore = create<DemoDataTableState>()(devtool(persist((set, get) => {
-    // #. 공통: 변경 없으면 set 생략하는 헬퍼
-    const setIfChanged = createSetIfChanged<DemoDataTableState>(set, get);
-    // #. 공통: page를 1로 리셋하면서 업데이트 (변경 없으면 set 생략)
-    const setWithPageReset = createSetWithPageReset<DemoDataTableState>(setIfChanged, 1);
-    // #. 공통: 초기화 (변경 없으면 set 생략)
-    const resetIfDirty = createResetIfDirty(set, get, initialState, hasDemoDataTableState);
+        },
+        resetStorePartial: { data: [], page: 1 },
+    });
 
     return {
         ...initialState,
@@ -87,9 +75,9 @@ export const useDemoDataTableStore = create<DemoDataTableState>()(devtool(persis
         // 페이지 번호 설정 핸들러 함수
         setPage: (page) => setIfChanged({ page }),
         // 초기 상태로 되돌리기 핸들러 함수
-        reset: resetIfDirty,
+        reset,
         // 변경된 상태가 있을 때만 초기화 핸들러 함수
-        resetStore: () => setIfChanged({ data: [], page: 1 }),
+        resetStore,
     };
 }, {
     name: "demo-data-table-state",
