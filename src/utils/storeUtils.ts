@@ -77,8 +77,8 @@ export const createSetWithPageReset = <T extends { page: number }>(
 type CreateStoreHelpersOptions<T, Snapshot extends Record<string, unknown>> = {
     set: SetState<T>;
     get: GetState<T>;
-    initialState: T;
-    snapshot: (state: T) => Snapshot;
+    initialState: Partial<T>;
+    snapshot: (state: Partial<T>) => Snapshot;
     comparators?: Partial<{ [K in keyof Snapshot]: (a: Snapshot[K], b: Snapshot[K]) => boolean }>;
     resetStorePartial?: Partial<T>;
 };

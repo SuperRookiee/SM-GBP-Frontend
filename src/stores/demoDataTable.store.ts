@@ -43,11 +43,11 @@ export const useDemoDataTableStore = create<DemoDataTableState>()(devtool(persis
         get,
         initialState,
         snapshot: (state) => ({
-            data: state.data,
-            query: state.query,
-            filterKey: state.filterKey,
-            sortKey: state.sortKey,
-            page: state.page,
+            data: state.data ?? [],
+            query: state.query ?? "",
+            filterKey: state.filterKey ?? "all",
+            sortKey: state.sortKey ?? null,
+            page: state.page ?? 1,
         }),
         comparators: {
             data: (current, defaults) => current.length === defaults.length,
