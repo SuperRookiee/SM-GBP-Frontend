@@ -35,15 +35,21 @@ export default defineConfig([
                     ['parent', 'sibling', 'index'],
                 ],
                 pathGroups: [
+                    // react / react-dom
                     { pattern: 'react', group: 'external', position: 'before' },
                     { pattern: 'react-dom', group: 'external', position: 'before' },
+                    // 기타 외부 라이브러리
+                    { pattern: '@tanstack/**', group: 'external', position: 'after' },
+                    { pattern: 'axios', group: 'external', position: 'after' },
+                    // 내부 모듈
                     { pattern: '@/apis/**', group: 'internal', position: 'before' },
                     { pattern: '@/constants/**', group: 'internal', position: 'before' },
                     { pattern: '@/stores/**', group: 'internal', position: 'before' },
                     { pattern: '@/hooks/**', group: 'internal', position: 'before' },
                     { pattern: '@/utils/**', group: 'internal', position: 'before' },
-                    { pattern: '@/types/**', group: 'internal', position: 'after' },
+                    // UI / 구조 계층
                     { pattern: '@/interface/**', group: 'internal', position: 'after' },
+                    { pattern: '@/types/**', group: 'internal', position: 'after' },
                     { pattern: '@/layouts/**', group: 'internal', position: 'after' },
                     { pattern: '@/components/**', group: 'internal', position: 'after' },
                     { pattern: '@/pages/**', group: 'internal', position: 'after' },

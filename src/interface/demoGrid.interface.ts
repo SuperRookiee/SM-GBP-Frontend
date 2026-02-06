@@ -9,10 +9,6 @@ export interface IDemoGridRow {
   status: string;
 }
 
-export type DemoGridFilterKey = "all" | keyof IDemoGridRow;
-export type DemoGridSortKey = keyof IDemoGridRow;
-export type DemoGridSortDirection = "asc" | "desc";
-
 export type DemoGridColumn<T = IDemoGridRow> = {
   key: keyof T;
   label: string;
@@ -36,7 +32,7 @@ export interface DemoGridSampleDataParams {
   page: number;
   pageSize: number;
   query?: string;
-  filterKey?: DemoGridFilterKey;
-  sortKey?: DemoGridSortKey | null;
-  sortDirection?: DemoGridSortDirection;
+  filterKey?: "all" | keyof IDemoGridRow;
+  sortKey?: keyof IDemoGridRow | null;
+  sortDirection?: "asc" | "desc";
 }

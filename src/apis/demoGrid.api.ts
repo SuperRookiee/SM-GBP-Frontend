@@ -1,11 +1,4 @@
-import type {
-  DemoGridFilterKey,
-  DemoGridResponse,
-  DemoGridSampleDataParams,
-  DemoGridSortDirection,
-  DemoGridSortKey,
-  IDemoGridRow,
-} from "@/interface/demoGrid.interface";
+import type { DemoGridResponse, DemoGridSampleDataParams, } from "@/interface/demoGrid.interface";
 import { DEMO_GRID_SAMPLE_DATA } from "@/tests/demoGridSampleData.test.ts";
 
 /**

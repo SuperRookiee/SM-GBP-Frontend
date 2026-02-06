@@ -1,9 +1,3 @@
-import AreaChartCard from "@/components/chart/demo/AreaChartCard.tsx";
-import BarChartCard from "@/components/chart/demo/BarChartCard.tsx";
-import LineChartCard from "@/components/chart/demo/LineChartCard.tsx";
-import PieChartCard from "@/components/chart/demo/PieChartCard.tsx";
-import RadarChartCard from "@/components/chart/demo/RadarChartCard.tsx";
-import RadialChartCard from "@/components/chart/demo/RadialChartCard.tsx";
 import {
     areaChartConfig,
     areaChartData,
@@ -18,6 +12,12 @@ import {
     radialChartConfig,
     radialChartData,
 } from "@/constants/demoChart.constants";
+import AreaChartCard from "@/components/chart/demo/AreaChartCard.tsx";
+import BarChartCard from "@/components/chart/demo/BarChartCard.tsx";
+import LineChartCard from "@/components/chart/demo/LineChartCard.tsx";
+import PieChartCard from "@/components/chart/demo/PieChartCard.tsx";
+import RadarChartCard from "@/components/chart/demo/RadarChartCard.tsx";
+import RadialChartCard from "@/components/chart/demo/RadialChartCard.tsx";
 
 const DemoChartPage = () => {
     return (
