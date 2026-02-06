@@ -1,7 +1,7 @@
 import type { IUserInterface } from "@/interface/IUser.interface";
-import type { UserTableColumn, UserTableFilterOption } from "@/types/userTable.types";
+import type { UserColumn, UserFilterOption } from "@/types/user.types.ts";
 
-export const USER_TABLE_FILTER_OPTIONS: UserTableFilterOption<IUserInterface>[] = [
+export const USER_TABLE_FILTER_OPTIONS: UserFilterOption<IUserInterface>[] = [
     { value: "all", label: "전체" },
     { value: "id", label: "사용자 ID" },
     { value: "name", label: "이름" },
@@ -9,7 +9,7 @@ export const USER_TABLE_FILTER_OPTIONS: UserTableFilterOption<IUserInterface>[] 
     { value: "role", label: "권한" },
 ];
 
-export const USER_TABLE_COLUMNS: UserTableColumn<IUserInterface>[] = [
+export const USER_TABLE_COLUMNS: UserColumn<IUserInterface>[] = [
     { key: "id", label: "ID", cellClassName: "font-medium" },
     { key: "name", label: "이름" },
     { key: "role", label: "권한" },

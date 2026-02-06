@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { IUserInterface } from "@/interface/IUser.interface";
 
-export type UserTableColumn<T = IUserInterface> = {
+export type UserColumn<T = IUserInterface> = {
   key: keyof T;
   label: string;
   sortable?: boolean;
@@ -10,7 +10,7 @@ export type UserTableColumn<T = IUserInterface> = {
   render?: (row: T) => ReactNode;
 };
 
-export type UserTableFilterOption<T = IUserInterface> = {
+export type UserFilterOption<T = IUserInterface> = {
   value: "all" | keyof T;
   label: string;
 };
