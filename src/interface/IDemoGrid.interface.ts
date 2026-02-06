@@ -9,7 +9,7 @@ export interface IDemoGridRow {
   status: string;
 }
 
-export interface DemoGridSampleDataParams {
+export interface IDemoGridSampleDataParams {
   page: number;
   pageSize: number;
   query?: string;

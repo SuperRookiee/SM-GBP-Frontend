@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { devtool } from "@/utils/devtools";
 import { createResetIfDirty, createSetIfChanged, createSetWithPageReset, hasChanged } from "@/utils/storeUtils";
-import type { IDemoGridRow } from "@/interface/demoGrid.interface";
+import type { IDemoGridRow } from "@/interface/IDemoGrid.interface.ts";
 
 type DemoGridState = {
     data: IDemoGridRow[];

@@ -215,12 +215,12 @@ dateFormatter.ts
 - 컴포넌트 내부에서 바로 사용하는 경우에 적합하다.
 
 ```tsx
-interface ButtonProps {
+interface IButtonProps {
   label: string;
   isDisabled: boolean;
 }
 
-const Button = ({ label, isDisabled }: ButtonProps) => {
+const Button = ({ label, isDisabled }: IButtonProps) => {
   return (
     <button disabled={isDisabled}>
       {label}
@@ -239,12 +239,12 @@ export default Button;
 - 동일한 props를 여러 곳에서 참조해야 하는 경우에 적합하다.
 
 ```tsx
-interface ButtonProps {
+interface IButtonProps {
   label: string;
   isDisabled: boolean;
 }
 
-const Button = (props: ButtonProps) => {
+const Button = (props: IButtonProps) => {
   return (
     <button disabled={props.isDisabled}>
       {props.label}
@@ -272,11 +272,11 @@ export default Button;
 ```tsx
 import { PropsWithChildren } from 'react';
 
-interface CardProps {
+interface ICardProps {
   title: string;
 }
 
-const Card = ({ title, children }: PropsWithChildren<CardProps>) => {
+const Card = ({ title, children }: PropsWithChildren<ICardProps>) => {
   return (
     <section>
       <h2>{title}</h2>

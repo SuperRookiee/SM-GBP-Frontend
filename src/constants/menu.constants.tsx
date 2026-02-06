@@ -35,7 +35,7 @@ export const MENU = {
                 { title: "Sample 2-2", url: "#" },
             ],
         },
-        { title: "User", url: "#", icon: <UserIcon/> },
+        { title: "UserInterface", url: "/user", icon: <UserIcon/> },
         { title: "Settings", url: "#", icon: <Settings2Icon/> },
     ],
     navSecondary: [

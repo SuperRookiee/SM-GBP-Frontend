@@ -1,4 +1,4 @@
-import type { DemoGridSampleDataParams } from "@/interface/demoGrid.interface";
+import type { IDemoGridSampleDataParams } from "@/interface/IDemoGrid.interface.ts";
 import type { DemoGridResponse } from "@/types/demoGrid.types";
 import { DEMO_GRID_SAMPLE_DATA } from "@/tests/demoGridSampleData.test.ts";
 
@@ -19,7 +19,7 @@ export const getDemoGridSampleDataApi = async ({
    filterKey = "all",
    sortKey,
    sortDirection = "asc",
-}: DemoGridSampleDataParams): Promise<DemoGridResponse> => {
+}: IDemoGridSampleDataParams): Promise<DemoGridResponse> => {
     const trimmedQuery = query?.trim().toLowerCase() ?? "";
     const filteredRows = DEMO_GRID_SAMPLE_DATA.filter((row) => {
         if (!trimmedQuery) return true;

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getDemoGridSampleDataApi } from "@/apis/demoGrid.api";
 import { GRID_CONSTANTS } from "@/constants/demoGrid.constants";
 import { DEMO_GRID_COLUMNS, DEMO_GRID_FILTER_OPTIONS } from "@/constants/demoGridPage.constants";
-import { useDemoGridStore } from "@/stores/demoGridStore";
+import { useDemoGridStore } from "@/stores/demoGrid.store.ts";
 import type { DemoGridResponse } from "@/types/demoGrid.types";
 import DataTable from "@/components/grid/DataTable";
 

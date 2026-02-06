@@ -1,4 +1,4 @@
-import type { IDemoGridRow } from "@/interface/demoGrid.interface";
+import type { IDemoGridRow } from "@/interface/IDemoGrid.interface.ts";
 import type { DemoGridColumn, DemoGridFilterOption } from "@/types/demoGrid.types";
 
 export const DEMO_GRID_FILTER_OPTIONS: DemoGridFilterOption[] = [

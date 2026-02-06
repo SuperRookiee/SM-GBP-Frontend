@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useDemoGridStore } from "@/stores/demoGridStore";
+import { useDemoGridStore } from "@/stores/demoGrid.store.ts";
 import useLogout from "@/hooks/useLogout.tsx";
 import { useResetStore } from "@/hooks/useResetStore";
 import ThemeToggle from "@/components/common/ThemeToggle.tsx";

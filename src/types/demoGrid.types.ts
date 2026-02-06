@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-
-import type { IDemoGridRow } from "@/interface/demoGrid.interface";
+import type { IDemoGridRow } from "@/interface/IDemoGrid.interface.ts";
 
 export type DemoGridColumn<T = IDemoGridRow> = {
   key: keyof T;
