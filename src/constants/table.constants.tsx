@@ -22,7 +22,7 @@ export const DEMO_DATA_TABLE_ACTION = {
         {
             id: "view",
             label: "상세 보기",
-            onSelect: (row: IDemoDataTableRow) => console.info("상세 보기", row),
+            href: (row: IDemoDataTableRow) => `/demo/data_table/${row.id}`,
         },
         {
             id: "copy",

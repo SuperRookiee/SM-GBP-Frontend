@@ -1,4 +1,5 @@
 import { MoreHorizontal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { ActionItem } from "@/types/ActionItem.type";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
@@ -11,7 +12,11 @@ interface IActionMenuProps<T> {
 }
 
 const ActionMenu = <T, >({ row, actions, label = "Actions", maxItems }: IActionMenuProps<T>) => {
+    const navigate = useNavigate();
+
     if (!actions?.length) return null;
+
+    const items = (maxItems ? actions.slice(0, maxItems) : actions);
 
     return (
         <DropdownMenu>
@@ -22,13 +27,13 @@ const ActionMenu = <T, >({ row, actions, label = "Actions", maxItems }: IActionM
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>{label}</DropdownMenuLabel>
-                {(maxItems ? actions.slice(0, maxItems) : actions).map((a, i) =>
+                {items.map((a, i) =>
                     <div key={a.id}>
                         {!!a.separatorBefore && i > 0 && <DropdownMenuSeparator/>}
                         <DropdownMenuItem
                             disabled={a.disabled}
                             className={a.destructive ? "text-destructive" : undefined}
-                            onSelect={() => !a.disabled && a.onSelect(row)}
+                            onSelect={() => (a.href ? navigate(a.href(row)) : a.onSelect?.(row))}
                         >
                             {a.label}
                         </DropdownMenuItem>
