@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
@@ -18,7 +17,6 @@ const UserPage = () => {
         setFilterKey,
         setSort,
         setPage,
-        reset,
     } = useUserPageStore();
     const pageSize = GRID_CONSTANTS.pageSize;
 
@@ -34,8 +32,6 @@ const UserPage = () => {
 
     const rows = data?.rows ?? [];
     const total = data?.total ?? 0;
-
-    useEffect(() => () => reset(), [reset]);
 
     if (isError) {
         return (
