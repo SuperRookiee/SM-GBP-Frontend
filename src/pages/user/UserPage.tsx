@@ -2,9 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import { USER_TABLE_COLUMNS, USER_TABLE_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
-import type { IUser } from "@/interface/IUser.ts";
+import { useUserPageStore } from "@/stores/page/user.page.store.ts";
 import DataTable from "@/components/table/DataTable";
-import { useUserPageStore } from "@/stores/user.page.store.ts";
 
 const UserPage = () => {
     const {

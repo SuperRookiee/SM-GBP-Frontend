@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useUserStore } from "@/stores/auth.store.ts";
+import { useAuthStore } from "@/stores/auth.store.ts";
 
 const AuthRouter = () => {
-    const user = useUserStore((s) => s.user);
+    const user = useAuthStore((s) => s.user);
     const location = useLocation();
 
     if (!user) {

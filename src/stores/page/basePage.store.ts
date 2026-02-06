@@ -4,7 +4,7 @@ import { devtool } from "@/utils/devtools";
 import { canonicalizeQuery } from "@/utils/queryCanonicalize.ts";
 import { createPageStoreHelpers } from "@/utils/storeUtils";
 
-export type BasePageStore<T extends Record<string, unknown>> = {
+export type BasePageStore<T extends object> = {
     query: string;
     filterKey: "all" | keyof T;
     sortKey: keyof T | null;
@@ -18,12 +18,12 @@ export type BasePageStore<T extends Record<string, unknown>> = {
     resetStore: () => void;
 };
 
-type BasePageState<T extends Record<string, unknown>> = Pick<
+type BasePageState<T extends object> = Pick<
     BasePageStore<T>,
     "query" | "filterKey" | "sortKey" | "sortDirection" | "page"
 >;
 
-type CreateTablePageStoreOptions<T extends Record<string, unknown>> = {
+type CreateTablePageStoreOptions<T extends object> = {
     persistKey: string;
     initialState?: Partial<BasePageState<T>>;
     resetStorePartial?: Partial<BasePageState<T>>;
@@ -38,73 +38,58 @@ const defaultState = {
     page: 1,
 };
 
-export const createTablePageStore = <T extends Record<string, unknown>>({
-    persistKey,
-    initialState,
-    resetStorePartial,
-    pageResetValue,
+export const createTablePageStore = <T extends object>({
+   persistKey, initialState, resetStorePartial, pageResetValue
 }: CreateTablePageStoreOptions<T>) => {
-    const resolvedInitialState = {
-        ...defaultState,
-        ...(initialState ?? {}),
-    } as BasePageState<T>;
+    const resolvedInitialState = { ...defaultState, ...(initialState ?? {}) } as BasePageState<T>;
 
-    return create<BasePageStore<T>>()(
-        devtool(
-            persist(
-                (set, get) => {
-                    const { setIfChanged, setWithPageReset, reset, resetStore } = createPageStoreHelpers<
-                        BasePageStore<T>,
-                        BasePageState<T>
-                    >({
-                        set,
-                        get,
-                        initialState: resolvedInitialState,
-                        snapshot: (state) => ({
-                            query: state.query ?? "",
-                            filterKey: state.filterKey ?? "all",
-                            sortKey: state.sortKey ?? null,
-                            sortDirection: state.sortDirection ?? "asc",
-                            page: state.page ?? 1,
-                        }),
-                        comparators: {
-                            query: (current, defaults) =>
-                                canonicalizeQuery(current) === canonicalizeQuery(defaults),
-                        },
-                        resetStorePartial,
-                        pageResetValue,
-                    });
-
-                    return {
-                        ...resolvedInitialState,
-                        setQuery: (query) => setWithPageReset({ query }),
-                        setFilterKey: (filterKey) => setWithPageReset({ filterKey }),
-                        setSort: (key) => {
-                            const { sortKey, sortDirection } = get();
-                            const nextSortDirection: BasePageStore<T>["sortDirection"] =
-                                sortDirection === "asc" ? "desc" : "asc";
-                            const next: Partial<BasePageStore<T>> =
-                                sortKey === key
-                                    ? { sortDirection: nextSortDirection }
-                                    : { sortKey: key, sortDirection: "asc" };
-                            setWithPageReset(next);
-                        },
-                        setPage: (page) => setIfChanged({ page }),
-                        reset,
-                        resetStore,
-                    };
+    return create<BasePageStore<T>>()(devtool(persist(
+        (set, get) => {
+            const { setIfChanged, setWithPageReset, reset, resetStore } = createPageStoreHelpers<BasePageStore<T>, BasePageState<T>>({
+                set,
+                get,
+                initialState: resolvedInitialState,
+                snapshot: state => ({
+                    query: state.query ?? "",
+                    filterKey: state.filterKey ?? "all",
+                    sortKey: state.sortKey ?? null,
+                    sortDirection: state.sortDirection ?? "asc",
+                    page: state.page ?? 1,
+                }),
+                comparators: {
+                    query: (current, defaults) =>
+                        canonicalizeQuery(current) === canonicalizeQuery(defaults),
                 },
-                {
-                    name: persistKey,
-                    partialize: (state) => ({
-                        query: state.query,
-                        filterKey: state.filterKey,
-                        sortKey: state.sortKey,
-                        sortDirection: state.sortDirection,
-                        page: state.page,
-                    }),
-                }
-            )
-        )
-    );
+                resetStorePartial,
+                pageResetValue,
+            });
+
+            return {
+                ...resolvedInitialState,
+                setQuery: query => setWithPageReset({ query }),
+                setFilterKey: filterKey => setWithPageReset({ filterKey }),
+                setSort: key => {
+                    const { sortKey, sortDirection } = get();
+                    const nextSortDirection: BasePageStore<T>["sortDirection"] = sortDirection === "asc" ? "desc" : "asc";
+                    const next: Partial<BasePageStore<T>> = sortKey === key ? { sortDirection: nextSortDirection } : {
+                        sortKey: key,  sortDirection: "asc"
+                    };
+                    setWithPageReset(next);
+                },
+                setPage: page => setIfChanged({ page }),
+                reset,
+                resetStore,
+            };
+        },
+        {
+            name: persistKey,
+            partialize: state => ({
+                query: state.query,
+                filterKey: state.filterKey,
+                sortKey: state.sortKey,
+                sortDirection: state.sortDirection,
+                page: state.page,
+            }),
+        }
+    )));
 };

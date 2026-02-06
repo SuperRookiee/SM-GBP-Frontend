@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useDemoDataTableStore } from "@/stores/demoDataTable.store.ts";
+import { useDemoDataTableStore } from "@/stores/page/demoDataTable.store.ts";
 import useLogout from "@/hooks/useLogout.tsx";
 import { useResetStore } from "@/hooks/useResetStore";
 import ThemeToggle from "@/components/common/ThemeToggle.tsx";

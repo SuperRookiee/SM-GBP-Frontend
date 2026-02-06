@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useUserStore } from "@/stores/auth.store.ts";
+import { useAuthStore } from "@/stores/auth.store.ts";
 import LoginForm from "@/components/sign/demo/LoginForm.tsx";
 
 const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const setUser = useUserStore((s) => s.setUser);
+    const setUser = useAuthStore((s) => s.setUser);
     const [id, setId] = useState("");
     const [password, setPassword] = useState("");
 
