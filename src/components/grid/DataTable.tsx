@@ -1,7 +1,5 @@
 import { Activity, type ReactNode, useEffect, useMemo } from "react";
 import { GRID_CONSTANTS } from "@/constants/demoGrid.constants";
-import { useDemoGridStore } from "@/stores/demoGrid.store.ts";
-import type { IDemoGridRow } from "@/interface/IDemoGrid.interface.ts";
 import type { DemoGridColumn, DemoGridFilterOption } from "@/types/demoGrid.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,39 +7,42 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-interface IGridTableClientProps {
-    rows: IDemoGridRow[];          // 현재 페이지 데이터만
+interface IGridTableClientProps<T> {
+    rows: T[];          // 현재 페이지 데이터만
     total: number;                 // 전체 건수
     pageSize: number;              // GRID_CONSTANTS.pageSize 전달
     isLoading?: boolean;
     title: string;
     description?: string;
-    columns: DemoGridColumn[];
-    filterOptions: DemoGridFilterOption[];
+    columns: DemoGridColumn<T>[];
+    filterOptions: DemoGridFilterOption<T>[];
+    query: string;
+    filterKey: "all" | keyof T;
+    sortKey: keyof T | null;
+    sortDirection: "asc" | "desc";
+    page: number;
+    onQueryChange: (query: string) => void;
+    onFilterChange: (filterKey: "all" | keyof T) => void;
+    onSortChange: (key: keyof T) => void;
+    onPageChange: (page: number) => void;
     searchLabel?: string;
     searchPlaceholder?: string;
     filterLabel?: string;
+    getRowId?: (row: T) => string | number;
     captionRenderer?: (total: number) => ReactNode;
 }
 
-const DataTable = ({
-   rows, total, pageSize, title, description, columns, filterOptions,
-   isLoading = false,
-   searchLabel = "검색",
-   searchPlaceholder = "검색어를 입력하세요",
-   filterLabel = "검색 조건",
-   captionRenderer = (count) => `총 ${count} 건`,
-}: IGridTableClientProps) => {
-    const query = useDemoGridStore((state) => state.query);
-    const filterKey = useDemoGridStore((state) => state.filterKey);
-    const sortKey = useDemoGridStore((state) => state.sortKey);
-    const sortDirection = useDemoGridStore((state) => state.sortDirection);
-    const page = useDemoGridStore((state) => state.page);
-
-    const setQuery = useDemoGridStore((state) => state.setQuery);
-    const setFilterKey = useDemoGridStore((state) => state.setFilterKey);
-    const setSort = useDemoGridStore((state) => state.setSort);
-    const setPage = useDemoGridStore((state) => state.setPage);
+const DataTable = <T,>({
+    rows, total, pageSize, title, description, columns, filterOptions,
+    query, filterKey, sortKey, sortDirection, page,
+    onQueryChange, onFilterChange, onSortChange, onPageChange,
+    isLoading = false,
+    searchLabel = "검색",
+    searchPlaceholder = "검색어를 입력하세요",
+    filterLabel = "검색 조건",
+    getRowId = (row) => (row as { id: string | number }).id,
+    captionRenderer = (count) => `총 ${count} 건`,
+}: IGridTableClientProps<T>) => {
 
     // #. total 기반 페이지 계산
     const totalPages = Math.max(Math.ceil(total / pageSize), 1);
@@ -52,8 +53,8 @@ const DataTable = ({
         if (isLoading) return;  // 서버 응답(total)이 준비되기 전에는 clamp로 page를 덮어쓰지 않음
         if (total <= 0) return; // 데이터 0건일 땐 굳이 보정 X
 
-        if (page !== currentPage) setPage(currentPage);
-    }, [currentPage, isLoading, page, setPage, total]);
+        if (page !== currentPage) onPageChange(currentPage);
+    }, [currentPage, isLoading, onPageChange, page, total]);
 
     const previousPage = currentPage > 1 ? currentPage - 1 : null;
     const nextPage = currentPage < totalPages ? currentPage + 1 : null;
@@ -65,7 +66,7 @@ const DataTable = ({
         Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
     [pageWindowEnd, pageWindowStart]);
 
-    const sortIndicator = (key: keyof IDemoGridRow) => {
+    const sortIndicator = (key: keyof T) => {
         if (sortKey !== key) return null;
         return <span className="ml-1 text-xs text-zinc-400">{sortDirection === "asc" ? "▲" : "▼"}</span>;
     };
@@ -74,18 +75,18 @@ const DataTable = ({
 
     // #. 서버 페이징에서는 검색/필터/정렬 변경 시 보통 page=1로 리셋
     const onChangeFilterKey = (value: string) => {
-        setFilterKey(value as "all" | keyof IDemoGridRow);
-        setPage(1);
+        onFilterChange(value as "all" | keyof T);
+        onPageChange(1);
     };
 
     const onChangeQuery = (value: string) => {
-        setQuery(value);
-        setPage(1);
+        onQueryChange(value);
+        onPageChange(1);
     };
 
-    const onClickSort = (key: keyof IDemoGridRow) => {
-        setSort(key);
-        setPage(1);
+    const onClickSort = (key: keyof T) => {
+        onSortChange(key);
+        onPageChange(1);
     };
 
     return (
@@ -169,9 +170,9 @@ const DataTable = ({
                             </TableRow>
                         ))
                         : rows.map((row) => (
-                            <TableRow key={row.id}>
+                            <TableRow key={getRowId(row)}>
                                 {columns.map((column) => (
-                                    <TableCell key={`${row.id}-${column.key}`} className={column.cellClassName}>
+                                    <TableCell key={`${getRowId(row)}-${String(column.key)}`} className={column.cellClassName}>
                                         {column.render ? column.render(row) : String(row[column.key])}
                                     </TableCell>
                                 ))}
@@ -186,14 +187,14 @@ const DataTable = ({
                   Page {currentPage} of {totalPages}
                 </span>
                 <div className="flex flex-wrap items-center gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={() => setPage(1)} disabled={currentPage === 1}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}>
                         처음
                     </Button>
                     <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => previousPage && setPage(previousPage)}
+                        onClick={() => previousPage && onPageChange(previousPage)}
                         disabled={!previousPage}
                     >
                         이전
@@ -210,20 +211,20 @@ const DataTable = ({
                             type="button"
                             variant={pageNumber === currentPage ? "default" : "outline"}
                             size="sm"
-                            onClick={() => setPage(pageNumber)}
+                            onClick={() => onPageChange(pageNumber)}
                         >
                             {pageNumber}
                         </Button>
                     )}
 
-                    <Button type="button" variant="outline" size="sm" onClick={() => nextPage && setPage(nextPage)} disabled={!nextPage}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => nextPage && onPageChange(nextPage)} disabled={!nextPage}>
                         다음
                     </Button>
                     <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => setPage(totalPages)}
+                        onClick={() => onPageChange(totalPages)}
                         disabled={currentPage === totalPages}
                     >
                         마지막

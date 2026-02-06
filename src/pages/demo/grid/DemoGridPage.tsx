@@ -14,12 +14,18 @@ const DemoGridPage = () => {
     const sortDirection = useDemoGridStore((s) => s.sortDirection);
     const page = useDemoGridStore((s) => s.page);
     const setPage = useDemoGridStore((s) => s.setPage);
+    const setQuery = useDemoGridStore((s) => s.setQuery);
+    const setFilterKey = useDemoGridStore((s) => s.setFilterKey);
+    const setSort = useDemoGridStore((s) => s.setSort);
+    const reset = useDemoGridStore((s) => s.reset);
     const pageSize = GRID_CONSTANTS.pageSize;
 
     // #. page가 0 이하로 가는 방지
     useEffect(() => {
         if (page < 1) setPage(1);
     }, [page, setPage]);
+
+    useEffect(() => () => reset(), [reset]);
 
     const { data, isLoading, isFetching, isError } = useQuery<DemoGridResponse>({
         queryKey: ["demoGrid", "rows", { page, pageSize, query, filterKey, sortKey, sortDirection}],
@@ -61,6 +67,15 @@ const DemoGridPage = () => {
                     isLoading={isLoading || isFetching}
                     filterOptions={DEMO_GRID_FILTER_OPTIONS}
                     columns={DEMO_GRID_COLUMNS}
+                    query={query}
+                    filterKey={filterKey}
+                    sortKey={sortKey}
+                    sortDirection={sortDirection}
+                    page={page}
+                    onQueryChange={setQuery}
+                    onFilterChange={setFilterKey}
+                    onSortChange={setSort}
+                    onPageChange={setPage}
                 />
             </div>
         </div>
