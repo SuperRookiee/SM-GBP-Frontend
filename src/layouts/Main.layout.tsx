@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useDemoGridStore } from "@/stores/demoGrid.store.ts";
+import { useDemoDataTableStore } from "@/stores/demoDataTable.store.ts";
 import useLogout from "@/hooks/useLogout.tsx";
 import { useResetStore } from "@/hooks/useResetStore";
 import ThemeToggle from "@/components/common/ThemeToggle.tsx";
@@ -13,8 +13,8 @@ const MainLayout = () => {
     const { logout } = useLogout();
 
     // #. 페이지를 벗어나면 스토어 상태를 초기화
-    const resetGridStore = useDemoGridStore((state) => state.resetStore);
-    useResetStore("/demo/data_table", resetGridStore);
+    const resetDataTableStore = useDemoDataTableStore((state) => state.resetStore);
+    useResetStore("/demo/data_table", resetDataTableStore);
 
     return (
         <SidebarProvider>

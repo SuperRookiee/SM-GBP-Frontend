@@ -3,19 +3,19 @@ import { persist } from "zustand/middleware";
 import { devtool } from "@/utils/devtools";
 import { canonicalizeQuery } from "@/utils/queryCanonicalize.ts";
 import { createResetIfDirty, createSetIfChanged, createSetWithPageReset, hasChanged } from "@/utils/storeUtils";
-import type { IDemoGridRow } from "@/interface/IDemoGrid.interface.ts";
+import type { IDemoDataTableRow } from "@/interface/IDemoDataTable.interface.ts";
 
-type DemoGridState = {
-    data: IDemoGridRow[];
+type DemoDataTableState = {
+    data: IDemoDataTableRow[];
     query: string;
-    filterKey: "all" | keyof IDemoGridRow;
-    sortKey: keyof IDemoGridRow | null;
+    filterKey: "all" | keyof IDemoDataTableRow;
+    sortKey: keyof IDemoDataTableRow | null;
     sortDirection: "asc" | "desc";
     page: number;
-    setData: (data: IDemoGridRow[]) => void;
+    setData: (data: IDemoDataTableRow[]) => void;
     setQuery: (query: string) => void;
-    setFilterKey: (filterKey: "all" | keyof IDemoGridRow) => void;
-    setSort: (key: keyof IDemoGridRow) => void;
+    setFilterKey: (filterKey: "all" | keyof IDemoDataTableRow) => void;
+    setSort: (key: keyof IDemoDataTableRow) => void;
     setPage: (page: number) => void;
     reset: () => void;
     resetStore: () => void;
@@ -31,9 +31,9 @@ const initialState = {
     page: 1,
 };
 
-type DemoGridStateSnapshot = Pick<DemoGridState, "data" | "query" | "filterKey" | "sortKey" | "page">;
+type DemoDataTableStateSnapshot = Pick<DemoDataTableState, "data" | "query" | "filterKey" | "sortKey" | "page">;
 
-const demoGridDefaults: DemoGridStateSnapshot = {
+const demoDataTableDefaults: DemoDataTableStateSnapshot = {
     data: [],
     query: "",
     filterKey: "all",
@@ -42,7 +42,7 @@ const demoGridDefaults: DemoGridStateSnapshot = {
 };
 
 // 스토어가 기본값에서 변경되었는지 확인하는 함수
-const hasDemoGridState = (state: DemoGridState) => hasChanged<DemoGridStateSnapshot>(
+const hasDemoDataTableState = (state: DemoDataTableState) => hasChanged<DemoDataTableStateSnapshot>(
     {
         data: state.data,
         query: state.query,
@@ -50,7 +50,7 @@ const hasDemoGridState = (state: DemoGridState) => hasChanged<DemoGridStateSnaps
         sortKey: state.sortKey,
         page: state.page,
     },
-    demoGridDefaults,
+    demoDataTableDefaults,
     {
         comparators: {
             data: (current, defaults) => current.length === defaults.length,
@@ -60,13 +60,13 @@ const hasDemoGridState = (state: DemoGridState) => hasChanged<DemoGridStateSnaps
 );
 
 // Grid 상태를 전역으로 관리하는 스토어 함수
-export const useDemoGridStore = create<DemoGridState>()(devtool(persist((set, get) => {
+export const useDemoDataTableStore = create<DemoDataTableState>()(devtool(persist((set, get) => {
     // #. 공통: 변경 없으면 set 생략하는 헬퍼
-    const setIfChanged = createSetIfChanged<DemoGridState>(set, get);
+    const setIfChanged = createSetIfChanged<DemoDataTableState>(set, get);
     // #. 공통: page를 1로 리셋하면서 업데이트 (변경 없으면 set 생략)
-    const setWithPageReset = createSetWithPageReset<DemoGridState>(setIfChanged, 1);
+    const setWithPageReset = createSetWithPageReset<DemoDataTableState>(setIfChanged, 1);
     // #. 공통: 초기화 (변경 없으면 set 생략)
-    const resetIfDirty = createResetIfDirty(set, get, initialState, hasDemoGridState);
+    const resetIfDirty = createResetIfDirty(set, get, initialState, hasDemoDataTableState);
 
     return {
         ...initialState,
@@ -79,8 +79,8 @@ export const useDemoGridStore = create<DemoGridState>()(devtool(persist((set, ge
         // 정렬 기준 토글/변경 핸들러 함수
         setSort: (key) => {
             const { sortKey, sortDirection } = get();
-            const nextSortDirection: DemoGridState["sortDirection"] = sortDirection === "asc" ? "desc" : "asc";
-            const next: Partial<DemoGridState> =
+            const nextSortDirection: DemoDataTableState["sortDirection"] = sortDirection === "asc" ? "desc" : "asc";
+            const next: Partial<DemoDataTableState> =
                 sortKey === key ? { sortDirection: nextSortDirection } : { sortKey: key, sortDirection: "asc" };
             setWithPageReset(next);
         },
@@ -92,7 +92,7 @@ export const useDemoGridStore = create<DemoGridState>()(devtool(persist((set, ge
         resetStore: () => setIfChanged({ data: [], page: 1 }),
     };
 }, {
-    name: "demo-grid-state",
+    name: "demo-data-table-state",
     partialize: (state) => ({
         query: state.query,
         filterKey: state.filterKey,

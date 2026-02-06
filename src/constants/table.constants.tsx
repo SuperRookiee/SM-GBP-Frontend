@@ -1,8 +1,8 @@
-import type { DemoGridColumn, DemoGridFilterOption } from "@/types/demoGrid.types.ts";
+import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types.ts";
 import type { UserColumn, UserFilterOption } from "@/types/user.types.ts";
 
-/** Demo Grid **/
-export const DEMO_GRID_FILTER_OPTIONS: DemoGridFilterOption[] = [
+/** Demo Data Table **/
+export const DEMO_DATA_TABLE_FILTER_OPTIONS: DemoDataTableFilterOption[] = [
     { value: "all", label: "전체" },
     { value: "id", label: "문서 번호" },
     { value: "customer", label: "담당자" },
@@ -10,7 +10,7 @@ export const DEMO_GRID_FILTER_OPTIONS: DemoGridFilterOption[] = [
     { value: "role", label: "역할" },
     { value: "status", label: "상태" },
 ];
-export const DEMO_GRID_COLUMNS: DemoGridColumn[] = [
+export const DEMO_DATA_TABLE_COLUMNS: DemoDataTableColumn[] = [
     { key: "id", label: "문서 번호", cellClassName: "font-medium" },
     { key: "customer", label: "담당자" },
     { key: "email", label: "이메일" },

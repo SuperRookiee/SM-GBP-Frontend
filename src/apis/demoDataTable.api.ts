@@ -1,6 +1,6 @@
-import type { IDemoGridSampleDataParams } from "@/interface/IDemoGrid.interface.ts";
-import type { DemoGridResponse } from "@/types/demoGrid.types";
-import { DEMO_GRID_SAMPLE_DATA } from "@/tests/demoGridSampleData.test.ts";
+import type { IDemoDataTableSampleDataParams } from "@/interface/IDemoDataTable.interface.ts";
+import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
+import { DEMO_DATA_TABLE_SAMPLE_DATA } from "@/tests/demoDataTableSampleData.test.ts";
 
 /**
  * 샘플 데이터를 페이지 단위로 반환하는 API 함수
@@ -12,16 +12,16 @@ import { DEMO_GRID_SAMPLE_DATA } from "@/tests/demoGridSampleData.test.ts";
  * @param sortDirection
  * @returns 샘플 데이터와 전체 건수
  */
-export const getDemoGridSampleDataApi = async ({
+export const getDemoDataTableSampleDataApi = async ({
    page,
    pageSize,
    query,
    filterKey = "all",
    sortKey,
    sortDirection = "asc",
-}: IDemoGridSampleDataParams): Promise<DemoGridResponse> => {
+}: IDemoDataTableSampleDataParams): Promise<DemoDataTableResponse> => {
     const trimmedQuery = query?.trim().toLowerCase() ?? "";
-    const filteredRows = DEMO_GRID_SAMPLE_DATA.filter((row) => {
+    const filteredRows = DEMO_DATA_TABLE_SAMPLE_DATA.filter((row) => {
         if (!trimmedQuery) return true;
         const fields =
             filterKey === "all"

@@ -1,7 +1,7 @@
 /**
  * Grid 테이블에서 사용하는 행 데이터 타입
  */
-export interface IDemoGridRow {
+export interface IDemoDataTableRow {
   id: string;
   customer: string;
   email: string;
@@ -9,11 +9,11 @@ export interface IDemoGridRow {
   status: string;
 }
 
-export interface IDemoGridSampleDataParams {
+export interface IDemoDataTableSampleDataParams {
   page: number;
   pageSize: number;
   query?: string;
-  filterKey?: "all" | keyof IDemoGridRow;
-  sortKey?: keyof IDemoGridRow | null;
+  filterKey?: "all" | keyof IDemoDataTableRow;
+  sortKey?: keyof IDemoDataTableRow | null;
   sortDirection?: "asc" | "desc";
 }
