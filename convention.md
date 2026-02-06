@@ -174,7 +174,7 @@ export const getUserApi = async () => {};
 ```
 stores/
  ├ auth.store.ts
- └ user.store.ts
+ └ userPage.store.ts
 ```
 
 ---

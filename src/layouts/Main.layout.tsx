@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { useDemoDataTableStore } from "@/stores/page/dataTable.store.ts";
+import { useDataTablePageStore } from "@/stores/page/dataTablePage.store.ts";
+import { useUserPageStore } from "@/stores/page/userPage.store.ts";
 import useLogout from "@/hooks/useLogout.tsx";
 import { useResetStore } from "@/hooks/useResetStore";
 import ThemeToggle from "@/components/common/ThemeToggle.tsx";
@@ -13,24 +14,26 @@ const MainLayout = () => {
     const { logout } = useLogout();
 
     // #. 페이지를 벗어나면 스토어 상태를 초기화
-    const resetDataTableStore = useDemoDataTableStore((state) => state.resetStore);
-    useResetStore("/demo/data_table", resetDataTableStore);
+    const resetDataTablePageStore = useDataTablePageStore(state => state.reset);
+    const resetUserPageStore = useUserPageStore(state => state.reset);
+    useResetStore("/demo/data_table", resetDataTablePageStore);
+    useResetStore("/user", resetUserPageStore);
 
     return (
         <SidebarProvider>
-            <AppSidebar />
+            <AppSidebar/>
             <SidebarInset className="flex h-svh flex-col">
                 <header className="flex h-12 shrink-0 items-center gap-2 px-4 justify-between">
-                    <SidebarTrigger className="-ml-1" />
+                    <SidebarTrigger className="-ml-1"/>
                     <div className="flex items-center gap-2">
-                        <ThemeToggle />
+                        <ThemeToggle/>
                         <Button size="xs" onClick={logout}>Logout</Button>
                     </div>
                 </header>
 
                 <ScrollArea className="flex-1">
                     <main className="px-4 py-2">
-                        <Outlet />
+                        <Outlet/>
                     </main>
                 </ScrollArea>
             </SidebarInset>

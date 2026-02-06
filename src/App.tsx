@@ -7,6 +7,7 @@ import DemoDialogPage from "@/pages/demo/dialog/DemoDialogPage.tsx";
 import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
 import IndexPage from "@/pages/demo/index/IndexPage.tsx";
 import LoginPage from "@/pages/login/LoginPage.tsx";
+import UserDetailPage from "@/pages/user/detail/UserDetailPage.tsx";
 import UserPage from "@/pages/user/UserPage.tsx";
 import AuthRouter from "@/routes/AuthRouter.tsx";
 
@@ -30,7 +31,10 @@ const App = () => {
                         <Route path="dialog" element={<DemoDialogPage/>}/>
                     </Route>
 
-                    <Route path='/user' element={<UserPage/>}/>
+                    <Route path="/user">
+                        <Route index element={<UserPage />} />
+                        <Route path=":id" element={<UserDetailPage />} />
+                    </Route>
 
                     {/* Error */}
                     <Route path="*" element={<NotFound/>}/>

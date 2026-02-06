@@ -3,20 +3,20 @@ import { useQuery } from "@tanstack/react-query";
 import { getDemoDataTableSampleDataApi } from "@/apis/demoDataTable.api";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import { DEMO_DATA_TABLE_COLUMNS, DEMO_DATA_TABLE_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
-import { useDemoDataTableStore } from "@/stores/page/dataTable.store.ts";
+import { useDataTablePageStore } from "@/stores/page/dataTablePage.store.ts";
 import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
 import DataTable from "@/components/table/DataTable";
 
 const DemoDataTablePage = () => {
-    const query = useDemoDataTableStore((s) => s.query);
-    const filterKey = useDemoDataTableStore((s) => s.filterKey);
-    const sortKey = useDemoDataTableStore((s) => s.sortKey);
-    const sortDirection = useDemoDataTableStore((s) => s.sortDirection);
-    const page = useDemoDataTableStore((s) => s.page);
-    const setPage = useDemoDataTableStore((s) => s.setPage);
-    const setQuery = useDemoDataTableStore((s) => s.setQuery);
-    const setFilterKey = useDemoDataTableStore((s) => s.setFilterKey);
-    const setSort = useDemoDataTableStore((s) => s.setSort);
+    const query = useDataTablePageStore((s) => s.query);
+    const filterKey = useDataTablePageStore((s) => s.filterKey);
+    const sortKey = useDataTablePageStore((s) => s.sortKey);
+    const sortDirection = useDataTablePageStore((s) => s.sortDirection);
+    const page = useDataTablePageStore((s) => s.page);
+    const setPage = useDataTablePageStore((s) => s.setPage);
+    const setQuery = useDataTablePageStore((s) => s.setQuery);
+    const setFilterKey = useDataTablePageStore((s) => s.setFilterKey);
+    const setSort = useDataTablePageStore((s) => s.setSort);
     const pageSize = GRID_CONSTANTS.pageSize;
 
     // #. page가 0 이하로 가는 방지
