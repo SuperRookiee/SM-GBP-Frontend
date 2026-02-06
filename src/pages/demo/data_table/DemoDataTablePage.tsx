@@ -1,23 +1,23 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getDemoGridSampleDataApi } from "@/apis/demoGrid.api";
+import { getDemoDataTableSampleDataApi } from "@/apis/demoDataTable.api";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
-import { DEMO_GRID_COLUMNS, DEMO_GRID_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
-import { useDemoGridStore } from "@/stores/demoGrid.store.ts";
-import type { DemoGridResponse } from "@/types/demoGrid.types";
+import { DEMO_DATA_TABLE_COLUMNS, DEMO_DATA_TABLE_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
+import { useDemoDataTableStore } from "@/stores/demoDataTable.store.ts";
+import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
 import DataTable from "@/components/table/DataTable";
 
 const DemoDataTablePage = () => {
-    const query = useDemoGridStore((s) => s.query);
-    const filterKey = useDemoGridStore((s) => s.filterKey);
-    const sortKey = useDemoGridStore((s) => s.sortKey);
-    const sortDirection = useDemoGridStore((s) => s.sortDirection);
-    const page = useDemoGridStore((s) => s.page);
-    const setPage = useDemoGridStore((s) => s.setPage);
-    const setQuery = useDemoGridStore((s) => s.setQuery);
-    const setFilterKey = useDemoGridStore((s) => s.setFilterKey);
-    const setSort = useDemoGridStore((s) => s.setSort);
-    const reset = useDemoGridStore((s) => s.reset);
+    const query = useDemoDataTableStore((s) => s.query);
+    const filterKey = useDemoDataTableStore((s) => s.filterKey);
+    const sortKey = useDemoDataTableStore((s) => s.sortKey);
+    const sortDirection = useDemoDataTableStore((s) => s.sortDirection);
+    const page = useDemoDataTableStore((s) => s.page);
+    const setPage = useDemoDataTableStore((s) => s.setPage);
+    const setQuery = useDemoDataTableStore((s) => s.setQuery);
+    const setFilterKey = useDemoDataTableStore((s) => s.setFilterKey);
+    const setSort = useDemoDataTableStore((s) => s.setSort);
+    const reset = useDemoDataTableStore((s) => s.reset);
     const pageSize = GRID_CONSTANTS.pageSize;
 
     // #. page가 0 이하로 가는 방지
@@ -27,9 +27,9 @@ const DemoDataTablePage = () => {
 
     useEffect(() => () => reset(), [reset]);
 
-    const { data, isLoading, isFetching, isError } = useQuery<DemoGridResponse>({
-        queryKey: ["demoGrid", "rows", { page, pageSize, query, filterKey, sortKey, sortDirection}],
-        queryFn: async () =>  await getDemoGridSampleDataApi({ page, pageSize, query, filterKey, sortKey, sortDirection}), // 서버에서 rows는 pageSize만큼, total은 전체 count(*) 내려줘야 함
+    const { data, isLoading, isFetching, isError } = useQuery<DemoDataTableResponse>({
+        queryKey: ["demoDataTable", "rows", { page, pageSize, query, filterKey, sortKey, sortDirection}],
+        queryFn: async () =>  await getDemoDataTableSampleDataApi({ page, pageSize, query, filterKey, sortKey, sortDirection}), // 서버에서 rows는 pageSize만큼, total은 전체 count(*) 내려줘야 함
         staleTime: 30_000,
         gcTime: 5 * 60_000,
         refetchOnWindowFocus: false,
@@ -65,8 +65,8 @@ const DemoDataTablePage = () => {
                     total={total}
                     pageSize={pageSize}
                     isLoading={isLoading || isFetching}
-                    filterOptions={DEMO_GRID_FILTER_OPTIONS}
-                    columns={DEMO_GRID_COLUMNS}
+                    filterOptions={DEMO_DATA_TABLE_FILTER_OPTIONS}
+                    columns={DEMO_DATA_TABLE_COLUMNS}
                     query={query}
                     filterKey={filterKey}
                     sortKey={sortKey}

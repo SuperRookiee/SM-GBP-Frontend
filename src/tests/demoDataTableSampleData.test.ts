@@ -1,6 +1,6 @@
-import type { IDemoGridRow } from "@/interface/IDemoGrid.interface.ts";
+import type { IDemoDataTableRow } from "@/interface/IDemoDataTable.interface.ts";
 
-export const DEMO_GRID_SAMPLE_DATA: IDemoGridRow[] = [
+export const DEMO_DATA_TABLE_SAMPLE_DATA: IDemoDataTableRow[] = [
   {
     id: "INV-001",
     customer: "Sarah Kim",

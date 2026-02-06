@@ -1,6 +1,6 @@
 import { Activity, type ReactNode, useEffect, useMemo } from "react";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
-import type { DemoGridColumn, DemoGridFilterOption } from "@/types/demoGrid.types";
+import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,8 +14,8 @@ interface IGridTableClientProps<T> {
     isLoading?: boolean;
     title: string;
     description?: string;
-    columns: DemoGridColumn<T>[];
-    filterOptions: DemoGridFilterOption<T>[];
+    columns: DemoDataTableColumn<T>[];
+    filterOptions: DemoDataTableFilterOption<T>[];
     query: string;
     filterKey: "all" | keyof T;
     sortKey: keyof T | null;
