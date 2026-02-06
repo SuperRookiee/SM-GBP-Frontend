@@ -9,7 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface IGridTableClientProps {
-    initialData: IDemoGridRow[];
+    rows: IDemoGridRow[];          // 현재 페이지 데이터만
+    total: number;                 // 전체 건수
+    pageSize: number;              // GRID_CONSTANTS.pageSize 전달
     isLoading?: boolean;
     title: string;
     description?: string;
@@ -18,135 +20,83 @@ interface IGridTableClientProps {
     searchLabel?: string;
     searchPlaceholder?: string;
     filterLabel?: string;
-    captionRenderer?: (count: number) => ReactNode;
+    captionRenderer?: (total: number) => ReactNode;
 }
 
-// Grid 데이터를 보여주는 테이블 컴포넌트 함수
-const GridTable = ({
-   initialData, title, description, columns, filterOptions,
+const DataTable = ({
+   rows, total, pageSize, title, description, columns, filterOptions,
    isLoading = false,
    searchLabel = "검색",
    searchPlaceholder = "검색어를 입력하세요",
    filterLabel = "검색 조건",
    captionRenderer = (count) => `총 ${count} 건`,
 }: IGridTableClientProps) => {
-    const storedData = useDemoGridStore((state) => state.data);
-    const data = storedData.length > 0 ? storedData : initialData;
     const query = useDemoGridStore((state) => state.query);
     const filterKey = useDemoGridStore((state) => state.filterKey);
     const sortKey = useDemoGridStore((state) => state.sortKey);
     const sortDirection = useDemoGridStore((state) => state.sortDirection);
     const page = useDemoGridStore((state) => state.page);
-    const setData = useDemoGridStore((state) => state.setData);
+
     const setQuery = useDemoGridStore((state) => state.setQuery);
     const setFilterKey = useDemoGridStore((state) => state.setFilterKey);
     const setSort = useDemoGridStore((state) => state.setSort);
     const setPage = useDemoGridStore((state) => state.setPage);
 
-    // #. 최초 로드 시 스토어 데이터가 비어 있으면 초기 데이터를 주입합니다.
+    // #. total 기반 페이지 계산
+    const totalPages = Math.max(Math.ceil(total / pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), totalPages);
+
+    // #. page가 범위 벗어나면 보정
     useEffect(() => {
-        if (storedData.length === 0)
-            setData(initialData);
-    }, [storedData.length, initialData, setData]);
-
-    // #. 검색어 및 필터 조건에 따라 데이터를 필터링합니다.
-    const filteredRows = useMemo(() => {
-        if (!query.trim()) return data;
-
-        const normalized = query.toLowerCase();
-        const fields: Array<keyof IDemoGridRow> =
-            filterKey === "all" ? ["id", "customer", "email", "role", "status"] : [filterKey];
-
-        return data.filter((row) =>
-            fields
-                .map((field) => String(row[field]))
-                .join(" ")
-                .toLowerCase()
-                .includes(normalized),
-        );
-    }, [data, filterKey, query]);
-
-    // #. 선택된 정렬 기준으로 데이터를 정렬합니다.
-    const sortedRows = useMemo(() => {
-        if (!sortKey) return filteredRows;
-
-        const sorted = [...filteredRows].sort((a, b) => {
-            const left = String(a[sortKey]);
-            const right = String(b[sortKey]);
-            return left.localeCompare(right, "ko");
-        });
-
-        return sortDirection === "asc" ? sorted : sorted.reverse();
-    }, [filteredRows, sortDirection, sortKey]);
-
-    // #. 페이지네이션 계산에 필요한 값들을 준비합니다.
-    const totalPages = Math.max(Math.ceil(sortedRows.length / GRID_CONSTANTS.pageSize), 1);
-    const currentPage = Math.min(page, totalPages);
-    const startIndex = (currentPage - 1) * GRID_CONSTANTS.pageSize;
-    const rows = sortedRows.slice(startIndex, startIndex + GRID_CONSTANTS.pageSize,);
-    const hasData = data.length > 0;
-
-    // #. 현재 페이지가 범위를 벗어나면 스토어 페이지를 보정합니다.
-    useEffect(() => {
-        if (!hasData) return;
         if (page !== currentPage) setPage(currentPage);
-    }, [currentPage, hasData, page, setPage]);
+    }, [currentPage, page, setPage]);
 
     const previousPage = currentPage > 1 ? currentPage - 1 : null;
     const nextPage = currentPage < totalPages ? currentPage + 1 : null;
 
-    // #. 화면에 표시할 페이지 번호 범위를 계산합니다.
-    const pageWindowStart =
-        Math.floor((currentPage - 1) / GRID_CONSTANTS.pageWindow) *
-        GRID_CONSTANTS.pageWindow +
-        1;
-    const pageWindowEnd = Math.min(
-        totalPages,
-        pageWindowStart + GRID_CONSTANTS.pageWindow - 1,
-    );
-    const pageNumbers = Array.from(
-        { length: pageWindowEnd - pageWindowStart + 1 },
-        (_, index) => pageWindowStart + index,
-    );
+    // #.페이지 윈도우 계산
+    const pageWindowStart = Math.floor((currentPage - 1) / GRID_CONSTANTS.pageWindow) * GRID_CONSTANTS.pageWindow + 1;
+    const pageWindowEnd = Math.min(totalPages, pageWindowStart + GRID_CONSTANTS.pageWindow - 1);
+    const pageNumbers = useMemo(() =>
+        Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
+    [pageWindowEnd, pageWindowStart]);
 
-    // #. 정렬 방향 표시를 반환하는 함수
     const sortIndicator = (key: keyof IDemoGridRow) => {
         if (sortKey !== key) return null;
-
-        return (
-            <span className="ml-1 text-xs text-zinc-400">
-              {sortDirection === "asc" ? "▲" : "▼"}
-            </span>
-        );
+        return <span className="ml-1 text-xs text-zinc-400">{sortDirection === "asc" ? "▲" : "▼"}</span>;
     };
 
     const skeletonRows = Array.from({ length: 6 }, (_, index) => `skeleton-${index}`);
 
+    // #. 서버 페이징에서는 검색/필터/정렬 변경 시 보통 page=1로 리셋
+    const onChangeFilterKey = (value: string) => {
+        setFilterKey(value as "all" | keyof IDemoGridRow);
+        setPage(1);
+    };
+
+    const onChangeQuery = (value: string) => {
+        setQuery(value);
+        setPage(1);
+    };
+
+    const onClickSort = (key: keyof IDemoGridRow) => {
+        setSort(key);
+        setPage(1);
+    };
+
     return (
-        <section
-            className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+        <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-                        {title}
-                    </h2>
-                    {description && (
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                            {description}
-                        </p>
-                    )}
+                    <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{title}</h2>
+                    {description && <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>}
                 </div>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
                     <div className="w-full sm:w-40">
-                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                            {filterLabel}
-                        </label>
-                        <Select
-                            value={filterKey}
-                            onValueChange={(value) => setFilterKey(value as "all" | keyof IDemoGridRow)}
-                        >
+                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{filterLabel}</label>
+                        <Select value={filterKey} onValueChange={onChangeFilterKey}>
                             <SelectTrigger className="mt-2">
-                                <SelectValue placeholder="검색 조건 선택"/>
+                                <SelectValue placeholder="검색 조건 선택" />
                             </SelectTrigger>
                             <SelectContent>
                                 {filterOptions.map((option) => (
@@ -157,31 +107,27 @@ const GridTable = ({
                             </SelectContent>
                         </Select>
                     </div>
+
                     <div className="w-full sm:w-72">
-                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                            {searchLabel}
-                        </label>
+                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{searchLabel}</label>
                         <Input
                             className="mt-2"
                             placeholder={searchPlaceholder}
                             value={query}
-                            onChange={(event) => setQuery(event.target.value)}
+                            onChange={(event) => onChangeQuery(event.target.value)}
                         />
                     </div>
                 </div>
             </div>
-
             <Table>
                 <TableCaption>
                     <Activity mode={isLoading ? "visible" : "hidden"}>
                         <div className="flex items-center gap-2">
-                            <Skeleton className="h-4 w-28"/>
-                            <Skeleton className="h-4 w-12"/>
+                            <Skeleton className="h-4 w-28" />
+                            <Skeleton className="h-4 w-12" />
                         </div>
                     </Activity>
-                    <Activity mode={isLoading ? "hidden" : "visible"}>
-                        {captionRenderer(sortedRows.length)}
-                    </Activity>
+                    <Activity mode={isLoading ? "hidden" : "visible"}>{captionRenderer(total)}</Activity>
                 </TableCaption>
                 <TableHeader>
                     <TableRow>
@@ -194,15 +140,13 @@ const GridTable = ({
                                             className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                                             type="button"
                                             variant="ghost"
-                                            onClick={() => setSort(column.key)}
+                                            onClick={() => onClickSort(column.key)}
                                         >
                                             {column.label}
                                             {sortIndicator(column.key)}
                                         </Button>
                                     ) : (
-                                        <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                                            {column.label}
-                                        </span>
+                                        <span className="text-sm text-zinc-500 dark:text-zinc-400">{column.label}</span>
                                     )}
                                 </TableHead>
                             );
@@ -215,7 +159,7 @@ const GridTable = ({
                             <TableRow key={key}>
                                 {columns.map((column) => (
                                     <TableCell key={`${key}-${column.key}`}>
-                                        <Skeleton className="h-4 w-24"/>
+                                        <Skeleton className="h-4 w-24" />
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -238,13 +182,7 @@ const GridTable = ({
                   Page {currentPage} of {totalPages}
                 </span>
                 <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setPage(1)}
-                        disabled={currentPage === 1}
-                    >
+                    <Button type="button" variant="outline" size="sm" onClick={() => setPage(1)} disabled={currentPage === 1}>
                         처음
                     </Button>
                     <Button
@@ -274,13 +212,7 @@ const GridTable = ({
                         </Button>
                     )}
 
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => nextPage && setPage(nextPage)}
-                        disabled={!nextPage}
-                    >
+                    <Button type="button" variant="outline" size="sm" onClick={() => nextPage && setPage(nextPage)} disabled={!nextPage}>
                         다음
                     </Button>
                     <Button
@@ -296,6 +228,6 @@ const GridTable = ({
             </div>
         </section>
     );
-}
+};
 
-export default GridTable;
+export default DataTable;

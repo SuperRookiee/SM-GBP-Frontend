@@ -1,6 +1,10 @@
 import type { IDemoGridRow } from "@/interface/demoGrid.interface";
 import { DEMO_GRID_SAMPLE_DATA } from "@/tests/demoGridSampleData.test.ts";
 
+export type DemoGridFilterKey = "all" | keyof IDemoGridRow;
+export type DemoGridSortKey = keyof IDemoGridRow;
+export type DemoGridSortDirection = "asc" | "desc";
+
 /**
  * Grid API 응답 데이터 형식
  */
@@ -15,6 +19,10 @@ interface IDemoGridResponse {
 interface IGetSampleDataParams {
   page: number;
   pageSize: number;
+  query?: string;
+  filterKey?: DemoGridFilterKey;
+  sortKey?: DemoGridSortKey | null;
+  sortDirection?: DemoGridSortDirection;
 }
 
 /**
