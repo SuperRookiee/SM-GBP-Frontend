@@ -19,10 +19,9 @@ export const DEMO_DATA_TABLE_COLUMNS: DemoDataTableColumn[] = [
         key: "status",
         label: "상태",
         render: (row) =>
-            <span
-                className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground">
-            {row.status}
-          </span>
+            <span className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground">
+                {row.status}
+            </span>
     },
 ]
 

@@ -12,10 +12,10 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 // 공통 레이아웃
 const MainLayout = () => {
     const { logout } = useLogout();
-
-    // #. 페이지를 벗어나면 스토어 상태를 초기화
     const resetDataTablePageStore = useDataTablePageStore(state => state.reset);
     const resetUserPageStore = useUserPageStore(state => state.reset);
+
+    // #. 페이지를 벗어나면 스토어 상태를 초기화
     useResetStore("/demo/data_table", resetDataTablePageStore);
     useResetStore("/user", resetUserPageStore);
 
@@ -30,7 +30,6 @@ const MainLayout = () => {
                         <Button size="xs" onClick={logout}>Logout</Button>
                     </div>
                 </header>
-
                 <ScrollArea className="flex-1">
                     <main className="px-4 py-2">
                         <Outlet/>

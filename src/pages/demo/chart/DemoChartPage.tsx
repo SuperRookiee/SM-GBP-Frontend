@@ -8,7 +8,7 @@ import type { ChartConfig } from "@/components/ui/chart.tsx";
 
 const DemoChartPage = () => {
     return (
-        <div className="p-6 space-y-6">
+        <div className="space-y-6">
             <div className="space-y-1">
                 <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
                     Demo

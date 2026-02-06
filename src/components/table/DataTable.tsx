@@ -8,9 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface IGridTableClientProps<T> {
-    rows: T[];          // 현재 페이지 데이터만
-    total: number;                 // 전체 건수
-    pageSize: number;              // GRID_CONSTANTS.pageSize 전달
+    rows: T[];
+    total: number;
+    pageSize: number;
     isLoading?: boolean;
     title: string;
     description?: string;
@@ -99,16 +99,16 @@ const DataTable = <T,>({
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
                     <div className="w-full sm:w-40">
                         <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{filterLabel}</label>
-                        <Select value={filterKey} onValueChange={onChangeFilterKey}>
+                        <Select value={String(filterKey)} onValueChange={onChangeFilterKey}>
                             <SelectTrigger className="mt-2">
                                 <SelectValue placeholder="검색 조건 선택" />
                             </SelectTrigger>
                             <SelectContent>
-                                {filterOptions.map((option) => (
-                                    <SelectItem key={option.value} value={option.value}>
+                                {filterOptions.map((option) =>
+                                    <SelectItem key={String(option.value)} value={String(option.value)}>
                                         {option.label}
                                     </SelectItem>
-                                ))}
+                                )}
                             </SelectContent>
                         </Select>
                     </div>
@@ -127,10 +127,10 @@ const DataTable = <T,>({
             <Table>
                 <TableHeader>
                     <TableRow>
-                        {columns.map((column) => {
+                        {columns.map(column => {
                             const isSortable = column.sortable ?? true;
                             return (
-                                <TableHead key={column.key} className={column.headerClassName}>
+                                <TableHead key={String(column.key)} className={column.headerClassName}>
                                     {isSortable ? (
                                         <Button
                                             className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
@@ -151,24 +151,24 @@ const DataTable = <T,>({
                 </TableHeader>
                 <TableBody>
                     {isLoading
-                        ? skeletonRows.map((key) => (
+                        ? skeletonRows.map(key =>
                             <TableRow key={key}>
-                                {columns.map((column) => (
-                                    <TableCell key={`${key}-${column.key}`}>
+                                {columns.map((column) =>
+                                    <TableCell key={`${key}-${String(column.key)}`}>
                                         <Skeleton className="h-4 w-24" />
                                     </TableCell>
-                                ))}
+                                )}
                             </TableRow>
-                        ))
-                        : rows.map((row) => (
+                        )
+                        : rows.map(row =>
                             <TableRow key={getRowId(row)}>
-                                {columns.map((column) => (
+                                {columns.map((column) =>
                                     <TableCell key={`${getRowId(row)}-${String(column.key)}`} className={column.cellClassName}>
                                         {column.render ? column.render(row) : String(row[column.key])}
                                     </TableCell>
-                                ))}
+                                )}
                             </TableRow>
-                        ))}
+                        )}
                 </TableBody>
             </Table>
 
