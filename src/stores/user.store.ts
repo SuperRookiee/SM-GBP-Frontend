@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { devtool } from "@/utils/devtools.ts";
-import type { IUserInterface } from "@/interface/IUser.interface.ts";
+import type { IUser } from "@/interface/IUser.ts";
 import { Role } from "@/enums/role.ts";
 
 type UserState = {
-    user: IUserInterface | null;
-    setUser: (user: IUserInterface) => void;
+    user: IUser | null;
+    setUser: (user: IUser) => void;
     clearUser: () => void;
 };
 

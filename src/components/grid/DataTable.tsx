@@ -1,5 +1,5 @@
 import { Activity, type ReactNode, useEffect, useMemo } from "react";
-import { GRID_CONSTANTS } from "@/constants/demoGrid.constants";
+import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import type { DemoGridColumn, DemoGridFilterOption } from "@/types/demoGrid.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

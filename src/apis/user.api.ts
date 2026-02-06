@@ -1,8 +1,8 @@
-import type { IUserInterface, IUserSampleDataParams } from "@/interface/IUser.interface.ts";
+import type { IUser, IUserSampleDataParams } from "@/interface/IUser.ts";
 import { USER_SAMPLE_DATA } from "@/tests/user.test.ts";
 
 export type UserTableResponse = {
-    rows: IUserInterface[];
+    rows: IUser[];
     total: number;
 };
 

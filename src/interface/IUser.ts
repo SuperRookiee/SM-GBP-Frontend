@@ -1,6 +1,6 @@
 import type { Role } from "@/enums/role.ts";
 
-export interface IUserInterface {
+export interface IUser {
     id: number;
     name: string;
     role: Role;
@@ -11,7 +11,7 @@ export interface IUserSampleDataParams {
     page: number;
     pageSize: number;
     query?: string;
-    filterKey?: "all" | keyof IUserInterface;
-    sortKey?: keyof IUserInterface | null;
+    filterKey?: "all" | keyof IUser;
+    sortKey?: keyof IUser | null;
     sortDirection?: "asc" | "desc";
 }

@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
-import { GRID_CONSTANTS } from "@/constants/demoGrid.constants";
-import { USER_TABLE_COLUMNS, USER_TABLE_FILTER_OPTIONS } from "@/constants/userPage.constants";
-import type { IUserInterface } from "@/interface/IUser.interface";
+import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
+import { USER_TABLE_COLUMNS, USER_TABLE_FILTER_OPTIONS } from "@/constants/table.constants.tsx";
+import type { IUser } from "@/interface/IUser.ts";
 import DataTable from "@/components/grid/DataTable";
 
 const UserPage = () => {
     const [query, setQuery] = useState("");
-    const [filterKey, setFilterKey] = useState<"all" | keyof IUserInterface>("all");
-    const [sortKey, setSortKey] = useState<keyof IUserInterface | null>(null);
+    const [filterKey, setFilterKey] = useState<"all" | keyof IUser>("all");
+    const [sortKey, setSortKey] = useState<keyof IUser | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
     const [page, setPage] = useState(1);
     const pageSize = GRID_CONSTANTS.pageSize;
@@ -27,7 +27,7 @@ const UserPage = () => {
     const rows = data?.rows ?? [];
     const total = data?.total ?? 0;
 
-    const onSortChange = (key: keyof IUserInterface) => {
+    const onSortChange = (key: keyof IUser) => {
         if (sortKey === key) {
             setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
         } else {
