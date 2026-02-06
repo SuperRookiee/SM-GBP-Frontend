@@ -17,15 +17,12 @@ const DemoDataTablePage = () => {
     const setQuery = useDemoDataTableStore((s) => s.setQuery);
     const setFilterKey = useDemoDataTableStore((s) => s.setFilterKey);
     const setSort = useDemoDataTableStore((s) => s.setSort);
-    const reset = useDemoDataTableStore((s) => s.reset);
     const pageSize = GRID_CONSTANTS.pageSize;
 
     // #. page가 0 이하로 가는 방지
     useEffect(() => {
         if (page < 1) setPage(1);
     }, [page, setPage]);
-
-    useEffect(() => () => reset(), [reset]);
 
     const { data, isLoading, isFetching, isError } = useQuery<DemoDataTableResponse>({
         queryKey: ["demoDataTable", "rows", { page, pageSize, query, filterKey, sortKey, sortDirection}],

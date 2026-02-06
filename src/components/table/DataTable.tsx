@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface IGridTableClientProps<T> {
     rows: T[];          // 현재 페이지 데이터만
@@ -125,15 +125,6 @@ const DataTable = <T,>({
                 </div>
             </div>
             <Table>
-                <TableCaption>
-                    <Activity mode={isLoading ? "visible" : "hidden"}>
-                        <div className="flex items-center gap-2">
-                            <Skeleton className="h-4 w-28" />
-                            <Skeleton className="h-4 w-12" />
-                        </div>
-                    </Activity>
-                    <Activity mode={isLoading ? "hidden" : "visible"}>{captionRenderer(total)}</Activity>
-                </TableCaption>
                 <TableHeader>
                     <TableRow>
                         {columns.map((column) => {
@@ -183,9 +174,18 @@ const DataTable = <T,>({
 
             <div className="mt-4 flex flex-col gap-4 border-t border-zinc-200 pt-4 text-sm text-zinc-500
                             dark:border-zinc-800 dark:text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
-                <span>
-                  Page {currentPage} of {totalPages}
-                </span>
+                <div className="flex items-center gap-3">
+                    <span>
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Activity mode={isLoading ? "visible" : "hidden"}>
+                        <div className="flex items-center gap-2">
+                            <Skeleton className="h-4 w-28" />
+                            <Skeleton className="h-4 w-12" />
+                        </div>
+                    </Activity>
+                    <Activity mode={isLoading ? "hidden" : "visible"}>{captionRenderer(total)}</Activity>
+                </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}>
                         처음

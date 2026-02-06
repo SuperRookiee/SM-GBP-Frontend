@@ -33,16 +33,6 @@ export const createResetIfDirty = <T, I extends Partial<T>>(
     };
 };
 
-// page를 기본값으로 리셋하면서 업데이트
-export const createSetWithPageReset = <T extends { page: number }>(
-    setIfChanged: (partial: Partial<T>) => void,
-    page = 1
-) => {
-    return (partial: Partial<T>) =>
-        setIfChanged({ ...partial, page });
-};
-
-
 type HasChangedOptions<T extends Record<string, unknown>> = {
     excludeKeys?: (keyof T)[];
     includeKeys?: (keyof T)[];
@@ -73,4 +63,62 @@ export const hasChanged = <T extends Record<string, unknown>>(
     }
 
     return false;
+};
+
+// page를 기본값으로 리셋하면서 업데이트
+export const createSetWithPageReset = <T extends { page: number }>(
+    setIfChanged: (partial: Partial<T>) => void,
+    page = 1
+) => {
+    return (partial: Partial<T>) =>
+        setIfChanged({ ...partial, page });
+};
+
+type CreateStoreHelpersOptions<T, Snapshot extends Record<string, unknown>> = {
+    set: SetState<T>;
+    get: GetState<T>;
+    initialState: Partial<T>;
+    snapshot: (state: Partial<T>) => Snapshot;
+    comparators?: Partial<{ [K in keyof Snapshot]: (a: Snapshot[K], b: Snapshot[K]) => boolean }>;
+    resetStorePartial?: Partial<T>;
+};
+
+export const createStoreHelpers = <T, Snapshot extends Record<string, unknown>>({
+    set,
+    get,
+    initialState,
+    snapshot,
+    comparators,
+    resetStorePartial,
+}: CreateStoreHelpersOptions<T, Snapshot>) => {
+    const setIfChanged = createSetIfChanged<T>(set, get);
+    const defaults = snapshot(initialState);
+    const hasStateChanged = () => hasChanged<Snapshot>(snapshot(get()), defaults, { comparators });
+    const reset = createResetIfDirty(set, get, initialState, hasStateChanged);
+    const resetStore = () => {
+        if (!resetStorePartial) return;
+        setIfChanged(resetStorePartial);
+    };
+
+    return {
+        setIfChanged,
+        reset,
+        resetStore,
+    };
+};
+
+type CreatePageStoreHelpersOptions<T extends { page: number }, Snapshot extends Record<string, unknown>> =
+    CreateStoreHelpersOptions<T, Snapshot> & { pageResetValue?: number };
+
+export const createPageStoreHelpers = <T extends { page: number }, Snapshot extends Record<string, unknown>>({
+    pageResetValue = 1,
+    ...options
+}: CreatePageStoreHelpersOptions<T, Snapshot>) => {
+    const base = createStoreHelpers<T, Snapshot>(options);
+    const setWithPageReset = createSetWithPageReset(base.setIfChanged, pageResetValue);
+
+    return {
+        ...base,
+        setWithPageReset,
+    };
 };
