@@ -31,13 +31,10 @@ const initialState = {
     page: 1,
 };
 
-type DemoDataTableStateSnapshot = Pick<DemoDataTableState, "data" | "query" | "filterKey" | "sortKey" | "page">;
-
-// Grid 상태를 전역으로 관리하는 스토어 함수
 export const useDemoDataTableStore = create<DemoDataTableState>()(devtool(persist((set, get) => {
     const { setIfChanged, setWithPageReset, reset, resetStore } = createPageStoreHelpers<
         DemoDataTableState,
-        DemoDataTableStateSnapshot
+        Pick<DemoDataTableState, "data" | "query" | "filterKey" | "sortKey" | "page">
     >({
         set,
         get,
