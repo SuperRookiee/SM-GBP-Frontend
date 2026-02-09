@@ -10,11 +10,11 @@ const DemoChartPage = () => {
     return (
         <div className="space-y-6">
             <div className="space-y-1">
-                <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+                <p className="text-sm font-semibold text-muted-foreground">
                     Demo
                 </p>
                 <h1 className="text-2xl font-semibold tracking-tight">Charts</h1>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-sm text-muted-foreground">
                     Recharts + shadcn/ui Chart examples
                 </p>
             </div>
