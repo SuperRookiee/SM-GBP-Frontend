@@ -24,7 +24,7 @@ const AppSidebar = () => {
                             <Link to="/" onClick={handleMenuClick}>
                                 <Item className="p-0" size="xs">
                                     <ItemContent>
-                                        <ItemTitle className="text-sm">GBP</ItemTitle>
+                                        <ItemTitle className="text-sm">Miracle</ItemTitle>
                                         <ItemDescription>v1.0.0</ItemDescription>
                                     </ItemContent>
                                 </Item>
