@@ -57,43 +57,43 @@ Miracle 프로젝트의 프론트엔드 환경 설정 및 기술 스택 가이�
 ### ✅ Requirements
 
 - **Node.js**: `v24.x` 이상 (LTS 권장)
-- **Package Manager**: `npm`
+- **Package Manager**: `pnpm`
 
 ### ⚙️ Installation & Development
 
 **1. 의존성 설치**
 
 ```bash
-npm install
-# npm install
+pnpm install
+# pnpm install
 ```
 
 **2. 개발 환경 실행**
 
 ```bash
-npm run dev
-# npm run dev
+pnpm run dev
+# pnpm run dev
 ```
 
 **3. 코드 품질 관리**
 
 ```bash
 # Lint 검사 + fix 자동 적용
-npm run lint
-# npm run lint
+pnpm run lint
+# pnpm run lint
 
 # Lint 검사 후 리포트 생성
-npm run lint:report
-# npm run lint:report
+pnpm run lint:report
+# pnpm run lint:report
 
 ```
 
 **4. 프로덕션 빌드**
 
 ```bash
-npm run build
-# npm run build
+pnpm run build
+# pnpm run build
 
-npm run preview
-# npm run preview
+pnpm run preview
+# pnpm run preview
 ```
