@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { describe, expect, it } from "vitest";
-import { server } from "@/test/mswServer";
-import { Delete, Get, Patch, Post, Put } from "./http";
+import { Delete, Get, Patch, Post, Put } from "@/utils/http.ts";
+import { server } from "@/test/mswServer.ts";
 
 describe("http utils", () => {
     it("attaches tokens and returns data", async () => {

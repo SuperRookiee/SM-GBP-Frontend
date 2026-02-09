@@ -1,5 +1,5 @@
 import type { IUser, IUserSampleDataParams } from "@/interface/IUser.ts";
-import { USER_SAMPLE_DATA } from "@/tests/user.test.ts";
+import { USER_SAMPLE_DATA } from "@/test/data/user.test.ts";
 
 export type UserTableResponse = {
     rows: IUser[];
