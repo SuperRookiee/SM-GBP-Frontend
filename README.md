@@ -1,6 +1,6 @@
-# 🚀 GBP Frontend
+# 🚀 Miracle Web
 
-GBP 프로젝트의 프론트엔드 환경 설정 및 기술 스택 가이드입니다.
+Miracle Web 프로젝트의 프론트엔드 환경 설정 및 기술 스택 가이드입니다.
 
 ---
 
