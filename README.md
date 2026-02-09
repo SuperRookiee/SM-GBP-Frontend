@@ -8,12 +8,13 @@ Miracle 프로젝트의 프론트엔드 환경 설정 및 기술 스택 가이�
 
 ### ⚡ Core & Build
 
-| 영역               | 기술                | 사용 용도                    |
-|:-----------------|:------------------|:-------------------------|
-| **UI Rendering** | `React 19`        | 전체 UI 렌더링 및 컴포넌트 아키텍처    |
-| **Language**     | `TypeScript`      | 정적 타입 정의 및 런타임 안정성 확보    |
-| **Build Tool**   | `Vite (Rolldown)` | 초고속 개발 서버 및 최적화된 프로덕션 빌드 |
-| **Routing**      | `React Router`    | SPA 라우팅 및 중첩 레이아웃 구성     |
+| 영역               | 기술                | 사용 용도                            |
+|:-----------------|:------------------|:---------------------------------|
+| **UI Rendering** | `React 19`        | 전체 UI 렌더링 및 컴포넌트 아키텍처            |
+| **Language**     | `TypeScript`      | 정적 타입 정의 및 런타임 안정성 확보            |
+| **Build Tool**   | `Vite (Rolldown)` | 초고속 개발 서버 및 최적화된 프로덕션 빌드         |
+| **Performance**  | `React Compiler`  | 자동 메모이제이션으로 불필요한 리렌더 방지 및 성능 최적화 |
+| **Routing**      | `React Router`    | SPA 라우팅 및 중첩 레이아웃 구성             |
 
 ### 🎨 UI & Styling
 
