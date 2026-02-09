@@ -1,0 +1,15 @@
+import { afterAll, afterEach, beforeAll } from "vitest";
+import { server } from "./mswServer";
+
+beforeAll(() => {
+    server.listen({ onUnhandledRequest: "error" });
+});
+
+afterEach(() => {
+    server.resetHandlers();
+    localStorage.clear();
+});
+
+afterAll(() => {
+    server.close();
+});
