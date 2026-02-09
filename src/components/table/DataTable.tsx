@@ -1,4 +1,5 @@
 import { Activity, type ReactNode, useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search } from "lucide-react";
 
 interface IGridTableClientProps<T> {
     rows: T[];
@@ -155,10 +155,10 @@ const DataTable = <T,>({
                                             className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                                             type="button"
                                             variant="ghost"
-                                            onClick={() => onClickSort(column.key)}
+                                            onClick={() => onClickSort(column.key as keyof T)}
                                         >
                                             {column.label}
-                                            {sortIndicator(column.key)}
+                                            {sortIndicator(column.key as keyof T)}
                                         </Button>
                                     ) : (
                                         <span className="text-sm text-zinc-500 dark:text-zinc-400">{column.label}</span>
@@ -183,7 +183,7 @@ const DataTable = <T,>({
                             <TableRow key={getRowId(row)}>
                                 {columns.map((column) =>
                                     <TableCell key={`${getRowId(row)}-${String(column.key)}`} className={column.cellClassName}>
-                                        {column.render ? column.render(row) : String(row[column.key])}
+                                        {column.render ? column.render(row) : String(row[column.key as keyof T])}
                                     </TableCell>
                                 )}
                             </TableRow>
