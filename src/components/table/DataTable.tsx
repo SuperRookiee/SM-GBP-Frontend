@@ -79,7 +79,7 @@ const DataTable = <T,>({
 
     const sortIndicator = (key: keyof T) => {
         if (sortKey !== key) return null;
-        return <span className="ml-1 text-xs text-zinc-400">{sortDirection === "asc" ? "▲" : "▼"}</span>;
+        return <span className="ml-1 text-xs text-muted-foreground">{sortDirection === "asc" ? "▲" : "▼"}</span>;
     };
 
     const skeletonRows = Array.from({ length: 6 }, (_, index) => `skeleton-${index}`);
@@ -105,15 +105,15 @@ const DataTable = <T,>({
     };
 
     return (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+        <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{title}</h2>
-                    {description && <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>}
+                    <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+                    {description && <p className="text-sm text-muted-foreground">{description}</p>}
                 </div>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
                     <div className="w-full sm:w-40">
-                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{filterLabel}</label>
+                        <label className="text-xs font-medium text-muted-foreground">{filterLabel}</label>
                         <Select value={String(draftFilterKey)} onValueChange={onChangeFilterKey}>
                             <SelectTrigger className="mt-2">
                                 <SelectValue placeholder="검색 조건 선택" />
@@ -129,7 +129,7 @@ const DataTable = <T,>({
                     </div>
 
                     <div className="w-full sm:w-72">
-                        <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{searchLabel}</label>
+                        <label className="text-xs font-medium text-muted-foreground">{searchLabel}</label>
                         <div className="mt-2 flex items-center gap-2">
                             <Input
                                 placeholder={searchPlaceholder}
@@ -152,7 +152,7 @@ const DataTable = <T,>({
                                 <TableHead key={String(column.key)} className={column.headerClassName}>
                                     {isSortable ? (
                                         <Button
-                                            className="h-auto justify-start px-0 py-0 text-left text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                                            className="h-auto justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
                                             type="button"
                                             variant="ghost"
                                             onClick={() => onClickSort(column.key as keyof T)}
@@ -161,7 +161,7 @@ const DataTable = <T,>({
                                             {sortIndicator(column.key as keyof T)}
                                         </Button>
                                     ) : (
-                                        <span className="text-sm text-zinc-500 dark:text-zinc-400">{column.label}</span>
+                                        <span className="text-sm text-muted-foreground">{column.label}</span>
                                     )}
                                 </TableHead>
                             );
@@ -191,8 +191,8 @@ const DataTable = <T,>({
                 </TableBody>
             </Table>
 
-            <div className="mt-4 flex flex-col gap-4 border-t border-zinc-200 pt-4 text-sm text-zinc-500
-                            dark:border-zinc-800 dark:text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground
+                            sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
                     <span>
                       Page {currentPage} of {totalPages}
@@ -224,7 +224,7 @@ const DataTable = <T,>({
                             key={pageNumber}
                             className={
                                 pageNumber === currentPage
-                                    ? "border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 dark:border-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                                    ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90"
                                     : undefined
                             }
                             type="button"
