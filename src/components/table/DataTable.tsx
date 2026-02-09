@@ -1,4 +1,4 @@
-import { Activity, type ReactNode, useEffect, useMemo } from "react";
+import { Activity, type ReactNode, useEffect, useMemo, useState } from "react";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Search } from "lucide-react";
 
 interface IGridTableClientProps<T> {
     rows: T[];
@@ -43,6 +44,8 @@ const DataTable = <T,>({
     getRowId = (row) => (row as { id: string | number }).id,
     captionRenderer = (count) => `총 ${count} 건`,
 }: IGridTableClientProps<T>) => {
+    const [draftQuery, setDraftQuery] = useState(query);
+    const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
 
     // #. total 기반 페이지 계산
     const totalPages = Math.max(Math.ceil(total / pageSize), 1);
@@ -55,6 +58,14 @@ const DataTable = <T,>({
 
         if (page !== currentPage) onPageChange(currentPage);
     }, [currentPage, isLoading, onPageChange, page, total]);
+
+    useEffect(() => {
+        setDraftQuery(query);
+    }, [query]);
+
+    useEffect(() => {
+        setDraftFilterKey(filterKey);
+    }, [filterKey]);
 
     const previousPage = currentPage > 1 ? currentPage - 1 : null;
     const nextPage = currentPage < totalPages ? currentPage + 1 : null;
@@ -75,12 +86,16 @@ const DataTable = <T,>({
 
     // #. 서버 페이징에서는 검색/필터/정렬 변경 시 보통 page=1로 리셋
     const onChangeFilterKey = (value: string) => {
-        onFilterChange(value as "all" | keyof T);
-        onPageChange(1);
+        setDraftFilterKey(value as "all" | keyof T);
     };
 
     const onChangeQuery = (value: string) => {
-        onQueryChange(value);
+        setDraftQuery(value);
+    };
+
+    const onClickSearch = () => {
+        onFilterChange(draftFilterKey);
+        onQueryChange(draftQuery);
         onPageChange(1);
     };
 
@@ -99,7 +114,7 @@ const DataTable = <T,>({
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
                     <div className="w-full sm:w-40">
                         <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{filterLabel}</label>
-                        <Select value={String(filterKey)} onValueChange={onChangeFilterKey}>
+                        <Select value={String(draftFilterKey)} onValueChange={onChangeFilterKey}>
                             <SelectTrigger className="mt-2">
                                 <SelectValue placeholder="검색 조건 선택" />
                             </SelectTrigger>
@@ -115,12 +130,16 @@ const DataTable = <T,>({
 
                     <div className="w-full sm:w-72">
                         <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{searchLabel}</label>
-                        <Input
-                            className="mt-2"
-                            placeholder={searchPlaceholder}
-                            value={query}
-                            onChange={(event) => onChangeQuery(event.target.value)}
-                        />
+                        <div className="mt-2 flex items-center gap-2">
+                            <Input
+                                placeholder={searchPlaceholder}
+                                value={draftQuery}
+                                onChange={(event) => onChangeQuery(event.target.value)}
+                            />
+                            <Button type="button" variant="outline" size="icon" onClick={onClickSearch} aria-label="검색">
+                                <Search className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
