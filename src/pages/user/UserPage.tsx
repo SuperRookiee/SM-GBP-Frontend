@@ -15,7 +15,7 @@ const UserPage = () => {
         setQuery,
         setFilterKey,
         setSort,
-        setPage,
+        setPage
     } = useUserPageStore();
     const pageSize = GRID_CONSTANTS.pageSize;
 

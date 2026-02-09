@@ -32,7 +32,7 @@ export const getUserSampleDataApi = async ({
     const startIndex = (page - 1) * pageSize;
     const rows = sortedRows.slice(startIndex, startIndex + pageSize);
 
-    await new Promise((res) => setTimeout(res, 800));
+    await new Promise((res) => setTimeout(res, 1000));
 
     return {
         rows,

@@ -75,7 +75,7 @@ export const DEMO_DATA_TABLE_COLUMNS: DemoDataTableColumn[] = [
 /** User **/
 export const USER_TABLE_FILTER: UserFilterOption[] = [
     { value: "all", label: "전체" },
-    { value: "id", label: "사용자 ID" },
+    { value: "id", label: "ID" },
     { value: "name", label: "이름" },
     { value: "user_id", label: "User ID" },
     { value: "role", label: "권한" },
