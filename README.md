@@ -46,10 +46,11 @@ Miracle 프로젝트의 프론트엔드 환경 설정 및 기술 스택 가이�
 
 ### ⚙️ Dev Tools
 
-| 영역                         | 기술                        | 사용 용도         | 링크                                                                                |
-|:---------------------------|:--------------------------|:--------------|:----------------------------------------------------------------------------------|
-| **State Debugging**        | `Redux DevTools`          | Zustand 변화 추적 | [Redux DevTools](https://github.com/reduxjs/redux-devtools)                       |
-| **Server State Debugging** | `TanStack Query DevTools` | Query 캐시 시각화  | [Query DevTools](https://tanstack.com/query/latest/docs/framework/react/devtools) |
+| 영역                         | 기술                        | 사용 용도           | 링크                                                                                |
+|:---------------------------|:--------------------------|:----------------|:----------------------------------------------------------------------------------|
+| **Testing**                | `Vitest`                  | 단위 테스트 및 통합 테스트 | [Vitest](https://vitest.dev/)                                                     |
+| **State Debugging**        | `Redux DevTools`          | Zustand 변화 추적   | [Redux DevTools](https://github.com/reduxjs/redux-devtools)                       |
+| **Server State Debugging** | `TanStack Query DevTools` | Query 캐시 시각화    | [Query DevTools](https://tanstack.com/query/latest/docs/framework/react/devtools) |
 
 ---
 
