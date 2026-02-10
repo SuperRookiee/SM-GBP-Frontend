@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
-import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import { USER_TABLE_COLUMNS, USER_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useUserPageStore } from "@/stores/page/userPage.store.ts";
 import DataTable from "@/components/table/DataTable";
@@ -12,12 +11,13 @@ const UserPage = () => {
         sortKey,
         sortDirection,
         page,
+        pageSize,
         setQuery,
         setFilterKey,
         setSort,
-        setPage
+        setPage,
+        setPageSize
     } = useUserPageStore();
-    const pageSize = GRID_CONSTANTS.pageSize;
 
     const { data, isLoading, isFetching, isError } = useQuery({
         queryKey: ["users", { page, pageSize, query, filterKey, sortKey, sortDirection }],
@@ -68,6 +68,8 @@ const UserPage = () => {
                     onFilterChange={setFilterKey}
                     onSortChange={setSort}
                     onPageChange={setPage}
+                    onPageSizeChange={setPageSize}
+                    enableSelect
                     searchPlaceholder="이름, 권한, User ID로 검색"
                 />
             </div>

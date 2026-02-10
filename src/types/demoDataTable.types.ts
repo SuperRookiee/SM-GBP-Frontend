@@ -5,6 +5,7 @@ export type DemoDataTableColumn<T = IDemoDataTableRow> = {
   key: keyof T | string;
   label: string;
   sortable?: boolean;
+  filterable?: boolean;
   headerClassName?: string;
   cellClassName?: string;
   render?: (row: T) => ReactNode;

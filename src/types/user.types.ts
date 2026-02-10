@@ -5,6 +5,7 @@ export type UserColumn<T = IUser> = {
   key: keyof T;
   label: string;
   sortable?: boolean;
+  filterable?: boolean;
   headerClassName?: string;
   cellClassName?: string;
   render?: (row: T) => ReactNode;
