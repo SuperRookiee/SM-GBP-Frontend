@@ -50,6 +50,12 @@ interface IGridTableClientProps<T> {
     captionRenderer?: (total: number) => ReactNode; // 총 건수 표시 렌더러
 }
 
+const getColumnWidthStyle = (width?: string | number) => {
+    if (width === undefined) return undefined;
+    const computedWidth = typeof width === "number" ? `${width}px` : width;
+    return { width: computedWidth, minWidth: computedWidth, maxWidth: computedWidth };
+};
+
 const DataTable = <T, >({
     rows, total, pageSize, title, description, columns, filterOptions,
     query, filterKey, sortKey, sortDirection, page,
@@ -269,12 +275,12 @@ const DataTable = <T, >({
             </div>
 
             <div className="w-full min-w-0 overflow-x-auto rounded-md border">
-                <ScrollArea className={`${tableHeightClassName}`}>
-                    <Table className="w-full lg:min-w-225 table-fixed">
+                <Table className="w-full min-w-max table-fixed">
+                    <ScrollArea className={`${tableHeightClassName}`}>
                         <TableHeader className="sticky top-0 z-20 bg-card">
                             <TableRow className="bg-card hover:bg-card">
                                 {enableSelect &&
-                                    <TableHead className="w-10 bg-card border-r border-border/40">
+                                    <TableHead className="w-10 bg-card border-r border-border/40" style={{ width: "40px", minWidth: "40px", maxWidth: "40px" }}>
                                         <Checkbox
                                             checked={isAllRowsSelected ? true : (isSomeRowsSelected ? "indeterminate" : false)}
                                             onCheckedChange={onToggleSelectAll}
@@ -294,6 +300,7 @@ const DataTable = <T, >({
 
                                     return (
                                         <TableHead key={String(column.key)}
+                                                   style={getColumnWidthStyle(column.width)}
                                                    className={`bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
                                             <div className="flex min-w-0 items-center gap-1 pr-2">
                                                 {isSortable ? (
@@ -386,13 +393,14 @@ const DataTable = <T, >({
                                 ? skeletonRows.map((key) =>
                                     <TableRow key={key}>
                                         {enableSelect && (
-                                            <TableCell className="w-10 border-r border-border/40">
+                                            <TableCell className="w-10 border-r border-border/40" style={{ width: "40px", minWidth: "40px", maxWidth: "40px" }}>
                                                 <Skeleton className="h-4 w-4"/>
                                             </TableCell>
                                         )}
                                         {columns.map((column, columnIndex) =>
                                             <TableCell
                                                 key={`${key}-${String(column.key)}`}
+                                                style={getColumnWidthStyle(column.width)}
                                                 className={`${columnIndex === columns.length - 1 ? "" : "border-r border-border/40"}`.trim()}
                                             >
                                                 <Skeleton className="h-4 w-24"/>
@@ -405,7 +413,7 @@ const DataTable = <T, >({
                                     return (
                                         <TableRow key={rowId}>
                                             {enableSelect && (
-                                                <TableCell className="w-10 border-r border-border/40">
+                                                <TableCell className="w-10 border-r border-border/40" style={{ width: "40px", minWidth: "40px", maxWidth: "40px" }}>
                                                     <Checkbox
                                                         checked={selectedRowIdSet.has(rowId)}
                                                         onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
@@ -415,6 +423,7 @@ const DataTable = <T, >({
                                             )}
                                             {columns.map((column) =>
                                                 <TableCell key={`${rowId}-${String(column.key)}`}
+                                                           style={getColumnWidthStyle(column.width)}
                                                            className={`${column.cellClassName ?? ""} ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"}`.trim()}>
                                                     {column.render ? column.render(row) : String(row[column.key as keyof T])}
                                                 </TableCell>,

@@ -4,6 +4,7 @@ import type { IUser } from "@/interface/IUser.ts";
 export type UserColumn<T = IUser> = {
   key: keyof T;
   label: string;
+  width?: string | number;
   sortable?: boolean;
   filterable?: boolean;
   headerClassName?: string;
