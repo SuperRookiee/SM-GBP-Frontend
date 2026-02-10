@@ -73,6 +73,7 @@ const DemoDataTablePage = () => {
                     onFilterChange={setFilterKey}
                     onSortChange={setSort}
                     onPageChange={setPage}
+                    enableSelect
                 />
             </div>
         </div>

@@ -68,6 +68,7 @@ const UserPage = () => {
                     onFilterChange={setFilterKey}
                     onSortChange={setSort}
                     onPageChange={setPage}
+                    enableSelect
                     searchPlaceholder="이름, 권한, User ID로 검색"
                 />
             </div>

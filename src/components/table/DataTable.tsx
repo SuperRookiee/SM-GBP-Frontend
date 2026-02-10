@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -31,6 +32,9 @@ interface IGridTableClientProps<T> {
     filterLabel?: string;
     getRowId?: (row: T) => string | number;
     captionRenderer?: (total: number) => ReactNode;
+    enableSelect?: boolean;
+    selectedRowIds?: Array<string | number>;
+    onSelectedRowIdsChange?: (selectedRowIds: Array<string | number>) => void;
 }
 
 const DataTable = <T,>({
@@ -43,18 +47,21 @@ const DataTable = <T,>({
     filterLabel = "검색 조건",
     getRowId = (row) => (row as { id: string | number }).id,
     captionRenderer = (count) => `총 ${count} 건`,
+    enableSelect = false,
+    selectedRowIds = [],
+    onSelectedRowIdsChange,
 }: IGridTableClientProps<T>) => {
     const [draftQuery, setDraftQuery] = useState(query);
     const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
+    const [columnFilters, setColumnFilters] = useState<Partial<Record<keyof T, string>>>({});
+    const [internalSelectedRowIds, setInternalSelectedRowIds] = useState<Array<string | number>>([]);
 
-    // #. total 기반 페이지 계산
     const totalPages = Math.max(Math.ceil(total / pageSize), 1);
     const currentPage = Math.min(Math.max(page, 1), totalPages);
 
-    // #. page가 범위 벗어나면 보정
     useEffect(() => {
-        if (isLoading) return;  // 서버 응답(total)이 준비되기 전에는 clamp로 page를 덮어쓰지 않음
-        if (total <= 0) return; // 데이터 0건일 땐 굳이 보정 X
+        if (isLoading) return;
+        if (total <= 0) return;
 
         if (page !== currentPage) onPageChange(currentPage);
     }, [currentPage, isLoading, onPageChange, page, total]);
@@ -67,10 +74,32 @@ const DataTable = <T,>({
         setDraftFilterKey(filterKey);
     }, [filterKey]);
 
+    const filteredRows = useMemo(() => {
+        return rows.filter((row) =>
+            columns.every((column) => {
+                if (!column.filterable) return true;
+                const filterValue = columnFilters[column.key as keyof T]?.trim();
+                if (!filterValue) return true;
+
+                const rawValue = row[column.key as keyof T];
+                if (rawValue === undefined || rawValue === null) return false;
+
+                return String(rawValue).toLowerCase().includes(filterValue.toLowerCase());
+            }),
+        );
+    }, [columnFilters, columns, rows]);
+
+    const effectiveSelectedRowIds = onSelectedRowIdsChange ? selectedRowIds : internalSelectedRowIds;
+
+    const selectedRowIdSet = useMemo(() => new Set(effectiveSelectedRowIds), [effectiveSelectedRowIds]);
+    const allVisibleIds = useMemo(() => filteredRows.map((row) => getRowId(row)), [filteredRows, getRowId]);
+
+    const isAllRowsSelected = allVisibleIds.length > 0 && allVisibleIds.every((id) => selectedRowIdSet.has(id));
+    const isSomeRowsSelected = allVisibleIds.some((id) => selectedRowIdSet.has(id));
+
     const previousPage = currentPage > 1 ? currentPage - 1 : null;
     const nextPage = currentPage < totalPages ? currentPage + 1 : null;
 
-    // #.페이지 윈도우 계산
     const pageWindowStart = Math.floor((currentPage - 1) / GRID_CONSTANTS.pageWindow) * GRID_CONSTANTS.pageWindow + 1;
     const pageWindowEnd = Math.min(totalPages, pageWindowStart + GRID_CONSTANTS.pageWindow - 1);
     const pageNumbers = useMemo(() =>
@@ -84,7 +113,6 @@ const DataTable = <T,>({
 
     const skeletonRows = Array.from({ length: 6 }, (_, index) => `skeleton-${index}`);
 
-    // #. 서버 페이징에서는 검색/필터/정렬 변경 시 보통 page=1로 리셋
     const onChangeFilterKey = (value: string) => {
         setDraftFilterKey(value as "all" | keyof T);
     };
@@ -102,6 +130,42 @@ const DataTable = <T,>({
     const onClickSort = (key: keyof T) => {
         onSortChange(key);
         onPageChange(1);
+    };
+
+    const onChangeColumnFilter = (key: keyof T, value: string) => {
+        setColumnFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const onToggleSelectAll = (checked: boolean | "indeterminate") => {
+        if (checked === true) {
+            const merged = new Set([...effectiveSelectedRowIds, ...allVisibleIds]);
+            const nextSelected = Array.from(merged);
+            if (onSelectedRowIdsChange) onSelectedRowIdsChange(nextSelected);
+            else setInternalSelectedRowIds(nextSelected);
+            return;
+        }
+
+        const visibleIdSet = new Set(allVisibleIds);
+        const nextSelected = effectiveSelectedRowIds.filter((id) => !visibleIdSet.has(id));
+        if (onSelectedRowIdsChange) onSelectedRowIdsChange(nextSelected);
+        else setInternalSelectedRowIds(nextSelected);
+    };
+
+    const onToggleSelectRow = (rowId: string | number, checked: boolean | "indeterminate") => {
+        if (checked === true) {
+            const merged = new Set([...effectiveSelectedRowIds, rowId]);
+            const nextSelected = Array.from(merged);
+            if (onSelectedRowIdsChange) onSelectedRowIdsChange(nextSelected);
+            else setInternalSelectedRowIds(nextSelected);
+            return;
+        }
+
+        const nextSelected = effectiveSelectedRowIds.filter((id) => id !== rowId);
+        if (onSelectedRowIdsChange) onSelectedRowIdsChange(nextSelected);
+        else setInternalSelectedRowIds(nextSelected);
     };
 
     return (
@@ -122,7 +186,7 @@ const DataTable = <T,>({
                                 {filterOptions.map((option) =>
                                     <SelectItem key={String(option.value)} value={String(option.value)}>
                                         {option.label}
-                                    </SelectItem>
+                                    </SelectItem>,
                                 )}
                             </SelectContent>
                         </Select>
@@ -144,12 +208,21 @@ const DataTable = <T,>({
                 </div>
             </div>
             <Table>
-                <TableHeader>
-                    <TableRow>
-                        {columns.map(column => {
+                <TableHeader className="sticky top-0 z-10 bg-card">
+                    <TableRow className="bg-card hover:bg-card">
+                        {enableSelect && (
+                            <TableHead className="w-10 bg-card">
+                                <Checkbox
+                                    checked={isAllRowsSelected ? true : (isSomeRowsSelected ? "indeterminate" : false)}
+                                    onCheckedChange={onToggleSelectAll}
+                                    aria-label="전체 선택"
+                                />
+                            </TableHead>
+                        )}
+                        {columns.map((column) => {
                             const isSortable = column.sortable ?? true;
                             return (
-                                <TableHead key={String(column.key)} className={column.headerClassName}>
+                                <TableHead key={String(column.key)} className={`bg-card ${column.headerClassName ?? ""}`}>
                                     {isSortable ? (
                                         <Button
                                             className="h-auto justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
@@ -167,27 +240,71 @@ const DataTable = <T,>({
                             );
                         })}
                     </TableRow>
+                    <TableRow className="bg-card hover:bg-card">
+                        {enableSelect && <TableHead className="w-10 bg-card" />}
+                        {columns.map((column) => (
+                            <TableHead key={`filter-${String(column.key)}`} className="bg-card">
+                                {column.filterable ? (
+                                    <Input
+                                        value={columnFilters[column.key as keyof T] ?? ""}
+                                        onChange={(event) => onChangeColumnFilter(column.key as keyof T, event.target.value)}
+                                        placeholder={`${column.label} 필터`}
+                                        className="h-8"
+                                    />
+                                ) : (
+                                    <span className="text-xs text-muted-foreground">-</span>
+                                )}
+                            </TableHead>
+                        ))}
+                    </TableRow>
                 </TableHeader>
                 <TableBody>
                     {isLoading
-                        ? skeletonRows.map(key =>
+                        ? skeletonRows.map((key) =>
                             <TableRow key={key}>
+                                {enableSelect && (
+                                    <TableCell className="w-10">
+                                        <Skeleton className="h-4 w-4" />
+                                    </TableCell>
+                                )}
                                 {columns.map((column) =>
                                     <TableCell key={`${key}-${String(column.key)}`}>
                                         <Skeleton className="h-4 w-24" />
-                                    </TableCell>
+                                    </TableCell>,
                                 )}
-                            </TableRow>
+                            </TableRow>,
                         )
-                        : rows.map(row =>
-                            <TableRow key={getRowId(row)}>
-                                {columns.map((column) =>
-                                    <TableCell key={`${getRowId(row)}-${String(column.key)}`} className={column.cellClassName}>
-                                        {column.render ? column.render(row) : String(row[column.key as keyof T])}
-                                    </TableCell>
-                                )}
-                            </TableRow>
-                        )}
+                        : filteredRows.map((row) => {
+                            const rowId = getRowId(row);
+                            return (
+                                <TableRow key={rowId}>
+                                    {enableSelect && (
+                                        <TableCell className="w-10">
+                                            <Checkbox
+                                                checked={selectedRowIdSet.has(rowId)}
+                                                onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
+                                                aria-label={`행 선택 ${String(rowId)}`}
+                                            />
+                                        </TableCell>
+                                    )}
+                                    {columns.map((column) =>
+                                        <TableCell key={`${rowId}-${String(column.key)}`} className={column.cellClassName}>
+                                            {column.render ? column.render(row) : String(row[column.key as keyof T])}
+                                        </TableCell>,
+                                    )}
+                                </TableRow>
+                            );
+                        })}
+                    {!isLoading && filteredRows.length === 0 && (
+                        <TableRow>
+                            <TableCell
+                                colSpan={columns.length + (enableSelect ? 1 : 0)}
+                                className="py-8 text-center text-sm text-muted-foreground"
+                            >
+                                조건에 맞는 데이터가 없습니다.
+                            </TableCell>
+                        </TableRow>
+                    )}
                 </TableBody>
             </Table>
 
@@ -233,7 +350,7 @@ const DataTable = <T,>({
                             onClick={() => onPageChange(pageNumber)}
                         >
                             {pageNumber}
-                        </Button>
+                        </Button>,
                     )}
 
                     <Button type="button" variant="outline" size="sm" onClick={() => nextPage && onPageChange(nextPage)} disabled={!nextPage}>
