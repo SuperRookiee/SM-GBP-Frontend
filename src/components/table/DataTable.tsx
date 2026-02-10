@@ -119,8 +119,9 @@ const DataTable = <T, >({
                 if (!column.filterable) return true;
 
                 const key = column.key as keyof T;
-                const selectedValues = columnSelectedValues[key] ?? [];
-                if (selectedValues.length === 0) return true;
+                const selectedValues = columnSelectedValues[key];
+                if (selectedValues === undefined) return true;
+                if (selectedValues.length === 0) return false;
 
                 return selectedValues.includes(getColumnRawValue(row, key));
             }),
@@ -197,11 +198,10 @@ const DataTable = <T, >({
     const onToggleColumnFilterValue = (key: keyof T, value: string, checked: boolean) => {
         setColumnSelectedValues((prev) => {
             const allValues = columnFilterOptions.get(key) ?? [];
-            const current = prev[key] ?? [];
-            const normalizedCurrent = current.length === 0 ? allValues : current;
+            const current = prev[key] ?? allValues;
             const next = checked
-                ? [...new Set([...normalizedCurrent, value])]
-                : normalizedCurrent.filter((item) => item !== value);
+                ? [...new Set([...current, value])]
+                : current.filter((item) => item !== value);
 
             return { ...prev, [key]: next };
         });
@@ -309,9 +309,13 @@ const DataTable = <T, >({
                             {columns.map((column, index) => {
                                 const isSortable = column.sortable ?? true;
                                 const columnKey = column.key as keyof T;
-                                const selectedCount = (columnSelectedValues[columnKey] ?? []).length;
+                                const selectedValues = columnSelectedValues[columnKey];
                                 const totalFilterOptionCount = (columnFilterOptions.get(columnKey) ?? []).length;
-                                const isFilterActive = selectedCount > 0 && selectedCount < totalFilterOptionCount;
+                                const effectiveSelectedValues = selectedValues ?? (columnFilterOptions.get(columnKey) ?? []);
+                                const selectedCount = effectiveSelectedValues.length;
+                                const isFilterActive = selectedValues !== undefined
+                                    && selectedCount > 0
+                                    && selectedCount < totalFilterOptionCount;
 
                                 return (
                                     <TableHead key={String(column.key)}
@@ -362,10 +366,10 @@ const DataTable = <T, >({
                                                         <ScrollArea className="h-60 w-full">
                                                             <div className="min-w-max pr-2">
                                                                 <DropdownMenuCheckboxItem
-                                                                    checked={selectedCount === 0
+                                                                    checked={selectedCount === totalFilterOptionCount
                                                                         ? true
-                                                                        : selectedCount === (columnFilterOptions.get(columnKey)?.length ?? 0)
-                                                                            ? true
+                                                                        : selectedCount === 0
+                                                                            ? false
                                                                             : "indeterminate"}
                                                                     onSelect={(event) => event.preventDefault()}
                                                                     onCheckedChange={(checked) => onToggleColumnSelectAll(columnKey, checked === true)}
@@ -380,9 +384,7 @@ const DataTable = <T, >({
                                                                     .map((value) => (
                                                                         <DropdownMenuCheckboxItem
                                                                             key={`${String(columnKey)}-${value}`}
-                                                                            checked={(columnSelectedValues[columnKey] ?? []).length === 0
-                                                                                ? true
-                                                                                : (columnSelectedValues[columnKey] ?? []).includes(value)}
+                                                                            checked={effectiveSelectedValues.includes(value)}
                                                                             onSelect={(event) => event.preventDefault()}
                                                                             onCheckedChange={(checked) =>
                                                                                 onToggleColumnFilterValue(columnKey, value, checked === true)
