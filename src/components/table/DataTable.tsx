@@ -196,8 +196,13 @@ const DataTable = <T, >({
     // #. 컬럼별 필터 목록에서 특정 항목 선택/해제
     const onToggleColumnFilterValue = (key: keyof T, value: string, checked: boolean) => {
         setColumnSelectedValues((prev) => {
+            const allValues = columnFilterOptions.get(key) ?? [];
             const current = prev[key] ?? [];
-            const next = checked ? [...new Set([...current, value])] : current.filter((item) => item !== value);
+            const normalizedCurrent = current.length === 0 ? allValues : current;
+            const next = checked
+                ? [...new Set([...normalizedCurrent, value])]
+                : normalizedCurrent.filter((item) => item !== value);
+
             return { ...prev, [key]: next };
         });
         onPageChange(1);
@@ -375,7 +380,9 @@ const DataTable = <T, >({
                                                                     .map((value) => (
                                                                         <DropdownMenuCheckboxItem
                                                                             key={`${String(columnKey)}-${value}`}
-                                                                            checked={(columnSelectedValues[columnKey] ?? []).includes(value)}
+                                                                            checked={(columnSelectedValues[columnKey] ?? []).length === 0
+                                                                                ? true
+                                                                                : (columnSelectedValues[columnKey] ?? []).includes(value)}
                                                                             onSelect={(event) => event.preventDefault()}
                                                                             onCheckedChange={(checked) =>
                                                                                 onToggleColumnFilterValue(columnKey, value, checked === true)
