@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDemoDataTableSampleDataApi } from "@/apis/demoDataTable.api";
-import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { DEMO_DATA_TABLE_COLUMNS, DEMO_DATA_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useDataTablePageStore } from "@/stores/page/dataTablePage.store.ts";
 import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
@@ -17,7 +16,8 @@ const DemoDataTablePage = () => {
     const setQuery = useDataTablePageStore((s) => s.setQuery);
     const setFilterKey = useDataTablePageStore((s) => s.setFilterKey);
     const setSort = useDataTablePageStore((s) => s.setSort);
-    const pageSize = DEFAULT_TABLE.pageSize;
+    const pageSize = useDataTablePageStore((s) => s.pageSize);
+    const setPageSize = useDataTablePageStore((s) => s.setPageSize);
 
     // #. page가 0 이하로 가는 방지
     useEffect(() => {
@@ -73,6 +73,7 @@ const DemoDataTablePage = () => {
                     onFilterChange={setFilterKey}
                     onSortChange={setSort}
                     onPageChange={setPage}
+                    onPageSizeChange={setPageSize}
                     enableSelect
                 />
             </div>

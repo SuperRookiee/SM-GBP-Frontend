@@ -36,6 +36,7 @@ interface IGridTableClientProps<T> {
     onFilterChange: (filterKey: "all" | keyof T) => void;
     onSortChange: (key: keyof T) => void;
     onPageChange: (page: number) => void;
+    onPageSizeChange?: (pageSize: number) => void;
     searchLabel?: string;
     searchPlaceholder?: string;
     filterLabel?: string;
@@ -45,12 +46,13 @@ interface IGridTableClientProps<T> {
     selectedRowIds?: Array<string | number>;
     onSelectedRowIdsChange?: (selectedRowIds: Array<string | number>) => void;
     tableHeightClassName?: string;
+    pageSizeOptions?: number[];
 }
 
 const DataTable = <T,>({
     rows, total, pageSize, title, description, columns, filterOptions,
     query, filterKey, sortKey, sortDirection, page,
-    onQueryChange, onFilterChange, onSortChange, onPageChange,
+    onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
     isLoading = false,
     searchLabel = "검색",
     searchPlaceholder = "검색어를 입력하세요",
@@ -61,6 +63,7 @@ const DataTable = <T,>({
     selectedRowIds = [],
     onSelectedRowIdsChange,
     tableHeightClassName = "h-[420px]",
+    pageSizeOptions = [5, 10, 25, 50, 100],
 }: IGridTableClientProps<T>) => {
     const [draftQuery, setDraftQuery] = useState(query);
     const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
@@ -192,6 +195,16 @@ const DataTable = <T,>({
             const allValues = columnFilterOptions.get(key) ?? [];
             return { ...prev, [key]: checked ? allValues : [] };
         });
+        onPageChange(1);
+    };
+
+
+    const onChangePageSize = (value: string) => {
+        if (!onPageSizeChange) return;
+        const nextPageSize = Number(value);
+        if (Number.isNaN(nextPageSize)) return;
+
+        onPageSizeChange(nextPageSize);
         onPageChange(1);
     };
 
@@ -377,7 +390,7 @@ const DataTable = <T,>({
             </ScrollArea>
 
             <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     <span>
                       Page {currentPage} of {totalPages}
                     </span>
@@ -388,6 +401,20 @@ const DataTable = <T,>({
                         </div>
                     </Activity>
                     <Activity mode={isLoading ? "hidden" : "visible"}>{captionRenderer(total)}</Activity>
+
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">Rows</span>
+                        <Select value={String(pageSize)} onValueChange={onChangePageSize}>
+                            <SelectTrigger className="h-8 w-20">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {pageSizeOptions.map((size) => (
+                                    <SelectItem key={size} value={String(size)}>{size}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}>처음</Button>

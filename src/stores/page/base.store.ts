@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { devtool } from "@/utils/devtools";
 import { canonicalizeQuery } from "@/utils/queryCanonicalize.ts";
 import { createPageStoreHelpers } from "@/utils/storeUtils";
@@ -10,17 +11,19 @@ export type BasePageStore<T extends object> = {
     sortKey: keyof T | null;
     sortDirection: "asc" | "desc";
     page: number;
+    pageSize: number;
     setQuery: (query: string) => void;
     setFilterKey: (filterKey: "all" | keyof T) => void;
     setSort: (key: keyof T) => void;
     setPage: (page: number) => void;
+    setPageSize: (pageSize: number) => void;
     reset: () => void;
     resetStore: () => void;
 };
 
 type BasePageState<T extends object> = Pick<
     BasePageStore<T>,
-    "query" | "filterKey" | "sortKey" | "sortDirection" | "page"
+    "query" | "filterKey" | "sortKey" | "sortDirection" | "page" | "pageSize"
 >;
 
 type CreateTablePageStoreOptions<T extends object> = {
@@ -36,6 +39,7 @@ const defaultState = {
     sortKey: null,
     sortDirection: "asc" as const,
     page: 1,
+    pageSize: DEFAULT_TABLE.pageSize,
 };
 
 export const createTablePageStore = <T extends object>({
@@ -55,6 +59,7 @@ export const createTablePageStore = <T extends object>({
                     sortKey: state.sortKey ?? null,
                     sortDirection: state.sortDirection ?? "asc",
                     page: state.page ?? 1,
+                    pageSize: state.pageSize ?? DEFAULT_TABLE.pageSize,
                 }),
                 comparators: {
                     query: (current, defaults) =>
@@ -77,6 +82,7 @@ export const createTablePageStore = <T extends object>({
                     setWithPageReset(next);
                 },
                 setPage: page => setIfChanged({ page }),
+                setPageSize: pageSize => setWithPageReset({ pageSize }),
                 reset,
                 resetStore,
             };
@@ -89,6 +95,7 @@ export const createTablePageStore = <T extends object>({
                 sortKey: state.sortKey,
                 sortDirection: state.sortDirection,
                 page: state.page,
+                pageSize: state.pageSize,
             }),
         }
     )));
