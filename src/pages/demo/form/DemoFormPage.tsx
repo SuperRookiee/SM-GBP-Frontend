@@ -47,7 +47,7 @@ const DemoFormPage = () => {
                 return {
                     status: "error",
                     message: "입력값을 다시 확인해주세요.",
-                    errors: result.error.flatten().fieldErrors,
+                    errors: z.flattenError(result.error).fieldErrors,
                     values: rawValues as Partial<FormValues>,
                 };
             }
