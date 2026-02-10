@@ -253,7 +253,7 @@ const DataTable = <T, >({
     };
 
     return (
-        <section className="min-w-0 max-w-full rounded-2xl border border-border bg-card p-4 shadow-sm">
+        <section className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">{title}</h2>
@@ -293,7 +293,7 @@ const DataTable = <T, >({
                 </div>
             </div>
 
-            <ScrollArea className={`w-full rounded-md border ${tableHeightClassName}`}>
+            <ScrollArea className={`w-full max-w-full rounded-md border ${tableHeightClassName}`}>
                 <Table className="min-w-full w-max table-auto">
                     <TableHeader className="sticky top-0 z-20 bg-card">
                         <TableRow className="bg-card hover:bg-card">
