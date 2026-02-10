@@ -22,7 +22,7 @@ const MainLayout = () => {
     return (
         <SidebarProvider>
             <AppSidebar/>
-            <SidebarInset className="flex h-svh flex-col">
+            <SidebarInset className="flex h-svh min-w-0 flex-col overflow-hidden">
                 <header className="flex h-12 shrink-0 items-center gap-2 px-4 justify-between">
                     <SidebarTrigger className="-ml-1"/>
                     <div className="flex items-center gap-2">
@@ -31,7 +31,7 @@ const MainLayout = () => {
                     </div>
                 </header>
                 <ScrollArea className="flex-1">
-                    <main className="px-4 py-2">
+                    <main className="min-w-0 overflow-x-hidden px-4 py-2">
                         <Outlet/>
                     </main>
                 </ScrollArea>

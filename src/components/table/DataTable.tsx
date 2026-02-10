@@ -239,7 +239,7 @@ const DataTable = <T, >({
         const startWidth = th.getBoundingClientRect().width;
 
         const onMouseMove = (moveEvent: MouseEvent) => {
-            const nextWidth = Math.max(120, Math.round(startWidth + moveEvent.clientX - startX));
+            const nextWidth = Math.max(5, Math.round(startWidth + moveEvent.clientX - startX));
             setColumnWidths((prev) => ({ ...prev, [key]: nextWidth }));
         };
 
@@ -253,7 +253,7 @@ const DataTable = <T, >({
     };
 
     return (
-        <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+        <section className="min-w-0 max-w-full rounded-2xl border border-border bg-card p-4 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">{title}</h2>
@@ -321,11 +321,11 @@ const DataTable = <T, >({
                                                style={columnWidths[String(columnKey)]
                                                    ? { width: `${columnWidths[String(columnKey)]}px`, minWidth: `${columnWidths[String(columnKey)]}px` }
                                                    : { minWidth: "180px" }}
-                                               className={`group relative bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
+                                               className={`group relative overflow-hidden bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
                                         <div className="flex min-w-0 items-center gap-1 pr-2">
                                             {isSortable ? (
                                                 <Button
-                                                    className="h-auto min-w-0 max-w-full justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
+                                                    className="h-auto min-w-0 max-w-full truncate justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
                                                     type="button"
                                                     variant="ghost"
                                                     onClick={() => onSortChange(columnKey)}
@@ -334,7 +334,7 @@ const DataTable = <T, >({
                                                     {sortIndicator(columnKey)}
                                                 </Button>
                                             ) : (
-                                                <span className="text-sm text-muted-foreground">{column.label}</span>
+                                                <span className="truncate text-sm text-muted-foreground">{column.label}</span>
                                             )}
 
                                             {column.filterable && (
