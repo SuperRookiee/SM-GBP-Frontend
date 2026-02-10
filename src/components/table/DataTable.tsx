@@ -4,14 +4,7 @@ import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -19,81 +12,94 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface IGridTableClientProps<T> {
-    rows: T[];
-    total: number;
-    pageSize: number;
-    isLoading?: boolean;
-    title: string;
-    description?: string;
-    columns: DemoDataTableColumn<T>[];
-    filterOptions: DemoDataTableFilterOption<T>[];
-    query: string;
-    filterKey: "all" | keyof T;
-    sortKey: keyof T | null;
-    sortDirection: "asc" | "desc";
-    page: number;
-    onQueryChange: (query: string) => void;
-    onFilterChange: (filterKey: "all" | keyof T) => void;
-    onSortChange: (key: keyof T) => void;
-    onPageChange: (page: number) => void;
-    onPageSizeChange?: (pageSize: number) => void;
-    searchLabel?: string;
-    searchPlaceholder?: string;
-    filterLabel?: string;
-    getRowId?: (row: T) => string | number;
-    captionRenderer?: (total: number) => ReactNode;
-    enableSelect?: boolean;
-    selectedRowIds?: Array<string | number>;
-    onSelectedRowIdsChange?: (selectedRowIds: Array<string | number>) => void;
-    tableHeightClassName?: string;
-    pageSizeOptions?: number[];
+    // 필수 데이터 및 제목 설정
+    title: string;                             // 테이블 제목
+    rows: T[];                                 // 테이블에 표시할 데이터 배열
+    total: number;                             // 전체 데이터 개수
+    columns: DemoDataTableColumn<T>[];         // 컬럼 설정 배열
+    // 페이지네이션 관련
+    page: number;                              // 현재 페이지 번호
+    pageSize: number;                          // 한 페이지당 표시할 행 수
+    pageSizeOptions?: number[];                // 페이지 크기 선택 옵션 목록
+    // 검색 및 필터링 상태
+    query: string;                             // 검색어 문자열
+    filterKey: "all" | keyof T;                // 현재 선택된 검색 필터 키
+    filterOptions: DemoDataTableFilterOption<T>[]; // 상단 검색 조건 옵션
+    // 정렬 관련 상태
+    sortKey: keyof T | null;                   // 현재 정렬 기준 컬럼 키
+    sortDirection: "asc" | "desc";             // 정렬 방향 (오름차순/내림차순)
+    // 이벤트 핸들러 (부모 컴포넌트 통신)
+    onPageChange: (page: number) => void;      // 페이지 변경 핸들러
+    onQueryChange: (query: string) => void;    // 검색어 변경 핸들러
+    onSortChange: (key: keyof T) => void;      // 정렬 변경 핸들러
+    onFilterChange: (filterKey: "all" | keyof T) => void; // 검색 필터 변경 핸들러
+    onPageSizeChange?: (pageSize: number) => void; // 페이지 크기 변경 핸들러
+    // 선택(Checkbox) 기능 관련
+    enableSelect?: boolean;                    // 체크박스 선택 기능 활성화 여부
+    selectedRowIds?: Array<string | number>;   // 외부에서 제어되는 선택된 행 ID 목록
+    onSelectedRowIdsChange?: (selectedRowIds: Array<string | number>) => void; // 선택 행 변경 핸들러
+    // UI 레이아웃 및 라벨 설정
+    description?: string;                      // 테이블 설명
+    isLoading?: boolean;                       // 로딩 상태 여부
+    searchLabel?: string;                      // 검색창 라벨 텍스트
+    searchPlaceholder?: string;                // 검색창 플레이스홀더
+    filterLabel?: string;                      // 필터 선택창 라벨 텍스트
+    tableHeightClassName?: string;             // 테이블 높이 조절 CSS 클래스
+    // 렌더링 및 유틸리티
+    getRowId?: (row: T) => string | number;    // 각 행의 고유 ID를 가져오는 함수
+    captionRenderer?: (total: number) => ReactNode; // 총 건수 표시 렌더러
 }
 
-const DataTable = <T,>({
-    rows, total, pageSize, title, description, columns, filterOptions,
-    query, filterKey, sortKey, sortDirection, page,
-    onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
-    isLoading = false,
-    searchLabel = "검색",
-    searchPlaceholder = "검색어를 입력하세요",
-    filterLabel = "검색 조건",
-    getRowId = (row) => (row as { id: string | number }).id,
-    captionRenderer = (count) => `총 ${count} 건`,
-    enableSelect = false,
-    selectedRowIds = [],
-    onSelectedRowIdsChange,
-    tableHeightClassName = "h-[420px]",
-    pageSizeOptions = [5, 10, 25, 50, 100],
-}: IGridTableClientProps<T>) => {
+const DataTable = <T, >({
+                            rows, total, pageSize, title, description, columns, filterOptions,
+                            query, filterKey, sortKey, sortDirection, page,
+                            onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
+                            isLoading = false,
+                            searchLabel = "검색",
+                            searchPlaceholder = "검색어를 입력하세요",
+                            filterLabel = "검색 조건",
+                            getRowId = (row) => (row as { id: string | number }).id,
+                            captionRenderer = (count) => `총 ${count} 건`,
+                            enableSelect = false,
+                            selectedRowIds = [],
+                            onSelectedRowIdsChange,
+                            tableHeightClassName = "h-[420px]",
+                            pageSizeOptions = [5, 10, 25, 50, 100],
+                        }: IGridTableClientProps<T>) => {
     const [draftQuery, setDraftQuery] = useState(query);
     const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
     const [columnFilterSearch, setColumnFilterSearch] = useState<Partial<Record<keyof T, string>>>({});
     const [columnSelectedValues, setColumnSelectedValues] = useState<Partial<Record<keyof T, string[]>>>({});
     const [internalSelectedRowIds, setInternalSelectedRowIds] = useState<Array<string | number>>([]);
-
     const totalPages = Math.max(Math.ceil(total / pageSize), 1);
     const currentPage = Math.min(Math.max(page, 1), totalPages);
 
+    // #. 페이지 유효성 검사 및 보정 로직
     useEffect(() => {
         if (isLoading) return;
         if (total <= 0) return;
         if (page !== currentPage) onPageChange(currentPage);
     }, [currentPage, isLoading, onPageChange, page, total]);
 
+    // #. 외부 query 값이 바뀔 때 내부 입력값 동기화
     useEffect(() => setDraftQuery(query), [query]);
+    // #. 외부 filterKey 값이 바뀔 때 내부 필터값 동기화
     useEffect(() => setDraftFilterKey(filterKey), [filterKey]);
 
+    // #. 행 데이터에서 특정 키의 값을 문자열로 추출하는 함수
     const getColumnRawValue = (row: T, key: keyof T) => {
         const value = row[key];
         if (value === undefined || value === null) return "";
         return String(value);
     };
 
+    // #. 컬럼 설정 중 필터링이 가능한 컬럼들만 추출
     const filterableColumns = useMemo(
         () => columns.filter((column) => column.filterable).map((column) => column.key as keyof T),
         [columns],
     );
 
+    // #. 각 컬럼별로 필터 목록에 표시할 고유 값들을 추출
     const columnFilterOptions = useMemo(() => {
         const map = new Map<keyof T, string[]>();
 
@@ -105,6 +111,7 @@ const DataTable = <T,>({
         return map;
     }, [filterableColumns, rows]);
 
+    // #. 컬럼별 개별 필터링 조건에 따라 행 데이터를 필터링
     const filteredRows = useMemo(() => {
         return rows.filter((row) =>
             columns.every((column) => {
@@ -132,8 +139,8 @@ const DataTable = <T,>({
     const pageWindowStart = Math.floor((currentPage - 1) / DEFAULT_TABLE.pageWindow) * DEFAULT_TABLE.pageWindow + 1;
     const pageWindowEnd = Math.min(totalPages, pageWindowStart + DEFAULT_TABLE.pageWindow - 1);
     const pageNumbers = useMemo(() =>
-        Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
-    [pageWindowEnd, pageWindowStart]);
+            Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
+        [pageWindowEnd, pageWindowStart]);
 
     const sortIndicator = (key: keyof T) => {
         if (sortKey !== key) return null;
@@ -142,12 +149,14 @@ const DataTable = <T,>({
 
     const skeletonRows = Array.from({ length: 6 }, (_, index) => `skeleton-${index}`);
 
+    // #. 상단 검색 버튼 클릭 시 검색 조건과 검색어를 부모로 전달
     const onClickSearch = () => {
         onFilterChange(draftFilterKey);
         onQueryChange(draftQuery);
         onPageChange(1);
     };
 
+    // #. 헤더 체크박스 클릭 시 전체 행 선택/해제 처리
     const onToggleSelectAll = (checked: boolean | "indeterminate") => {
         if (checked === true) {
             const merged = new Set([...effectiveSelectedRowIds, ...allVisibleIds]);
@@ -163,6 +172,7 @@ const DataTable = <T,>({
         else setInternalSelectedRowIds(nextSelected);
     };
 
+    // #. 개별 행의 체크박스 클릭 시 선택 상태 토글
     const onToggleSelectRow = (rowId: string | number, checked: boolean | "indeterminate") => {
         if (checked === true) {
             const merged = new Set([...effectiveSelectedRowIds, rowId]);
@@ -177,10 +187,12 @@ const DataTable = <T,>({
         else setInternalSelectedRowIds(nextSelected);
     };
 
+    // #. 컬럼별 필터 내의 검색어 입력 처리
     const onChangeColumnSearch = (key: keyof T, value: string) => {
         setColumnFilterSearch((prev) => ({ ...prev, [key]: value }));
     };
 
+    // #. 컬럼별 필터 목록에서 특정 항목 선택/해제
     const onToggleColumnFilterValue = (key: keyof T, value: string, checked: boolean) => {
         setColumnSelectedValues((prev) => {
             const current = prev[key] ?? [];
@@ -190,6 +202,7 @@ const DataTable = <T,>({
         onPageChange(1);
     };
 
+    // #. 특정 컬럼의 필터 항목 전체 선택/해제
     const onToggleColumnSelectAll = (key: keyof T, checked: boolean) => {
         setColumnSelectedValues((prev) => {
             const allValues = columnFilterOptions.get(key) ?? [];
@@ -198,7 +211,7 @@ const DataTable = <T,>({
         onPageChange(1);
     };
 
-
+    // #. 페이지당 표시할 행 수 변경 시 호출
     const onChangePageSize = (value: string) => {
         if (!onPageSizeChange) return;
         const nextPageSize = Number(value);
@@ -210,6 +223,7 @@ const DataTable = <T,>({
 
     return (
         <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+            {/* 상단 영역 */}
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">{title}</h2>
@@ -218,9 +232,10 @@ const DataTable = <T,>({
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
                     <div className="w-full sm:w-40">
                         <label className="text-xs font-medium text-muted-foreground">{filterLabel}</label>
-                        <Select value={String(draftFilterKey)} onValueChange={(value) => setDraftFilterKey(value as "all" | keyof T)}>
+                        <Select value={String(draftFilterKey)}
+                                onValueChange={(value) => setDraftFilterKey(value as "all" | keyof T)}>
                             <SelectTrigger className="mt-2">
-                                <SelectValue placeholder="검색 조건 선택" />
+                                <SelectValue placeholder="검색 조건 선택"/>
                             </SelectTrigger>
                             <SelectContent>
                                 {filterOptions.map((option) =>
@@ -241,14 +256,15 @@ const DataTable = <T,>({
                                 onChange={(event) => setDraftQuery(event.target.value)}
                             />
                             <Button type="button" variant="outline" size="icon" onClick={onClickSearch} aria-label="검색">
-                                <Search className="h-4 w-4" />
+                                <Search className="h-4 w-4"/>
                             </Button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <ScrollArea className={`w-full rounded-md border ${tableHeightClassName}`}>
+            {/* 테이블 */}
+            <ScrollArea className={`w-full rounded-md ${tableHeightClassName}`}>
                 <Table>
                     <TableHeader className="sticky top-0 z-20 bg-card">
                         <TableRow className="bg-card hover:bg-card">
@@ -293,11 +309,12 @@ const DataTable = <T,>({
                                                             className="h-7 w-7 text-muted-foreground hover:text-foreground"
                                                             aria-label={`${column.label} 필터 열기`}
                                                         >
-                                                            <Filter className="h-3.5 w-3.5" />
+                                                            <Filter className="h-3.5 w-3.5"/>
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent className="w-56 p-2" align="start">
-                                                        <DropdownMenuLabel className="px-1 py-1 text-xs text-muted-foreground">
+                                                        <DropdownMenuLabel
+                                                            className="px-1 py-1 text-xs text-muted-foreground">
                                                             {column.label} 필터
                                                         </DropdownMenuLabel>
                                                         <Input
@@ -306,7 +323,7 @@ const DataTable = <T,>({
                                                             placeholder="Search..."
                                                             className="mb-2 h-8"
                                                         />
-                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuSeparator/>
                                                         <DropdownMenuCheckboxItem
                                                             checked={selectedCount === 0 || selectedCount === (columnFilterOptions.get(columnKey)?.length ?? 0)}
                                                             onCheckedChange={(checked) => onToggleColumnSelectAll(columnKey, checked === true)}
@@ -344,12 +361,12 @@ const DataTable = <T,>({
                                 <TableRow key={key}>
                                     {enableSelect && (
                                         <TableCell className="w-10">
-                                            <Skeleton className="h-4 w-4" />
+                                            <Skeleton className="h-4 w-4"/>
                                         </TableCell>
                                     )}
                                     {columns.map((column) =>
                                         <TableCell key={`${key}-${String(column.key)}`}>
-                                            <Skeleton className="h-4 w-24" />
+                                            <Skeleton className="h-4 w-24"/>
                                         </TableCell>,
                                     )}
                                 </TableRow>,
@@ -368,7 +385,8 @@ const DataTable = <T,>({
                                             </TableCell>
                                         )}
                                         {columns.map((column) =>
-                                            <TableCell key={`${rowId}-${String(column.key)}`} className={column.cellClassName}>
+                                            <TableCell key={`${rowId}-${String(column.key)}`}
+                                                       className={column.cellClassName}>
                                                 {column.render ? column.render(row) : String(row[column.key as keyof T])}
                                             </TableCell>,
                                         )}
@@ -389,6 +407,7 @@ const DataTable = <T,>({
                 </Table>
             </ScrollArea>
 
+            {/* 하단 영역 */}
             <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-wrap items-center gap-3">
                     <span>
@@ -396,8 +415,8 @@ const DataTable = <T,>({
                     </span>
                     <Activity mode={isLoading ? "visible" : "hidden"}>
                         <div className="flex items-center gap-2">
-                            <Skeleton className="h-4 w-28" />
-                            <Skeleton className="h-4 w-12" />
+                            <Skeleton className="h-4 w-28"/>
+                            <Skeleton className="h-4 w-12"/>
                         </div>
                     </Activity>
                     <Activity mode={isLoading ? "hidden" : "visible"}>{captionRenderer(total)}</Activity>
@@ -406,7 +425,7 @@ const DataTable = <T,>({
                         <span className="text-xs text-muted-foreground">Rows</span>
                         <Select value={String(pageSize)} onValueChange={onChangePageSize}>
                             <SelectTrigger className="h-8 w-20">
-                                <SelectValue />
+                                <SelectValue/>
                             </SelectTrigger>
                             <SelectContent>
                                 {pageSizeOptions.map((size) => (
@@ -417,22 +436,30 @@ const DataTable = <T,>({
                     </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}>처음</Button>
-                    <Button type="button" variant="outline" size="sm" onClick={() => previousPage && onPageChange(previousPage)} disabled={!previousPage}>이전</Button>
+                    <Button type="button" variant="outline" size="sm"
+                            onClick={() => onPageChange(1)}
+                            disabled={currentPage === 1}>처음</Button>
+                    <Button type="button" variant="outline" size="sm"
+                            onClick={() => previousPage && onPageChange(previousPage)}
+                            disabled={!previousPage}>이전</Button>
                     {pageNumbers.map((pageNumber) =>
                         <Button
                             key={pageNumber}
-                            className={pageNumber === currentPage ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90" : undefined}
                             type="button"
                             variant={pageNumber === currentPage ? "default" : "outline"}
+                            className={pageNumber === currentPage ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90" : undefined}
                             size="sm"
                             onClick={() => onPageChange(pageNumber)}
                         >
                             {pageNumber}
                         </Button>,
                     )}
-                    <Button type="button" variant="outline" size="sm" onClick={() => nextPage && onPageChange(nextPage)} disabled={!nextPage}>다음</Button>
-                    <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}>마지막</Button>
+                    <Button type="button" variant="outline" size="sm"
+                            onClick={() => nextPage && onPageChange(nextPage)}
+                            disabled={!nextPage}>다음</Button>
+                    <Button type="button" variant="outline" size="sm"
+                            onClick={() => onPageChange(totalPages)}
+                            disabled={currentPage === totalPages}>마지막</Button>
                 </div>
             </div>
         </section>
