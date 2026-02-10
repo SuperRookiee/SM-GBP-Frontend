@@ -29,7 +29,7 @@ export default SampleComponent;
 
 - CSS 클래스명 및 `className`에는 `snake_case` 또는 `kebab-case` 사용을 허용한다.
 - 하나의 프로젝트 내에서는 **한 가지 표기법으로 통일**하는 것을 권장한다.
-- 
+
 ---
 
 ### 2.2 boolean (flag) 변수 네이밍
