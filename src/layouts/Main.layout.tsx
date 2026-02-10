@@ -31,7 +31,7 @@ const MainLayout = () => {
                     </div>
                 </header>
                 <ScrollArea className="flex-1">
-                    <main className="min-w-0 overflow-x-hidden px-4 py-2">
+                    <main className="min-w-0 px-4 py-2">
                         <Outlet/>
                     </main>
                 </ScrollArea>

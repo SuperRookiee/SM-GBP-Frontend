@@ -442,8 +442,8 @@ const DataTable = <T, >({
                                 </TableRow>
                             )}
                         </TableBody>
-                    </ScrollArea>
-                </Table>
+                    </Table>
+                </ScrollArea>
             </div>
 
             <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
