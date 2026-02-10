@@ -4,6 +4,7 @@ import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/dem
 import type { UserColumn, UserFilterOption } from "@/types/user.types.ts";
 import ActionMenu from "@/components/common/ActionMenu";
 
+/** Default **/
 export const DEFAULT_TABLE = {
     pageSize: 5,
     pageWindow: 5,
