@@ -63,7 +63,7 @@ const DataTable = <T, >({
     enableSelect = false,
     selectedRowIds = [],
     onSelectedRowIdsChange,
-    tableHeightClassName = "h-[420px]",
+    tableHeightClassName = "h-105",
     pageSizeOptions = [5, 10, 25, 50, 100],
 }: IGridTableClientProps<T>) => {
     const [draftQuery, setDraftQuery] = useState(query);
@@ -227,7 +227,8 @@ const DataTable = <T, >({
     };
 
     return (
-        <section className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm">
+        <section
+            className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">{title}</h2>
@@ -268,8 +269,8 @@ const DataTable = <T, >({
             </div>
 
             <div className="w-full min-w-0 overflow-x-auto rounded-md border">
-                <ScrollArea className={`${tableHeightClassName} min-w-0 overflow-x-hidden`}>
-                    <Table className="w-full lg:min-w-225 table-fixed">
+                <Table className="w-full lg:min-w-225 table-fixed">
+                    <ScrollArea className={`${tableHeightClassName}`}>
                         <TableHeader className="sticky top-0 z-20 bg-card">
                             <TableRow className="bg-card hover:bg-card">
                                 {enableSelect &&
@@ -306,7 +307,8 @@ const DataTable = <T, >({
                                                         {sortIndicator(columnKey)}
                                                     </Button>
                                                 ) : (
-                                                    <span className="truncate text-sm text-muted-foreground">{column.label}</span>
+                                                    <span
+                                                        className="truncate text-sm text-muted-foreground">{column.label}</span>
                                                 )}
 
                                                 {column.filterable && (
@@ -320,7 +322,8 @@ const DataTable = <T, >({
                                                                 aria-label={`${column.label} 필터 열기`}
                                                             >
                                                                 <Filter className="h-3.5 w-3.5"/>
-                                                                {isFilterActive && <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-primary"/>}
+                                                                {isFilterActive && <span
+                                                                    className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-primary"/>}
                                                             </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent className="w-56 p-2 overflow-x-auto"
@@ -430,8 +433,8 @@ const DataTable = <T, >({
                                 </TableRow>
                             )}
                         </TableBody>
-                    </Table>
-                </ScrollArea>
+                    </ScrollArea>
+                </Table>
             </div>
 
             <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
