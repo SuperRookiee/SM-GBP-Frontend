@@ -50,13 +50,14 @@ export const DEMO_DATA_TABLE_ACTION = {
 };
 
 export const DEMO_DATA_TABLE_COLUMNS: DemoDataTableColumn[] = [
-    { key: "id", label: "문서 번호", cellClassName: "font-medium", filterable: true },
-    { key: "customer", label: "담당자", filterable: true },
-    { key: "email", label: "이메일", filterable: true },
-    { key: "role", label: "역할", filterable: true },
+    { key: "id", label: "문서 번호", width: 140, cellClassName: "font-medium", filterable: true },
+    { key: "customer", label: "담당자", width: 140, filterable: true },
+    { key: "email", label: "이메일", width: 260, filterable: true },
+    { key: "role", label: "역할", width: 120, filterable: true },
     {
         key: "status",
         label: "상태",
+        width: 120,
         filterable: true,
         render: row =>
             <span className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground">
@@ -67,6 +68,7 @@ export const DEMO_DATA_TABLE_COLUMNS: DemoDataTableColumn[] = [
         key: "actions",
         label: DEMO_DATA_TABLE_ACTION.columnLabel,
         sortable: false,
+        width: 80,
         headerClassName: "text-right",
         cellClassName: "text-right",
         render: row =>
@@ -89,8 +91,8 @@ export const USER_TABLE_FILTER: UserFilterOption[] = [
 ];
 
 export const USER_TABLE_COLUMNS: UserColumn[] = [
-    { key: "id", label: "ID", cellClassName: "font-medium", filterable: true },
-    { key: "name", label: "이름", filterable: true },
-    { key: "role", label: "권한", filterable: true },
-    { key: "user_id", label: "User ID", filterable: true },
+    { key: "id", label: "ID", width: 100, cellClassName: "font-medium", filterable: true },
+    { key: "name", label: "이름", width: 160, filterable: true },
+    { key: "role", label: "권한", width: 140, filterable: true },
+    { key: "user_id", label: "User ID", width: 180, filterable: true },
 ];

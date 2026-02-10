@@ -4,6 +4,7 @@ import type { IDemoDataTableRow } from "@/interface/IDemoDataTable.interface.ts"
 export type DemoDataTableColumn<T = IDemoDataTableRow> = {
   key: keyof T | string;
   label: string;
+  width?: string | number;
   sortable?: boolean;
   filterable?: boolean;
   headerClassName?: string;
