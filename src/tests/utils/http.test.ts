@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { describe, expect, it } from "vitest";
 import { Delete, Get, Patch, Post, Put } from "@/utils/http.ts";
-import { server } from "@/test/mswServer.ts";
+import { server } from "@/tests/mswServer.ts";
 
 /**
  * http 유틸 함수 전반에 대한 테스트

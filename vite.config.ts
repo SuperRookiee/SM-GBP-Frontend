@@ -17,10 +17,10 @@ const viteConfig = defineConfig({
 
 const vitestConfig = defineTestConfig({
   test: {
-    include: ["src/test/**/*.{test,spec}.{ts,tsx}"],
-    exclude: ["src/test/data/**"],
+    include: ["src/tests/**/*.{test,spec}.{ts,tsx}"],
+    exclude: ["src/tests/data/**"],
     environment: "jsdom",
-    setupFiles: "./src/test/setup.ts",
+    setupFiles: "./src/tests/setup.ts",
   },
 });
 

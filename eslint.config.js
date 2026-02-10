@@ -56,7 +56,7 @@ export default defineConfig([
                     { pattern: '@/assets/**', group: 'internal', position: 'after' },
                     { pattern: '@/styles/**', group: 'internal', position: 'after' },
                     // Test
-                    { pattern: '@/test/**', group: 'parent', position: 'before' },
+                    { pattern: '@/tests/**', group: 'parent', position: 'before' },
                 ],
                 pathGroupsExcludedImportTypes: ['react'],
                 alphabetize: { order: 'asc', caseInsensitive: true },
