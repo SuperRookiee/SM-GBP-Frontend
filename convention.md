@@ -25,6 +25,11 @@ export default SampleComponent;
 - 변수 및 함수명은 `camelCase`를 사용한다.
 - 함수명은 **동사 + 명사** 형태로 작성한다.
 
+### 2.2 CSS / className
+
+- CSS 클래스명 및 `className`에는 `snake_case` 또는 `kebab-case` 사용을 허용한다.
+- 하나의 프로젝트 내에서는 **한 가지 표기법으로 통일**하는 것을 권장한다.
+- 
 ---
 
 ### 2.2 boolean (flag) 변수 네이밍
@@ -47,7 +52,7 @@ hasToken;
 - 약어 사용은 기본적으로 **금지**한다.
 - 단, **관용적으로 널리 사용되는 약어**와 **팀 합의된 약어**만 허용한다.
 
-비허용 예시
+비권장 예시
 
 ```tsx
 idx;           // ❌
@@ -55,7 +60,7 @@ arr;           // ❌
 string2Number; // ❌
 ```
 
-허용 예시
+권장 예시
 
 ```tsx
 index;           // ⭕
