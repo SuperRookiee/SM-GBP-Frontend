@@ -4,6 +4,11 @@ import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/dem
 import type { UserColumn, UserFilterOption } from "@/types/user.types.ts";
 import ActionMenu from "@/components/common/ActionMenu";
 
+export const DEFAULT_TABLE = {
+    pageSize: 5,
+    pageWindow: 5,
+} as const;
+
 /** Demo Data Table **/
 export const DEMO_DATA_TABLE_FILTER: DemoDataTableFilterOption[] = [
     { value: "all", label: "전체" },

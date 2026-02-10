@@ -1,6 +1,6 @@
 import { Activity, type ReactNode, useEffect, useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
-import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
+import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -126,8 +126,8 @@ const DataTable = <T,>({
     const previousPage = currentPage > 1 ? currentPage - 1 : null;
     const nextPage = currentPage < totalPages ? currentPage + 1 : null;
 
-    const pageWindowStart = Math.floor((currentPage - 1) / GRID_CONSTANTS.pageWindow) * GRID_CONSTANTS.pageWindow + 1;
-    const pageWindowEnd = Math.min(totalPages, pageWindowStart + GRID_CONSTANTS.pageWindow - 1);
+    const pageWindowStart = Math.floor((currentPage - 1) / DEFAULT_TABLE.pageWindow) * DEFAULT_TABLE.pageWindow + 1;
+    const pageWindowEnd = Math.min(totalPages, pageWindowStart + DEFAULT_TABLE.pageWindow - 1);
     const pageNumbers = useMemo(() =>
         Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
     [pageWindowEnd, pageWindowStart]);

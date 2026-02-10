@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDemoDataTableSampleDataApi } from "@/apis/demoDataTable.api";
-import { GRID_CONSTANTS } from "@/constants/grid.constants.ts";
+import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { DEMO_DATA_TABLE_COLUMNS, DEMO_DATA_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useDataTablePageStore } from "@/stores/page/dataTablePage.store.ts";
 import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
@@ -17,7 +17,7 @@ const DemoDataTablePage = () => {
     const setQuery = useDataTablePageStore((s) => s.setQuery);
     const setFilterKey = useDataTablePageStore((s) => s.setFilterKey);
     const setSort = useDataTablePageStore((s) => s.setSort);
-    const pageSize = GRID_CONSTANTS.pageSize;
+    const pageSize = DEFAULT_TABLE.pageSize;
 
     // #. page가 0 이하로 가는 방지
     useEffect(() => {
