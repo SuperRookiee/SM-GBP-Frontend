@@ -66,6 +66,7 @@ const DataTable = <T, >({
     tableHeightClassName = "h-[420px]",
     pageSizeOptions = [5, 10, 25, 50, 100],
 }: IGridTableClientProps<T>) => {
+    const DEFAULT_COLUMN_WIDTH = 180;
     const [draftQuery, setDraftQuery] = useState(query);
     const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
     const [columnFilterSearch, setColumnFilterSearch] = useState<Partial<Record<keyof T, string>>>({});
@@ -252,6 +253,15 @@ const DataTable = <T, >({
         window.addEventListener("mouseup", onMouseUp);
     };
 
+    const getColumnStyle = (columnKey: keyof T) => {
+        const width = columnWidths[String(columnKey)] ?? DEFAULT_COLUMN_WIDTH;
+
+        return {
+            width: `${width}px`,
+            minWidth: `${width}px`,
+        };
+    };
+
     return (
         <section className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -293,9 +303,9 @@ const DataTable = <T, >({
                 </div>
             </div>
 
-            <div className="w-full min-w-0 overflow-x-auto rounded-md border">
-                <ScrollArea className={`${tableHeightClassName} min-w-0 overflow-x-hidden`}>
-                    <Table className="w-full lg:min-w-225 table-fixed">
+            <div className="w-full min-w-0 rounded-md border">
+                <ScrollArea className={`${tableHeightClassName} min-w-0 overflow-x-auto`}>
+                    <Table className="min-w-full w-max table-fixed">
                         <TableHeader className="sticky top-0 z-20 bg-card">
                             <TableRow className="bg-card hover:bg-card">
                                 {enableSelect &&
@@ -319,9 +329,7 @@ const DataTable = <T, >({
 
                                     return (
                                         <TableHead key={String(column.key)}
-                                                   style={columnWidths[String(columnKey)]
-                                                       ? { width: `${columnWidths[String(columnKey)]}px`, minWidth: `${columnWidths[String(columnKey)]}px` }
-                                                       : { minWidth: "180px" }}
+                                                   style={getColumnStyle(columnKey)}
                                                    className={`group relative overflow-hidden bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
                                             <div className="flex min-w-0 items-center gap-1 pr-2">
                                                 {isSortable ? (
@@ -428,9 +436,7 @@ const DataTable = <T, >({
                                         {columns.map((column, columnIndex) =>
                                             <TableCell
                                                 key={`${key}-${String(column.key)}`}
-                                                style={columnWidths[String(column.key)]
-                                                    ? { width: `${columnWidths[String(column.key)]}px`, minWidth: `${columnWidths[String(column.key)]}px` }
-                                                    : { minWidth: "180px" }}
+                                                style={getColumnStyle(column.key as keyof T)}
                                                 className={`${columnIndex === columns.length - 1 ? "" : "border-r border-border/40"} whitespace-nowrap overflow-hidden`.trim()}
                                             >
                                                 <Skeleton className="h-4 w-24"/>
@@ -453,9 +459,7 @@ const DataTable = <T, >({
                                             )}
                                             {columns.map((column) =>
                                                 <TableCell key={`${rowId}-${String(column.key)}`}
-                                                           style={columnWidths[String(column.key)]
-                                                               ? { width: `${columnWidths[String(column.key)]}px`, minWidth: `${columnWidths[String(column.key)]}px` }
-                                                               : { minWidth: "180px" }}
+                                                           style={getColumnStyle(column.key as keyof T)}
                                                            className={`${column.cellClassName ?? ""} ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"} whitespace-nowrap overflow-hidden`.trim()}>
                                                     <div className="overflow-hidden text-ellipsis whitespace-nowrap">
                                                         {column.render ? column.render(row) : String(row[column.key as keyof T])}
