@@ -313,8 +313,7 @@ const DataTable = <T, >({
                                 const totalFilterOptionCount = (columnFilterOptions.get(columnKey) ?? []).length;
                                 const effectiveSelectedValues = selectedValues ?? (columnFilterOptions.get(columnKey) ?? []);
                                 const selectedCount = effectiveSelectedValues.length;
-                                const isFilterActive = selectedValues !== undefined
-                                    && selectedCount > 0
+                                const isFilterActive = totalFilterOptionCount > 0
                                     && selectedCount < totalFilterOptionCount;
 
                                 return (
