@@ -1,4 +1,4 @@
-import { Activity, type ReactNode, useEffect, useMemo, useState } from "react";
+import { Activity, type MouseEvent as ReactMouseEvent, type ReactNode, useEffect, useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
 import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
@@ -71,6 +71,7 @@ const DataTable = <T, >({
     const [columnFilterSearch, setColumnFilterSearch] = useState<Partial<Record<keyof T, string>>>({});
     const [columnSelectedValues, setColumnSelectedValues] = useState<Partial<Record<keyof T, string[]>>>({});
     const [internalSelectedRowIds, setInternalSelectedRowIds] = useState<Array<string | number>>([]);
+    const [columnWidths, setColumnWidths] = useState<Partial<Record<string, number>>>({});
     const totalPages = Math.max(Math.ceil(total / pageSize), 1);
     const currentPage = Math.min(Math.max(page, 1), totalPages);
 
@@ -118,8 +119,9 @@ const DataTable = <T, >({
                 if (!column.filterable) return true;
 
                 const key = column.key as keyof T;
-                const selectedValues = columnSelectedValues[key] ?? [];
-                if (selectedValues.length === 0) return true;
+                const selectedValues = columnSelectedValues[key];
+                if (selectedValues === undefined) return true;
+                if (selectedValues.length === 0) return false;
 
                 return selectedValues.includes(getColumnRawValue(row, key));
             }),
@@ -195,8 +197,12 @@ const DataTable = <T, >({
     // #. 컬럼별 필터 목록에서 특정 항목 선택/해제
     const onToggleColumnFilterValue = (key: keyof T, value: string, checked: boolean) => {
         setColumnSelectedValues((prev) => {
-            const current = prev[key] ?? [];
-            const next = checked ? [...new Set([...current, value])] : current.filter((item) => item !== value);
+            const allValues = columnFilterOptions.get(key) ?? [];
+            const current = prev[key] ?? allValues;
+            const next = checked
+                ? [...new Set([...current, value])]
+                : current.filter((item) => item !== value);
+
             return { ...prev, [key]: next };
         });
         onPageChange(1);
@@ -221,8 +227,33 @@ const DataTable = <T, >({
         onPageChange(1);
     };
 
+    const onResizeColumn = (columnKey: keyof T, event: ReactMouseEvent<HTMLSpanElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const th = event.currentTarget.closest("th");
+        if (!th) return;
+
+        const key = String(columnKey);
+        const startX = event.clientX;
+        const startWidth = th.getBoundingClientRect().width;
+
+        const onMouseMove = (moveEvent: MouseEvent) => {
+            const nextWidth = Math.max(5, Math.round(startWidth + moveEvent.clientX - startX));
+            setColumnWidths((prev) => ({ ...prev, [key]: nextWidth }));
+        };
+
+        const onMouseUp = () => {
+            window.removeEventListener("mousemove", onMouseMove);
+            window.removeEventListener("mouseup", onMouseUp);
+        };
+
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
+    };
+
     return (
-        <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+        <section className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">{title}</h2>
@@ -262,12 +293,12 @@ const DataTable = <T, >({
                 </div>
             </div>
 
-            <ScrollArea className={`w-full rounded-md border ${tableHeightClassName}`}>
-                <Table>
+            <ScrollArea className={`w-full max-w-full rounded-md border ${tableHeightClassName}`}>
+                <Table className="min-w-full w-max table-auto">
                     <TableHeader className="sticky top-0 z-20 bg-card">
                         <TableRow className="bg-card hover:bg-card">
                             {enableSelect &&
-                                <TableHead className="w-10 bg-card">
+                                <TableHead className="w-10 bg-card border-r border-border/40">
                                     <Checkbox
                                         checked={isAllRowsSelected ? true : (isSomeRowsSelected ? "indeterminate" : false)}
                                         onCheckedChange={onToggleSelectAll}
@@ -275,19 +306,26 @@ const DataTable = <T, >({
                                     />
                                 </TableHead>
                             }
-                            {columns.map((column) => {
+                            {columns.map((column, index) => {
                                 const isSortable = column.sortable ?? true;
                                 const columnKey = column.key as keyof T;
-                                const selectedCount = (columnSelectedValues[columnKey] ?? []).length;
-                                const isFilterActive = selectedCount > 0;
+                                const selectedValues = columnSelectedValues[columnKey];
+                                const totalFilterOptionCount = (columnFilterOptions.get(columnKey) ?? []).length;
+                                const effectiveSelectedValues = selectedValues ?? (columnFilterOptions.get(columnKey) ?? []);
+                                const selectedCount = effectiveSelectedValues.length;
+                                const isFilterActive = totalFilterOptionCount > 0
+                                    && selectedCount < totalFilterOptionCount;
 
                                 return (
                                     <TableHead key={String(column.key)}
-                                               className={`bg-card ${column.headerClassName ?? ""}`}>
-                                        <div className="flex items-center gap-1">
+                                               style={columnWidths[String(columnKey)]
+                                                   ? { width: `${columnWidths[String(columnKey)]}px`, minWidth: `${columnWidths[String(columnKey)]}px` }
+                                                   : { minWidth: "180px" }}
+                                               className={`group relative overflow-hidden bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
+                                        <div className="flex min-w-0 items-center gap-1 pr-2">
                                             {isSortable ? (
                                                 <Button
-                                                    className="h-auto justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
+                                                    className="h-auto min-w-0 max-w-full truncate justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
                                                     type="button"
                                                     variant="ghost"
                                                     onClick={() => onSortChange(columnKey)}
@@ -296,7 +334,7 @@ const DataTable = <T, >({
                                                     {sortIndicator(columnKey)}
                                                 </Button>
                                             ) : (
-                                                <span className="text-sm text-muted-foreground">{column.label}</span>
+                                                <span className="truncate text-sm text-muted-foreground">{column.label}</span>
                                             )}
 
                                             {column.filterable && (
@@ -329,7 +367,12 @@ const DataTable = <T, >({
                                                         <ScrollArea className="h-60 w-full">
                                                             <div className="min-w-max pr-2">
                                                                 <DropdownMenuCheckboxItem
-                                                                    checked={selectedCount === 0 || selectedCount === (columnFilterOptions.get(columnKey)?.length ?? 0)}
+                                                                    checked={selectedCount === totalFilterOptionCount
+                                                                        ? true
+                                                                        : selectedCount === 0
+                                                                            ? false
+                                                                            : "indeterminate"}
+                                                                    onSelect={(event) => event.preventDefault()}
                                                                     onCheckedChange={(checked) => onToggleColumnSelectAll(columnKey, checked === true)}
                                                                     className="capitalize whitespace-nowrap"
                                                                 >
@@ -342,7 +385,8 @@ const DataTable = <T, >({
                                                                     .map((value) => (
                                                                         <DropdownMenuCheckboxItem
                                                                             key={`${String(columnKey)}-${value}`}
-                                                                            checked={(columnSelectedValues[columnKey] ?? []).includes(value)}
+                                                                            checked={effectiveSelectedValues.includes(value)}
+                                                                            onSelect={(event) => event.preventDefault()}
                                                                             onCheckedChange={(checked) =>
                                                                                 onToggleColumnFilterValue(columnKey, value, checked === true)
                                                                             }
@@ -356,6 +400,15 @@ const DataTable = <T, >({
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             )}
+                                            <span
+                                                role="separator"
+                                                aria-orientation="vertical"
+                                                aria-label={`${column.label} 너비 조절`}
+                                                className="absolute right-0 top-0 h-full w-2 cursor-col-resize opacity-0 transition-opacity group-hover:opacity-100"
+                                                onMouseDown={(event) => onResizeColumn(columnKey, event)}
+                                            >
+                                                <span className="absolute right-0 top-2 h-[calc(100%-1rem)] border-r border-border/60"/>
+                                            </span>
                                         </div>
                                     </TableHead>
                                 );
@@ -367,12 +420,18 @@ const DataTable = <T, >({
                             ? skeletonRows.map((key) =>
                                 <TableRow key={key}>
                                     {enableSelect && (
-                                        <TableCell className="w-10">
+                                        <TableCell className="w-10 border-r border-border/40">
                                             <Skeleton className="h-4 w-4"/>
                                         </TableCell>
                                     )}
-                                    {columns.map((column) =>
-                                        <TableCell key={`${key}-${String(column.key)}`}>
+                                    {columns.map((column, columnIndex) =>
+                                        <TableCell
+                                            key={`${key}-${String(column.key)}`}
+                                            style={columnWidths[String(column.key)]
+                                                ? { width: `${columnWidths[String(column.key)]}px`, minWidth: `${columnWidths[String(column.key)]}px` }
+                                                : { minWidth: "180px" }}
+                                            className={`${columnIndex === columns.length - 1 ? "" : "border-r border-border/40"} whitespace-nowrap overflow-hidden`.trim()}
+                                        >
                                             <Skeleton className="h-4 w-24"/>
                                         </TableCell>,
                                     )}
@@ -383,7 +442,7 @@ const DataTable = <T, >({
                                 return (
                                     <TableRow key={rowId}>
                                         {enableSelect && (
-                                            <TableCell className="w-10">
+                                            <TableCell className="w-10 border-r border-border/40">
                                                 <Checkbox
                                                     checked={selectedRowIdSet.has(rowId)}
                                                     onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
@@ -393,8 +452,13 @@ const DataTable = <T, >({
                                         )}
                                         {columns.map((column) =>
                                             <TableCell key={`${rowId}-${String(column.key)}`}
-                                                       className={column.cellClassName}>
-                                                {column.render ? column.render(row) : String(row[column.key as keyof T])}
+                                                       style={columnWidths[String(column.key)]
+                                                           ? { width: `${columnWidths[String(column.key)]}px`, minWidth: `${columnWidths[String(column.key)]}px` }
+                                                           : { minWidth: "180px" }}
+                                                       className={`${column.cellClassName ?? ""} ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"} whitespace-nowrap overflow-hidden`.trim()}>
+                                                <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                                                    {column.render ? column.render(row) : String(row[column.key as keyof T])}
+                                                </div>
                                             </TableCell>,
                                         )}
                                     </TableRow>
