@@ -269,8 +269,8 @@ const DataTable = <T, >({
             </div>
 
             <div className="w-full min-w-0 overflow-x-auto rounded-md border">
-                <Table className="w-full lg:min-w-225 table-fixed">
-                    <ScrollArea className={`${tableHeightClassName}`}>
+                <ScrollArea className={`${tableHeightClassName}`}>
+                    <Table className="w-full lg:min-w-225 table-fixed">
                         <TableHeader className="sticky top-0 z-20 bg-card">
                             <TableRow className="bg-card hover:bg-card">
                                 {enableSelect &&
@@ -433,8 +433,8 @@ const DataTable = <T, >({
                                 </TableRow>
                             )}
                         </TableBody>
-                    </ScrollArea>
-                </Table>
+                    </Table>
+                </ScrollArea>
             </div>
 
             <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
