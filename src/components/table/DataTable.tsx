@@ -294,7 +294,7 @@ const DataTable = <T, >({
             </div>
 
             <ScrollArea className={`w-full rounded-md border ${tableHeightClassName}`}>
-                <Table className="table-fixed">
+                <Table className="min-w-full w-max table-auto">
                     <TableHeader className="sticky top-0 z-20 bg-card">
                         <TableRow className="bg-card hover:bg-card">
                             {enableSelect &&
@@ -319,12 +319,14 @@ const DataTable = <T, >({
 
                                 return (
                                     <TableHead key={String(column.key)}
-                                               style={columnWidths[String(columnKey)] ? { width: `${columnWidths[String(columnKey)]}px` } : undefined}
+                                               style={columnWidths[String(columnKey)]
+                                                   ? { width: `${columnWidths[String(columnKey)]}px`, minWidth: `${columnWidths[String(columnKey)]}px` }
+                                                   : { minWidth: "180px" }}
                                                className={`group relative bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex min-w-0 items-center gap-1 pr-2">
                                             {isSortable ? (
                                                 <Button
-                                                    className="h-auto justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
+                                                    className="h-auto min-w-0 max-w-full justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
                                                     type="button"
                                                     variant="ghost"
                                                     onClick={() => onSortChange(columnKey)}
@@ -426,8 +428,10 @@ const DataTable = <T, >({
                                     {columns.map((column, columnIndex) =>
                                         <TableCell
                                             key={`${key}-${String(column.key)}`}
-                                            style={columnWidths[String(column.key)] ? { width: `${columnWidths[String(column.key)]}px` } : undefined}
-                                            className={columnIndex === columns.length - 1 ? undefined : "border-r border-border/40"}
+                                            style={columnWidths[String(column.key)]
+                                                ? { width: `${columnWidths[String(column.key)]}px`, minWidth: `${columnWidths[String(column.key)]}px` }
+                                                : { minWidth: "180px" }}
+                                            className={`${columnIndex === columns.length - 1 ? "" : "border-r border-border/40"} whitespace-nowrap overflow-hidden`.trim()}
                                         >
                                             <Skeleton className="h-4 w-24"/>
                                         </TableCell>,
@@ -449,9 +453,13 @@ const DataTable = <T, >({
                                         )}
                                         {columns.map((column) =>
                                             <TableCell key={`${rowId}-${String(column.key)}`}
-                                                       style={columnWidths[String(column.key)] ? { width: `${columnWidths[String(column.key)]}px` } : undefined}
-                                                       className={`${column.cellClassName ?? ""} ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"}`.trim()}>
-                                                {column.render ? column.render(row) : String(row[column.key as keyof T])}
+                                                       style={columnWidths[String(column.key)]
+                                                           ? { width: `${columnWidths[String(column.key)]}px`, minWidth: `${columnWidths[String(column.key)]}px` }
+                                                           : { minWidth: "180px" }}
+                                                       className={`${column.cellClassName ?? ""} ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"} whitespace-nowrap overflow-hidden`.trim()}>
+                                                <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                                                    {column.render ? column.render(row) : String(row[column.key as keyof T])}
+                                                </div>
                                             </TableCell>,
                                         )}
                                     </TableRow>
