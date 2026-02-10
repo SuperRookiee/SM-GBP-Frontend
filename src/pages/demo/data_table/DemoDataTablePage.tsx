@@ -46,8 +46,8 @@ const DemoDataTablePage = () => {
     }
 
     return (
-        <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
-            <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 overflow-hidden">
+        <div className="flex h-full min-h-0 min-w-0 overflow-hidden">
+            <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-7xl flex-col gap-6 overflow-hidden">
                 <header className="space-y-2">
                     <p className="text-sm font-semibold text-muted-foreground">Demo DataTable</p>
                     <h1 className="text-3xl font-semibold tracking-tight">Demo DataTable</h1>
@@ -58,6 +58,8 @@ const DemoDataTablePage = () => {
                 <DataTable
                     title="거래 내역 목록"
                     description="검색 조건은 저장되어 새로고침 후에도 유지됩니다."
+                    containerHeightClassName="min-h-0 flex-1"
+                    tableHeightClassName="min-h-0 flex-1"
                     rows={rows}
                     total={total}
                     pageSize={pageSize}
