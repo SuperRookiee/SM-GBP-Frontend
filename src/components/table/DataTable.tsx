@@ -1,4 +1,4 @@
-import { Activity, type MouseEvent as ReactMouseEvent, type ReactNode, useEffect, useMemo, useState } from "react";
+import { Activity, type ReactNode, useEffect, useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
 import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
@@ -71,7 +71,6 @@ const DataTable = <T, >({
     const [columnFilterSearch, setColumnFilterSearch] = useState<Partial<Record<keyof T, string>>>({});
     const [columnSelectedValues, setColumnSelectedValues] = useState<Partial<Record<keyof T, string[]>>>({});
     const [internalSelectedRowIds, setInternalSelectedRowIds] = useState<Array<string | number>>([]);
-    const [columnWidths, setColumnWidths] = useState<Partial<Record<string, number>>>({});
     const totalPages = Math.max(Math.ceil(total / pageSize), 1);
     const currentPage = Math.min(Math.max(page, 1), totalPages);
 
@@ -227,31 +226,6 @@ const DataTable = <T, >({
         onPageChange(1);
     };
 
-    const onResizeColumn = (columnKey: keyof T, event: ReactMouseEvent<HTMLSpanElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const th = event.currentTarget.closest("th");
-        if (!th) return;
-
-        const key = String(columnKey);
-        const startX = event.clientX;
-        const startWidth = th.getBoundingClientRect().width;
-
-        const onMouseMove = (moveEvent: MouseEvent) => {
-            const nextWidth = Math.max(5, Math.round(startWidth + moveEvent.clientX - startX));
-            setColumnWidths((prev) => ({ ...prev, [key]: nextWidth }));
-        };
-
-        const onMouseUp = () => {
-            window.removeEventListener("mousemove", onMouseMove);
-            window.removeEventListener("mouseup", onMouseUp);
-        };
-
-        window.addEventListener("mousemove", onMouseMove);
-        window.addEventListener("mouseup", onMouseUp);
-    };
-
     return (
         <section className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -319,10 +293,7 @@ const DataTable = <T, >({
 
                                     return (
                                         <TableHead key={String(column.key)}
-                                                   style={columnWidths[String(columnKey)]
-                                                       ? { width: `${columnWidths[String(columnKey)]}px`, minWidth: `${columnWidths[String(columnKey)]}px` }
-                                                       : { minWidth: "180px" }}
-                                                   className={`group relative overflow-hidden bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
+                                                   className={`bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
                                             <div className="flex min-w-0 items-center gap-1 pr-2">
                                                 {isSortable ? (
                                                     <Button
@@ -401,15 +372,6 @@ const DataTable = <T, >({
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 )}
-                                                <span
-                                                    role="separator"
-                                                    aria-orientation="vertical"
-                                                    aria-label={`${column.label} 너비 조절`}
-                                                    className="absolute right-0 top-0 h-full w-2 cursor-col-resize opacity-0 transition-opacity group-hover:opacity-100"
-                                                    onMouseDown={(event) => onResizeColumn(columnKey, event)}
-                                                >
-                                                    <span className="absolute right-0 top-2 h-[calc(100%-1rem)] border-r border-border/60"/>
-                                                </span>
                                             </div>
                                         </TableHead>
                                     );
@@ -428,10 +390,7 @@ const DataTable = <T, >({
                                         {columns.map((column, columnIndex) =>
                                             <TableCell
                                                 key={`${key}-${String(column.key)}`}
-                                                style={columnWidths[String(column.key)]
-                                                    ? { width: `${columnWidths[String(column.key)]}px`, minWidth: `${columnWidths[String(column.key)]}px` }
-                                                    : { minWidth: "180px" }}
-                                                className={`${columnIndex === columns.length - 1 ? "" : "border-r border-border/40"} whitespace-nowrap overflow-hidden`.trim()}
+                                                className={`${columnIndex === columns.length - 1 ? "" : "border-r border-border/40"}`.trim()}
                                             >
                                                 <Skeleton className="h-4 w-24"/>
                                             </TableCell>,
@@ -453,13 +412,8 @@ const DataTable = <T, >({
                                             )}
                                             {columns.map((column) =>
                                                 <TableCell key={`${rowId}-${String(column.key)}`}
-                                                           style={columnWidths[String(column.key)]
-                                                               ? { width: `${columnWidths[String(column.key)]}px`, minWidth: `${columnWidths[String(column.key)]}px` }
-                                                               : { minWidth: "180px" }}
-                                                           className={`${column.cellClassName ?? ""} ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"} whitespace-nowrap overflow-hidden`.trim()}>
-                                                    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                                                        {column.render ? column.render(row) : String(row[column.key as keyof T])}
-                                                    </div>
+                                                           className={`${column.cellClassName ?? ""} ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"}`.trim()}>
+                                                    {column.render ? column.render(row) : String(row[column.key as keyof T])}
                                                 </TableCell>,
                                             )}
                                         </TableRow>
