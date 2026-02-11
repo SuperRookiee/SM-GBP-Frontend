@@ -30,12 +30,13 @@ Miracle 프로젝트의 프론트엔드 환경 설정 및 기술 스택 가이�
 
 ### 🏗 State & Infrastructure
 
-| 영역             | 기술         | 사용 용도            | 링크                                       |
-|:---------------|:-----------|:-----------------|:-----------------------------------------|
-| **State**      | `Zustand`  | 전역 상태 관리         | [Zustand](https://zustand.docs.pmnd.rs/) |
-| **Validation** | `Zod`      | Schema 기반 데이터 검증 | [Zod](https://zod.dev/)                  |
-| **Chart**      | `Recharts` | 차트 라이브러리         | [Recharts](https://recharts.org/)        |
-| **Linting**    | `ESLint`   | 정적 코드 분석         | [ESLint](https://eslint.org/)            |
+| 영역             | 기술         | 사용 용도            | 링크                                                 |
+|:---------------|:-----------|:-----------------|:---------------------------------------------------|
+| **State**      | `Zustand`  | 전역 상태 관리         | [Zustand](https://zustand.docs.pmnd.rs/)           |
+| **Validation** | `Zod`      | Schema 기반 데이터 검증 | [Zod](https://zod.dev/)                            |
+| **Linting**    | `ESLint`   | 정적 코드 분석         | [ESLint](https://eslint.org/)                      |
+| **Chart**      | `Recharts` | 차트 라이브러리         | [Recharts](https://recharts.org/)                  |
+| **Grid**       | `Toast UI` | 테이블 라이브러리        | [Toast UI](https://nhn.github.io/tui.grid/latest/) |
 
 ### 🔌 Data Fetching
 
