@@ -27,9 +27,9 @@ const App = () => {
                     <Route path='/demo'>
                         <Route path="data_table" element={<DemoDataTablePage/>}/>
                         <Route path="chart" element={<DemoChartPage/>}/>
+                        <Route path="grid_table" element={<GridTablePage/>}/>
                         <Route path="form" element={<DemoFormPage/>}/>
                         <Route path="dialog" element={<DemoDialogPage/>}/>
-                        <Route path="grid_table" element={<GridTablePage/>}/>
                     </Route>
 
                     <Route path="/user">
