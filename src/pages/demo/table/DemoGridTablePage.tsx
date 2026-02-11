@@ -18,6 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx";
+import style from "@/styles/demoGridTable.module.css";
 
 const STATUS_OPTIONS: DemoGridStatus[] = ["판매중", "품절", "품절임박"];
 const CATEGORY_OPTIONS: DemoGridCategory[] = ["전자기기", "생활용품", "패션", "사무용품"];
@@ -262,7 +263,7 @@ const DemoGridTablePage = () => {
 
   return (
     <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
-      <div className="demo-grid-playground mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-4 overflow-hidden p-2">
+      <div className={`${style.demoGridPlayground} mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-4 overflow-hidden p-2`}>
         <header className="space-y-2">
           <p className="text-sm font-semibold text-muted-foreground">Demo GridTable</p>
           <h1 className="text-3xl font-semibold tracking-tight">TOAST UI Grid Feature Playground</h1>
@@ -404,20 +405,6 @@ const DemoGridTablePage = () => {
             caption={`총 ${total} 건`}
           />
         </Card>
-
-        <style>
-          {`
-            .demo-grid-playground .tui-grid-body-area tr:hover td {
-              background: rgba(96, 165, 250, 0.12) !important;
-            }
-            .demo-grid-playground .tui-grid-row.row-low-stock td {
-              background: rgba(251, 191, 36, 0.12);
-            }
-            .demo-grid-playground .tui-grid-row.row-discontinued td {
-              color: #9ca3af;
-            }
-          `}
-        </style>
       </div>
     </div>
   );
