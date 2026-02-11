@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
+import { GetSampleListApi, type ISampleListParams } from "@/apis/demo/sample.api.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import DataTable from "@/components/table/DataTable";
@@ -24,12 +24,12 @@ const DemoApiPage = () => {
 
     const { data, isLoading, isFetching, isError } = useQuery({
         queryKey: ["sample", "list", { page, pageSize, query, filterKey, sortKey, sortDirection }],
-        queryFn: GetSampleListApi,
+        queryFn: ({ queryKey }) => {
+            const [, , params] = queryKey;
+            return GetSampleListApi(params as ISampleListParams);
+        },
         staleTime: 30_000,
         gcTime: 5 * 60_000,
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        placeholderData: (prev) => prev,
     });
 
     const allRows = data?.data ?? [];
