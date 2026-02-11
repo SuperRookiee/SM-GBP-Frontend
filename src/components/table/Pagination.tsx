@@ -18,7 +18,7 @@ type TablePaginationProps = {
   onPageSizeChange?: (pageSize: number) => void;
 };
 
-const TablePagination = ({
+const Pagination = ({
   currentPage,
   totalPages,
   pageNumbers,
@@ -98,4 +98,4 @@ const TablePagination = ({
   );
 };
 
-export default TablePagination;
+export default Pagination;

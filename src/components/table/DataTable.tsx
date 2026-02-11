@@ -2,7 +2,7 @@ import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
 import { DEFAULT_TABLE, SELECT_COL_SIZE } from "@/constants/table.constants.tsx";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
-import TablePagination from "@/components/table/Pagination.tsx";
+import Pagination from "@/components/table/Pagination.tsx";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -471,7 +471,7 @@ const DataTable = <T, >({
                 </div>
             </CardContent>
 
-            <TablePagination
+            <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
                 pageNumbers={pageNumbers}

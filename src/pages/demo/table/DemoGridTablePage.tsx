@@ -10,7 +10,7 @@ import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { useGridTablePageStore } from "@/stores/page/gridTablePage.store.ts";
 import { cn } from "@/utils/utils.ts";
 import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interface/IDemoGridTable.interface.ts";
-import TablePagination from "@/components/table/Pagination.tsx";
+import Pagination from "@/components/table/Pagination.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
@@ -390,7 +390,7 @@ const DemoGridTablePage = () => {
             <div ref={gridWrapperRef} />
           </CardContent>
 
-          <TablePagination
+          <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             pageNumbers={pageNumbers}
