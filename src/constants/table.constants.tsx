@@ -31,7 +31,7 @@ export const DEMO_DATA_TABLE_ACTION = {
         {
             id: "view",
             label: "상세 보기",
-            href: (row: IDemoDataTableRow) => `/demo/data_table/${row.id}`,
+            href: (row: IDemoDataTableRow) => `/demo/grid_table/${row.id}`,
         },
         {
             id: "copy",

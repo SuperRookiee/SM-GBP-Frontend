@@ -3,6 +3,7 @@ import { Filter, Search } from "lucide-react";
 import { DEFAULT_TABLE, SELECT_COL_SIZE } from "@/constants/table.constants.tsx";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -233,12 +234,12 @@ const DataTable = <T, >({
     };
 
     return (
-        <section
-            className="mx-auto w-full min-w-0 rounded-2xl border border-border bg-card p-4 shadow-sm max-w-112.5 sm:max-w-160 md:max-w-3xl lg:max-w-5xl xl:max-w-308.75">
-            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <Card
+            className="mx-auto w-full min-w-0 max-w-112.5 shadow-sm sm:max-w-160 md:max-w-3xl lg:max-w-5xl xl:max-w-308.75">
+            <CardHeader className="gap-3">
                 <div>
-                    <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-                    {description && <p className="text-sm text-muted-foreground">{description}</p>}
+                    <CardTitle>{title}</CardTitle>
+                    {description && <CardDescription>{description}</CardDescription>}
                 </div>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
                     <div className="w-full sm:w-40">
@@ -272,8 +273,9 @@ const DataTable = <T, >({
                         </div>
                     </div>
                 </div>
-            </div>
+            </CardHeader>
 
+            <CardContent>
             <div className="w-full min-w-0 rounded-md border">
                 <ScrollArea className={`w-full ${tableHeightClassName}`}>
                     <Table className="min-w-full w-max table-fixed">
@@ -474,9 +476,10 @@ const DataTable = <T, >({
                     </Table>
                 </ScrollArea>
             </div>
+            </CardContent>
 
-            <div
-                className="mt-4 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <CardFooter
+                className="mt-2 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-wrap items-center gap-3">
                     <span>
                       Page {currentPage} of {totalPages}
@@ -528,8 +531,8 @@ const DataTable = <T, >({
                             onClick={() => onPageChange(totalPages)}
                             disabled={currentPage === totalPages}>마지막</Button>
                 </div>
-            </div>
-        </section>
+            </CardFooter>
+        </Card>
     );
 };
 

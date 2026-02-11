@@ -3,7 +3,6 @@ import MainLayout from "@/layouts/Main.layout.tsx";
 import NotFound from "@/components/errors/NotFound.tsx";
 import DashboardPage from "@/pages/dashboard/DashboardPage.tsx";
 import DemoChartPage from "@/pages/demo/chart/DemoChartPage.tsx";
-import DemoDataTablePage from "@/pages/demo/data_table/DemoDataTablePage.tsx";
 import DemoDialogPage from "@/pages/demo/dialog/DemoDialogPage.tsx";
 import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
 import GridTablePage from "@/pages/demo/grid_table/GridTablePage.tsx";
@@ -25,7 +24,8 @@ const App = () => {
 
                     {/* Demo*/}
                     <Route path='/demo'>
-                        <Route path="data_table" element={<DemoDataTablePage/>}/>
+                        <Route path="grid_table" element={<DemoGridTablePage/>}/>
+                        <Route path="data_table" element={<DemoGridTablePage/>}/>
                         <Route path="chart" element={<DemoChartPage/>}/>
                         <Route path="grid_table" element={<GridTablePage/>}/>
                         <Route path="form" element={<DemoFormPage/>}/>
