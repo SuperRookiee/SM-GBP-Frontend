@@ -1,5 +1,6 @@
 import { Get } from "@/utils/http.ts";
 
+// TODO interface 분리
 export interface ISampleApiItem {
     id: number;
     name: string;
@@ -13,7 +14,7 @@ export interface ISampleListApiResponse {
     success: boolean;
 }
 
-export interface ISampleListParams {
+export interface ISampleListRequest {
     page: number;
     pageSize: number;
     query?: string;
@@ -22,6 +23,6 @@ export interface ISampleListParams {
     sortDirection?: "asc" | "desc";
 }
 
-export const GetSampleListApi = (params: ISampleListParams) => {
+export const GetSampleListApi = (params: ISampleListRequest) => {
     return Get<ISampleListApiResponse>("/sample/list", params);
 };

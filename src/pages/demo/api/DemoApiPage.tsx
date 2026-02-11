@@ -66,44 +66,47 @@ const DemoApiPage = () => {
     const startIndex = (page - 1) * pageSize;
     const rows = sortedRows.slice(startIndex, startIndex + pageSize);
 
-    if (isError) {
-        return (
-            <div className="p-6">
-                <p className="text-sm text-destructive">데이터를 불러오지 못했습니다.</p>
-            </div>
-        );
-    }
-
     return (
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
             <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 overflow-hidden">
                 <header className="space-y-2">
                     <p className="text-sm font-semibold text-muted-foreground">Demo API</p>
-                    <h1 className="text-3xl font-semibold tracking-tight">Sample API DataTable</h1>
+                    <h1 className="text-3xl font-semibold tracking-tight">
+                        Sample API DataTable
+                    </h1>
                     <p className="text-sm text-muted-foreground">
                         /sample/list 응답 데이터를 공통 DataTable 컴포넌트로 조회합니다.
                     </p>
                 </header>
-                <DataTable
-                    title="샘플 목록"
-                    description="검색 조건은 상태 스토어에 저장되어 새로고침 후에도 유지됩니다."
-                    rows={rows}
-                    total={total}
-                    pageSize={pageSize}
-                    isLoading={isLoading || isFetching}
-                    filterOptions={SAMPLE_TABLE_FILTER}
-                    columns={SAMPLE_TABLE_COLUMNS}
-                    query={search}
-                    filterKey={filterKey}
-                    sortKey={sortKey}
-                    sortDirection={sortDirection}
-                    page={page}
-                    onQueryChange={setSearch}
-                    onFilterChange={setFilterKey}
-                    onSortChange={setSort}
-                    onPageChange={setPage}
-                    onPageSizeChange={setPageSize}
-                />
+
+                {isError ? (
+                    <div className="flex h-64 items-center justify-center rounded-md border border-destructive/30 bg-destructive/5">
+                        <p className="text-sm text-destructive">
+                            데이터를 불러오지 못했습니다.
+                        </p>
+                    </div>
+                ) : (
+                    <DataTable
+                        title="샘플 목록"
+                        description="검색 조건은 상태 스토어에 저장되어 새로고침 후에도 유지됩니다."
+                        rows={rows}
+                        total={total}
+                        pageSize={pageSize}
+                        isLoading={isLoading || isFetching}
+                        filterOptions={SAMPLE_TABLE_FILTER}
+                        columns={SAMPLE_TABLE_COLUMNS}
+                        query={search}
+                        filterKey={filterKey}
+                        sortKey={sortKey}
+                        sortDirection={sortDirection}
+                        page={page}
+                        onQueryChange={setSearch}
+                        onFilterChange={setFilterKey}
+                        onSortChange={setSort}
+                        onPageChange={setPage}
+                        onPageSizeChange={setPageSize}
+                    />
+                )}
             </div>
         </div>
     );
