@@ -1,63 +1,41 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
-import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
-import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
+import { getDemoDataTableSampleDataApi } from "@/apis/demo/demoDataTable.api.ts";
+import { DEMO_DATA_TABLE_COLUMNS, DEMO_DATA_TABLE_FILTER } from "@/constants/table.constants.tsx";
+import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";
+import type { DemoDataTableResponse } from "@/types/demo/demoDataTable.types.ts";
 import DataTable from "@/components/table/DataTable";
 
 const DemoDataTablePage = () => {
-    const query = useSamplePageStore((s) => s.query);
-    const filterKey = useSamplePageStore((s) => s.filterKey);
-    const sortKey = useSamplePageStore((s) => s.sortKey);
-    const sortDirection = useSamplePageStore((s) => s.sortDirection);
-    const page = useSamplePageStore((s) => s.page);
-    const setPage = useSamplePageStore((s) => s.setPage);
-    const setQuery = useSamplePageStore((s) => s.setQuery);
-    const setFilterKey = useSamplePageStore((s) => s.setFilterKey);
-    const setSort = useSamplePageStore((s) => s.setSort);
-    const pageSize = useSamplePageStore((s) => s.pageSize);
-    const setPageSize = useSamplePageStore((s) => s.setPageSize);
+    const query = useDataTablePageStore((s) => s.query);
+    const filterKey = useDataTablePageStore((s) => s.filterKey);
+    const sortKey = useDataTablePageStore((s) => s.sortKey);
+    const sortDirection = useDataTablePageStore((s) => s.sortDirection);
+    const page = useDataTablePageStore((s) => s.page);
+    const setPage = useDataTablePageStore((s) => s.setPage);
+    const setQuery = useDataTablePageStore((s) => s.setQuery);
+    const setFilterKey = useDataTablePageStore((s) => s.setFilterKey);
+    const setSort = useDataTablePageStore((s) => s.setSort);
+    const pageSize = useDataTablePageStore((s) => s.pageSize);
+    const setPageSize = useDataTablePageStore((s) => s.setPageSize);
 
     // #. page가 0 이하로 가는 방지
     useEffect(() => {
         if (page < 1) setPage(1);
     }, [page, setPage]);
 
-    const { data, isLoading, isFetching, isError } = useQuery({
-        queryKey: ["sample", "list", { page, pageSize, query, filterKey, sortKey, sortDirection }],
-        queryFn: GetSampleListApi,
+    const { data, isLoading, isFetching, isError } = useQuery<DemoDataTableResponse>({
+        queryKey: ["demoGridTable", "rows", { page, pageSize, query, filterKey, sortKey, sortDirection}],
+        queryFn: async () =>  await getDemoDataTableSampleDataApi({ page, pageSize, query, filterKey, sortKey, sortDirection}), // 서버에서 rows는 pageSize만큼, total은 전체 count(*) 내려줘야 함
         staleTime: 30_000,
         gcTime: 5 * 60_000,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        placeholderData: prev => prev,
+        placeholderData: prev => prev, // 이전 페이지 데이터를 잠깐 유지해서 깜빡임 줄이기
     });
 
-    const allRows = data?.data ?? [];
-    const trimmedQuery = query.trim().toLowerCase();
-    const filteredRows = allRows.filter((row) => {
-        if (!trimmedQuery) return true;
-
-        const fields = filterKey === "all"
-            ? Object.values(row)
-            : [row[filterKey]];
-
-        return fields.some((value) => String(value).toLowerCase().includes(trimmedQuery));
-    });
-
-    const sortedRows = [...filteredRows].sort((a, b) => {
-        if (!sortKey) return 0;
-
-        const aValue = String(a[sortKey]);
-        const bValue = String(b[sortKey]);
-        const compared = aValue.localeCompare(bValue, "ko", { numeric: true });
-
-        return sortDirection === "asc" ? compared : -compared;
-    });
-
-    const total = sortedRows.length;
-    const startIndex = (page - 1) * pageSize;
-    const rows = sortedRows.slice(startIndex, startIndex + pageSize);
+    const rows = data?.rows ?? [];
+    const total = data?.total ?? 0;
 
     if (isError) {
         return (
@@ -72,20 +50,20 @@ const DemoDataTablePage = () => {
             <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 overflow-hidden">
                 <header className="space-y-2">
                     <p className="text-sm font-semibold text-muted-foreground">Demo GridTable</p>
-                    <h1 className="text-3xl font-semibold tracking-tight">Sample DataTable</h1>
+                    <h1 className="text-3xl font-semibold tracking-tight">Demo GridTable</h1>
                     <p className="text-sm text-muted-foreground">
-                        /sample/list 응답 데이터를 DataTable로 조회합니다.
+                        서버에서 페이지 단위로 rows를 받고, total은 전체 건수를 받는 예시입니다.
                     </p>
                 </header>
                 <DataTable
-                    title="샘플 목록"
-                    description="검색 조건은 상태 스토어에 저장되어 새로고침 후에도 유지됩니다."
+                    title="거래 내역 목록"
+                    description="검색 조건은 저장되어 새로고침 후에도 유지됩니다."
                     rows={rows}
                     total={total}
                     pageSize={pageSize}
                     isLoading={isLoading || isFetching}
-                    filterOptions={SAMPLE_TABLE_FILTER}
-                    columns={SAMPLE_TABLE_COLUMNS}
+                    filterOptions={DEMO_DATA_TABLE_FILTER}
+                    columns={DEMO_DATA_TABLE_COLUMNS}
                     query={query}
                     filterKey={filterKey}
                     sortKey={sortKey}
@@ -96,6 +74,7 @@ const DemoDataTablePage = () => {
                     onSortChange={setSort}
                     onPageChange={setPage}
                     onPageSizeChange={setPageSize}
+                    enableSelect
                 />
             </div>
         </div>
