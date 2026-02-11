@@ -13,16 +13,14 @@ const SAMPLE_ROWS = [
     { id: 8, product: "LED 스탠드", category: "생활용품", price: 37000, stock: 3, status: "품절임박" },
 ];
 
-const GridTablePage = () => {
+const DemoGridTablePage = () => {
     const gridWrapperRef = useRef<HTMLDivElement | null>(null);
     const gridInstanceRef = useRef<Grid | null>(null);
 
     useEffect(() => {
-        if (!gridWrapperRef.current) {
-            return;
-        }
+        if (!gridWrapperRef.current) return;
 
-        const grid = new Grid({
+        gridInstanceRef.current = new Grid({
             el: gridWrapperRef.current,
             bodyHeight: 360,
             rowHeaders: ["rowNum"],
@@ -50,8 +48,6 @@ const GridTablePage = () => {
             },
         });
 
-        gridInstanceRef.current = grid;
-
         return () => {
             gridInstanceRef.current?.destroy();
             gridInstanceRef.current = null;
@@ -69,11 +65,11 @@ const GridTablePage = () => {
                     </p>
                 </header>
                 <div className="overflow-hidden rounded-md border border-border bg-background p-4">
-                    <div ref={gridWrapperRef} />
+                    <div ref={gridWrapperRef}/>
                 </div>
             </div>
         </div>
     );
 };
 
-export default GridTablePage;
+export default DemoGridTablePage;

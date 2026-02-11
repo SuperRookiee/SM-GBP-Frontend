@@ -9,11 +9,11 @@ export const MENU = {
             icon: <HomeIcon/>,
             isActive: true,
             items: [
-                { title: "GridTable", url: "/demo/grid_table" },
+                { title: "Data Table", url: "/demo/data_table" },
+                { title: "Grid Table", url: "/demo/grid_table" },
                 { title: "Chart", url: "/demo/chart" },
                 { title: "Form", url: "/demo/form" },
                 { title: "Dialog", url: "/demo/dialog" },
-                { title: "GridTable", url: "/demo/grid_table" },
                 { title: "404", url: "/demo/not_found" },
             ],
         },

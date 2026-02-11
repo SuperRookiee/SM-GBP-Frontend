@@ -6,7 +6,7 @@ import { useDataTablePageStore } from "@/stores/page/dataTablePage.store.ts";
 import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
 import DataTable from "@/components/table/DataTable";
 
-const DemoGridTablePage = () => {
+const DemoDataTablePage = () => {
     const query = useDataTablePageStore((s) => s.query);
     const filterKey = useDataTablePageStore((s) => s.filterKey);
     const sortKey = useDataTablePageStore((s) => s.sortKey);
@@ -81,4 +81,4 @@ const DemoGridTablePage = () => {
     );
 };
 
-export default DemoGridTablePage;
+export default DemoDataTablePage;
