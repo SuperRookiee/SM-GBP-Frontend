@@ -127,22 +127,20 @@ const DemoGridTablePage = () => {
   const applyFilters = useGridTablePageStore((state) => state.applyFilters);
   const resetFilters = useGridTablePageStore((state) => state.resetFilters);
 
-  const [rows, setRows] = useState<IDemoGridTableRow[]>([]);
   const [frozenEnabled, setFrozenEnabled] = useState(true);
   const [eventMessage, setEventMessage] = useState("이벤트 로그가 여기에 표시됩니다.");
   const [columnVisible, setColumnVisible] = useState<Record<string, boolean>>(defaultColumnVisibility);
   const [emptyMode, setEmptyMode] = useState(false);
   const [manualLoading, setManualLoading] = useState(false);
 
-  const { isLoading, isFetching, isError, refetch } = useQuery({
+  const { data, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ["demoGridTable", { applied, sorters }],
     queryFn: () => getDemoGridTableSampleDataApi({ ...applied, sorters }),
     staleTime: 20_000,
     refetchOnWindowFocus: false,
-    onSuccess: (nextRows) => setRows(nextRows),
   });
 
-  const gridRows = useMemo(() => withRowClassName(emptyMode ? [] : rows), [rows, emptyMode]);
+  const gridRows = useMemo(() => withRowClassName(emptyMode ? [] : (data ?? [])), [data, emptyMode]);
 
   const applyGridData = useCallback((nextRows: IDemoGridTableRow[]) => {
     if (!gridInstanceRef.current) return;
@@ -226,15 +224,7 @@ const DemoGridTablePage = () => {
     });
 
     grid.on("afterChange", () => {
-      const currentData = grid.getData() as IDemoGridTableRow[];
-      setRows(
-        currentData.map((row) => ({
-          ...row,
-          id: Number(row.id),
-          price: Number(row.price),
-          stock: Number(row.stock),
-        })),
-      );
+      setEventMessage("셀 편집 완료");
     });
 
     gridInstanceRef.current = grid;
