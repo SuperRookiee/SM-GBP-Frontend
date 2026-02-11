@@ -8,6 +8,7 @@ import { defineConfig as defineTestConfig } from "vitest/config";
 // https://vite.dev/config/
 const viteConfig = defineConfig({
   plugins: [react(), tailwindcss(), svgr()],
+  envPrefix: ["VITE_", "MIRACLE_"],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

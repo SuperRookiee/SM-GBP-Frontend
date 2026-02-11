@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import MainLayout from "@/layouts/Main.layout.tsx";
 import NotFound from "@/components/errors/NotFound.tsx";
 import DashboardPage from "@/pages/dashboard/DashboardPage.tsx";
+import DemoApiPage from "@/pages/demo/api/DemoApiPage.tsx";
 import DemoChartPage from "@/pages/demo/chart/DemoChartPage.tsx";
 import DemoDialogPage from "@/pages/demo/dialog/DemoDialogPage.tsx";
 import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
@@ -31,6 +32,7 @@ const App = () => {
                         <Route path="grid_table" element={<DemoGridTablePage/>}/>
                         <Route path="form" element={<DemoFormPage/>}/>
                         <Route path="dialog" element={<DemoDialogPage/>}/>
+                        <Route path="api" element={<DemoApiPage/>}/>
                     </Route>
 
                     <Route path="/user">
