@@ -6,13 +6,13 @@ import { canonicalizeQuery } from "@/utils/queryCanonicalize.ts";
 import { createPageStoreHelpers } from "@/utils/storeUtils";
 
 export type BasePageStore<T extends object> = {
-    query: string;
+    search: string;
     filterKey: "all" | keyof T;
     sortKey: keyof T | null;
     sortDirection: "asc" | "desc";
     page: number;
     pageSize: number;
-    setQuery: (query: string) => void;
+    setSearch: (search: string) => void;
     setFilterKey: (filterKey: "all" | keyof T) => void;
     setSort: (key: keyof T) => void;
     setPage: (page: number) => void;
@@ -23,7 +23,7 @@ export type BasePageStore<T extends object> = {
 
 type BasePageState<T extends object> = Pick<
     BasePageStore<T>,
-    "query" | "filterKey" | "sortKey" | "sortDirection" | "page" | "pageSize"
+    "search" | "filterKey" | "sortKey" | "sortDirection" | "page" | "pageSize"
 >;
 
 type CreateTablePageStoreOptions<T extends object> = {
@@ -34,7 +34,7 @@ type CreateTablePageStoreOptions<T extends object> = {
 };
 
 const defaultState = {
-    query: "",
+    search: "",
     filterKey: "all" as const,
     sortKey: null,
     sortDirection: "asc" as const,
@@ -54,7 +54,7 @@ export const createTablePageStore = <T extends object>({
                 get,
                 initialState: resolvedInitialState,
                 snapshot: state => ({
-                    query: state.query ?? "",
+                    search: state.search ?? "",
                     filterKey: state.filterKey ?? "all",
                     sortKey: state.sortKey ?? null,
                     sortDirection: state.sortDirection ?? "asc",
@@ -62,7 +62,7 @@ export const createTablePageStore = <T extends object>({
                     pageSize: state.pageSize ?? DEFAULT_TABLE.pageSize,
                 }),
                 comparators: {
-                    query: (current, defaults) =>
+                    search: (current, defaults) =>
                         canonicalizeQuery(current) === canonicalizeQuery(defaults),
                 },
                 resetStorePartial,
@@ -71,7 +71,7 @@ export const createTablePageStore = <T extends object>({
 
             return {
                 ...resolvedInitialState,
-                setQuery: query => setWithPageReset({ query }),
+                setSearch: search => setWithPageReset({ search }),
                 setFilterKey: filterKey => setWithPageReset({ filterKey }),
                 setSort: key => {
                     const { sortKey, sortDirection } = get();
@@ -90,7 +90,7 @@ export const createTablePageStore = <T extends object>({
         {
             name: persistKey,
             partialize: state => ({
-                query: state.query,
+                search: state.search,
                 filterKey: state.filterKey,
                 sortKey: state.sortKey,
                 sortDirection: state.sortDirection,

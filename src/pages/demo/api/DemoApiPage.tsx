@@ -1,18 +1,18 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GetSampleListApi, type ISampleListParams } from "@/apis/demo/sample.api.ts";
+import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import DataTable from "@/components/table/DataTable";
 
 const DemoApiPage = () => {
-    const query = useSamplePageStore((s) => s.query);
+    const search = useSamplePageStore((s) => s.search);
     const filterKey = useSamplePageStore((s) => s.filterKey);
     const sortKey = useSamplePageStore((s) => s.sortKey);
     const sortDirection = useSamplePageStore((s) => s.sortDirection);
     const page = useSamplePageStore((s) => s.page);
     const setPage = useSamplePageStore((s) => s.setPage);
-    const setQuery = useSamplePageStore((s) => s.setQuery);
+    const setSearch = useSamplePageStore((s) => s.setSearch);
     const setFilterKey = useSamplePageStore((s) => s.setFilterKey);
     const setSort = useSamplePageStore((s) => s.setSort);
     const pageSize = useSamplePageStore((s) => s.pageSize);
@@ -23,17 +23,24 @@ const DemoApiPage = () => {
     }, [page, setPage]);
 
     const { data, isLoading, isFetching, isError } = useQuery({
-        queryKey: ["sample", "list", { page, pageSize, query, filterKey, sortKey, sortDirection }],
+        queryKey: ["sample", "list", { page, pageSize, search, filterKey, sortKey, sortDirection }],
         queryFn: ({ queryKey }) => {
-            const [, , params] = queryKey;
-            return GetSampleListApi(params as ISampleListParams);
+            const [, , params] = queryKey as [string, string, {
+                page: number;
+                pageSize: number;
+                search: string;
+                filterKey: string;
+                sortKey: string | null;
+                sortDirection: "asc" | "desc";
+            }];
+            return GetSampleListApi({ ...params, query: params.search, sortKey: params.sortKey ?? undefined });
         },
         staleTime: 30_000,
         gcTime: 5 * 60_000,
     });
 
     const allRows = data?.data ?? [];
-    const trimmedQuery = query.trim().toLowerCase();
+    const trimmedQuery = search.trim().toLowerCase();
 
     const filteredRows = allRows.filter((row) => {
         if (!trimmedQuery) return true;
@@ -86,12 +93,12 @@ const DemoApiPage = () => {
                     isLoading={isLoading || isFetching}
                     filterOptions={SAMPLE_TABLE_FILTER}
                     columns={SAMPLE_TABLE_COLUMNS}
-                    query={query}
+                    query={search}
                     filterKey={filterKey}
                     sortKey={sortKey}
                     sortDirection={sortDirection}
                     page={page}
-                    onQueryChange={setQuery}
+                    onQueryChange={setSearch}
                     onFilterChange={setFilterKey}
                     onSortChange={setSort}
                     onPageChange={setPage}
