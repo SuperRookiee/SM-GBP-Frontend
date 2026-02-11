@@ -5,6 +5,7 @@ import { CalendarIcon, Search } from "lucide-react";
 import Grid from "tui-grid";
 import { useQuery } from "@tanstack/react-query";
 import "tui-grid/dist/tui-grid.css";
+import "./style/DemoGridTablePage.css";
 import { getDemoGridTableSampleDataApi } from "@/apis/demoGridTable.api.ts";
 import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { useGridTablePageStore } from "@/stores/page/gridTablePage.store.ts";
@@ -114,6 +115,7 @@ const MultiCheckboxField = <T extends string>({
 );
 
 const DemoGridTablePage = () => {
+  // TOAST UI Grid DOM 컨테이너와 인스턴스를 참조합니다.
   const gridWrapperRef = useRef<HTMLDivElement | null>(null);
   const gridInstanceRef = useRef<Grid | null>(null);
 
@@ -130,6 +132,7 @@ const DemoGridTablePage = () => {
   const applyFilters = useGridTablePageStore((state) => state.applyFilters);
   const resetFilters = useGridTablePageStore((state) => state.resetFilters);
 
+  // UI 상태(고정 컬럼, 이벤트 로그, 컬럼 표시 여부 등)를 관리합니다.
   const [frozenEnabled, setFrozenEnabled] = useState(true);
   const [eventMessage, setEventMessage] = useState("이벤트 로그가 여기에 표시됩니다.");
   const [columnVisible, setColumnVisible] = useState<Record<string, boolean>>(defaultColumnVisibility);
@@ -138,6 +141,7 @@ const DemoGridTablePage = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_TABLE.pageSize);
 
+  // 적용된 필터/정렬 기준으로 샘플 데이터를 조회합니다.
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ["demoGridTable", { applied, sorters }],
     queryFn: () => getDemoGridTableSampleDataApi({ ...applied, sorters }),
@@ -158,6 +162,7 @@ const DemoGridTablePage = () => {
     Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
   [pageWindowEnd, pageWindowStart]);
 
+  // 현재 페이지에 표시할 데이터만 잘라서 Grid 전용 row 속성을 주입합니다.
   const gridRows = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return withRowClassName(resolvedRows.slice(start, start + pageSize));
@@ -186,6 +191,7 @@ const DemoGridTablePage = () => {
     setFrozenEnabled(enabled);
   }, []);
 
+  // 최초 1회 Grid를 생성하고 이벤트를 연결합니다.
   useEffect(() => {
     if (!gridWrapperRef.current) return;
 
@@ -256,6 +262,7 @@ const DemoGridTablePage = () => {
     };
   }, []);
 
+  // 페이지/필터 상태가 바뀌면 Grid 데이터를 교체합니다.
   useEffect(() => {
     applyGridData(gridRows);
   }, [applyGridData, gridRows]);
@@ -387,7 +394,9 @@ const DemoGridTablePage = () => {
               {(isLoading || isFetching || manualLoading) && " · 데이터 로딩 중"}
               {isError && " · 데이터 조회 실패"}
             </div>
-            <div ref={gridWrapperRef} />
+            <div className="demo-grid-shell">
+              <div ref={gridWrapperRef} />
+            </div>
           </CardContent>
 
           <Pagination
@@ -404,20 +413,6 @@ const DemoGridTablePage = () => {
             caption={`총 ${total} 건`}
           />
         </Card>
-
-        <style>
-          {`
-            .demo-grid-playground .tui-grid-body-area tr:hover td {
-              background: rgba(96, 165, 250, 0.12) !important;
-            }
-            .demo-grid-playground .tui-grid-row.row-low-stock td {
-              background: rgba(251, 191, 36, 0.12);
-            }
-            .demo-grid-playground .tui-grid-row.row-discontinued td {
-              color: #9ca3af;
-            }
-          `}
-        </style>
       </div>
     </div>
   );

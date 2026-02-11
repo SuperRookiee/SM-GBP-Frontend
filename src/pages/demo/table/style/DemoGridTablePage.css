@@ -1,0 +1,52 @@
+.demo-grid-playground .demo-grid-shell {
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--border) 88%, transparent);
+  border-radius: 0.75rem;
+  background: var(--card);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
+}
+
+.demo-grid-playground .tui-grid-container {
+  border: 0;
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.demo-grid-playground .tui-grid-header-area {
+  border-bottom: 1px solid var(--border);
+  background-color: color-mix(in oklab, var(--muted) 80%, white);
+}
+
+.demo-grid-playground .tui-grid-header-area .tui-grid-cell {
+  border-color: var(--border);
+  background-color: transparent;
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.demo-grid-playground .tui-grid-body-area .tui-grid-cell,
+.demo-grid-playground .tui-grid-summary-area .tui-grid-cell {
+  border-color: color-mix(in oklab, var(--border) 88%, transparent);
+  background-color: var(--card);
+}
+
+.demo-grid-playground .tui-grid-cell {
+  padding: 0.625rem 0.75rem;
+}
+
+.demo-grid-playground .tui-grid-body-area tr:hover td {
+  background: color-mix(in oklab, var(--accent) 55%, transparent) !important;
+}
+
+.demo-grid-playground .tui-grid-row.row-low-stock td {
+  background: color-mix(in oklab, #f59e0b 20%, transparent);
+}
+
+.demo-grid-playground .tui-grid-row.row-discontinued td {
+  color: var(--muted-foreground);
+}
+
+.demo-grid-playground .tui-grid-scrollbar-right-top,
+.demo-grid-playground .tui-grid-scrollbar-frozen-border {
+  border-color: var(--border);
+}
