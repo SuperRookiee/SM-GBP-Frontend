@@ -1,4 +1,5 @@
 import type { IDemoDataTableRow } from "@/interface/demo/IDemoDataTable.interface.ts";
+import type { ISampleRow } from "@/interface/demo/ISample.interface.ts";
 import type { ActionItem } from "@/types/ActionItem.type.ts";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demo/demoDataTable.types.ts";
 import type { UserColumn, UserFilterOption } from "@/types/user.types.ts";
@@ -83,6 +84,20 @@ export const DEMO_DATA_TABLE_COLUMNS: DemoDataTableColumn[] = [
                 label={DEMO_DATA_TABLE_ACTION.menuLabel}
             />
     },
+];
+
+/** Sample Data Table **/
+export const SAMPLE_TABLE_FILTER: DemoDataTableFilterOption<ISampleRow>[] = [
+    { value: "all", label: "전체" },
+    { value: "id", label: "ID" },
+    { value: "name", label: "이름" },
+    { value: "description", label: "설명" },
+];
+
+export const SAMPLE_TABLE_COLUMNS: DemoDataTableColumn<ISampleRow>[] = [
+    { key: "id", label: "ID", width: 100, cellClassName: "font-medium", filterable: true },
+    { key: "name", label: "이름", width: 180, filterable: true },
+    { key: "description", label: "설명", width: 420, filterable: true },
 ];
 
 /** User **/
