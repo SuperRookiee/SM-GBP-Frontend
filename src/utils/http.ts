@@ -99,18 +99,16 @@ apiClient.interceptors.response.use(
         const status = err.response?.status;
         const original = err.config as (AxiosRequestConfig & { _retry?: boolean }) | undefined;
 
-        // 401이 아니거나 이미 재시도한 요청이면 그대로 실패 반환
         if (status !== 401 || !original || original._retry) {
-            return Promise.reject(err);
+            return Promise.reject(normalizeError(err));
         }
 
         original._retry = true;
 
-        // 이미 refresh 진행 중이면 대기열에 등록
         if (isRefreshing) {
             return new Promise((resolve, reject) => {
                 enqueue((token) => {
-                    if (!token) return reject(err);
+                    if (!token) return reject(normalizeError(err));
 
                     original.headers = original.headers ?? {};
                     original.headers.Authorization = `Bearer ${token}`;
@@ -120,13 +118,11 @@ apiClient.interceptors.response.use(
             });
         }
 
-        // refresh 시작
         isRefreshing = true;
 
         try {
             const newToken = await refreshAccessToken();
 
-            // 대기 중이던 요청들 재실행
             flushQueue(newToken);
 
             original.headers = original.headers ?? {};
@@ -134,15 +130,24 @@ apiClient.interceptors.response.use(
 
             return apiClient(original);
         } catch (refreshErr) {
-            // refresh 실패 시 토큰 정리
             flushQueue(null);
             tokenStore.clear();
-            return Promise.reject(refreshErr);
+            return Promise.reject(normalizeError(refreshErr)); // 🔥 변경
         } finally {
             isRefreshing = false;
         }
     }
 );
+
+// #. 메세지 타입 가드
+const hasMessage = (data: unknown): data is { message?: string } => {
+    return (
+        typeof data === "object" &&
+        data !== null &&
+        "message" in data &&
+        typeof (data as { message?: unknown }).message === "string"
+    );
+};
 
 // #. 공통 HTTP 함수
 export const Get = <T>(url: string, params?: unknown, config?: AxiosRequestConfig) =>
@@ -159,3 +164,25 @@ export const Patch = <T>(url: string, data?: unknown, config?: AxiosRequestConfi
 
 export const Delete = <T>(url: string, config?: AxiosRequestConfig) =>
     apiClient.delete<T>(url, config).then((r) => r.data);
+
+// #. 공통 에러 메시지
+const normalizeError = (error: unknown): Error => {
+    let message = "알 수 없는 오류가 발생했습니다.";
+
+    if (axios.isAxiosError(error)) {
+        if (!error.response)
+            message = "서버에 연결할 수 없습니다. (네트워크 오류)";
+        else if (error.response.status >= 500)
+            message = "서버 내부 오류가 발생했습니다.";
+        else if (error.response.status === 401)
+            message = "인증이 필요합니다.";
+        else if (hasMessage(error.response.data))
+            message = error.response.data.message ?? message;
+        else
+            message = error.message;
+    } else if (error instanceof Error) {
+        message = error.message;
+    }
+
+    return new Error(message);
+};
