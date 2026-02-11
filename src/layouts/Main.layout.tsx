@@ -16,7 +16,7 @@ const MainLayout = () => {
     const resetUserPageStore = useUserPageStore(state => state.reset);
 
     // #. 페이지를 벗어나면 스토어 상태를 초기화
-    useResetStore("/demo/data_table", resetDataTablePageStore);
+    useResetStore("/demo/grid_table", resetDataTablePageStore);
     useResetStore("/user", resetUserPageStore);
 
     return (

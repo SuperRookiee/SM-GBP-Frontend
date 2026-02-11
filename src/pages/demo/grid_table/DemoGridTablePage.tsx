@@ -6,7 +6,7 @@ import { useDataTablePageStore } from "@/stores/page/dataTablePage.store.ts";
 import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
 import DataTable from "@/components/table/DataTable";
 
-const DemoDataTablePage = () => {
+const DemoGridTablePage = () => {
     const query = useDataTablePageStore((s) => s.query);
     const filterKey = useDataTablePageStore((s) => s.filterKey);
     const sortKey = useDataTablePageStore((s) => s.sortKey);
@@ -25,7 +25,7 @@ const DemoDataTablePage = () => {
     }, [page, setPage]);
 
     const { data, isLoading, isFetching, isError } = useQuery<DemoDataTableResponse>({
-        queryKey: ["demoDataTable", "rows", { page, pageSize, query, filterKey, sortKey, sortDirection}],
+        queryKey: ["demoGridTable", "rows", { page, pageSize, query, filterKey, sortKey, sortDirection}],
         queryFn: async () =>  await getDemoDataTableSampleDataApi({ page, pageSize, query, filterKey, sortKey, sortDirection}), // 서버에서 rows는 pageSize만큼, total은 전체 count(*) 내려줘야 함
         staleTime: 30_000,
         gcTime: 5 * 60_000,
@@ -49,8 +49,8 @@ const DemoDataTablePage = () => {
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
             <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 overflow-hidden">
                 <header className="space-y-2">
-                    <p className="text-sm font-semibold text-muted-foreground">Demo DataTable</p>
-                    <h1 className="text-3xl font-semibold tracking-tight">Demo DataTable</h1>
+                    <p className="text-sm font-semibold text-muted-foreground">Demo GridTable</p>
+                    <h1 className="text-3xl font-semibold tracking-tight">Demo GridTable</h1>
                     <p className="text-sm text-muted-foreground">
                         서버에서 페이지 단위로 rows를 받고, total은 전체 건수를 받는 예시입니다.
                     </p>
@@ -81,4 +81,4 @@ const DemoDataTablePage = () => {
     );
 };
 
-export default DemoDataTablePage;
+export default DemoGridTablePage;
