@@ -1,6 +1,6 @@
 import { Activity, type ReactNode, useEffect, useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
-import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
+import { DEFAULT_TABLE, SELECT_COL_SIZE } from "@/constants/table.constants.tsx";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -79,7 +79,6 @@ const DataTable = <T, >({
     const [internalSelectedRowIds, setInternalSelectedRowIds] = useState<Array<string | number>>([]);
     const totalPages = Math.max(Math.ceil(total / pageSize), 1);
     const currentPage = Math.min(Math.max(page, 1), totalPages);
-    const SELECT_COL_SIZE = 28;
 
     // #. 페이지 유효성 검사 및 보정 로직
     useEffect(() => {

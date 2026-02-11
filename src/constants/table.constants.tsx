@@ -10,6 +10,9 @@ export const DEFAULT_TABLE = {
     pageWindow: 5,
 } as const;
 
+/** Select Column **/
+export const SELECT_COL_SIZE = 28;
+
 /** Demo Data Table **/
 export const DEMO_DATA_TABLE_FILTER: DemoDataTableFilterOption[] = [
     { value: "all", label: "전체" },
