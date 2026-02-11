@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router-dom";
 import MainLayout from "@/layouts/Main.layout.tsx";
 import NotFound from "@/components/errors/NotFound.tsx";
+import DashboardPage from "@/pages/dashboard/DashboardPage.tsx";
 import DemoChartPage from "@/pages/demo/chart/DemoChartPage.tsx";
 import DemoDataTablePage from "@/pages/demo/data_table/DemoDataTablePage.tsx";
 import DemoDialogPage from "@/pages/demo/dialog/DemoDialogPage.tsx";
 import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
 import GridTablePage from "@/pages/demo/grid_table/GridTablePage.tsx";
-import IndexPage from "@/pages/demo/index/IndexPage.tsx";
 import LoginPage from "@/pages/login/LoginPage.tsx";
 import UserDetailPage from "@/pages/user/detail/UserDetailPage.tsx";
 import UserPage from "@/pages/user/UserPage.tsx";
@@ -21,11 +21,10 @@ const App = () => {
             {/* 보호 Route */}
             <Route element={<AuthRouter/>}>
                 <Route path="/" element={<MainLayout/>}>
-                    <Route index element={<IndexPage/>}/>
+                    <Route index element={<DashboardPage/>}/>
 
                     {/* Demo*/}
                     <Route path='/demo'>
-                        <Route path="index" element={<IndexPage/>}/>
                         <Route path="data_table" element={<DemoDataTablePage/>}/>
                         <Route path="chart" element={<DemoChartPage/>}/>
                         <Route path="form" element={<DemoFormPage/>}/>

@@ -483,8 +483,8 @@ const DataTable = <T, >({
                     </span>
                     <Activity mode={isLoading ? "visible" : "hidden"}>
                         <div className="flex items-center gap-2">
-                            <Skeleton className="h-4 w-28"/>
-                            <Skeleton className="h-4 w-12"/>
+                            <Skeleton className="h-4 w-6"/>
+                            <Skeleton className="h-4 w-6"/>
                         </div>
                     </Activity>
                     <Activity mode={isLoading ? "hidden" : "visible"}>{captionRenderer(total)}</Activity>

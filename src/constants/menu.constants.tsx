@@ -9,7 +9,6 @@ export const MENU = {
             icon: <HomeIcon/>,
             isActive: true,
             items: [
-                { title: "Index", url: "/demo/index" },
                 { title: "DataTable", url: "/demo/data_table" },
                 { title: "Chart", url: "/demo/chart" },
                 { title: "Form", url: "/demo/form" },
