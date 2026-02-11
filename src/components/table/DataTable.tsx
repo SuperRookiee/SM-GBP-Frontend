@@ -234,9 +234,9 @@ const DataTable = <T, >({
     };
 
     return (
-        <Card
-            className="mx-auto w-full min-w-0 max-w-112.5 shadow-sm sm:max-w-160 md:max-w-3xl lg:max-w-5xl xl:max-w-308.75">
-            <CardHeader className="gap-3">
+        <Card className="mx-auto w-full min-w-0 shadow-sm max-w-112.5
+                        sm:max-w-160 md:max-w-3xl lg:max-w-5xl xl:max-w-308.75">
+            <CardHeader className="flex justify-between">
                 <div>
                     <CardTitle>{title}</CardTitle>
                     {description && <CardDescription>{description}</CardDescription>}
@@ -276,210 +276,211 @@ const DataTable = <T, >({
             </CardHeader>
 
             <CardContent>
-            <div className="w-full min-w-0 rounded-md border">
-                <ScrollArea className={`w-full ${tableHeightClassName}`}>
-                    <Table className="min-w-full w-max table-fixed">
-                        <TableHeader className="sticky top-0 z-20 bg-card">
-                            <TableRow className="bg-card hover:bg-card">
-                                {enableSelect &&
-                                    <TableHead
-                                        className="border-r border-border/40 p-0"
-                                        style={{
-                                            width: `${SELECT_COL_SIZE}px`,
-                                            minWidth: `${SELECT_COL_SIZE}px`,
-                                            maxWidth: `${SELECT_COL_SIZE}px`
-                                        }}
-                                    >
-                                        <div className="flex h-full w-full items-center justify-center p-1">
-                                            <Checkbox
-                                                checked={isAllRowsSelected ? true : isSomeRowsSelected ? "indeterminate" : false}
-                                                onCheckedChange={onToggleSelectAll}
-                                                aria-label="전체 선택"
-                                            />
-                                        </div>
-                                    </TableHead>
-                                }
-                                {columns.map((column, index) => {
-                                    const isSortable = column.sortable ?? true;
-                                    const columnKey = column.key as keyof T;
-                                    const selectedValues = columnSelectedValues[columnKey];
-                                    const totalFilterOptionCount = (columnFilterOptions.get(columnKey) ?? []).length;
-                                    const effectiveSelectedValues = selectedValues ?? (columnFilterOptions.get(columnKey) ?? []);
-                                    const selectedCount = effectiveSelectedValues.length;
-                                    const isFilterActive = totalFilterOptionCount > 0
-                                        && selectedCount < totalFilterOptionCount;
-
-                                    return (
-                                        <TableHead key={String(column.key)}
-                                                   style={getColumnWidthStyle(column.width)}
-                                                   className={`bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
-                                            <div className="flex min-w-0 items-center gap-1 pr-2">
-                                                {isSortable ? (
-                                                    <Button
-                                                        className="h-auto min-w-0 max-w-full truncate justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
-                                                        type="button"
-                                                        variant="ghost"
-                                                        onClick={() => onSortChange(columnKey)}
-                                                    >
-                                                        {column.label}
-                                                        {sortIndicator(columnKey)}
-                                                    </Button>
-                                                ) : (
-                                                    <span
-                                                        className="truncate text-sm text-muted-foreground">{column.label}</span>
-                                                )}
-
-                                                {column.filterable && (
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button
-                                                                type="button"
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                className={`relative h-7 w-7 ${isFilterActive ? "text-primary hover:text-primary" : "text-muted-foreground hover:text-foreground"}`}
-                                                                aria-label={`${column.label} 필터 열기`}
-                                                            >
-                                                                <Filter className="h-3.5 w-3.5"/>
-                                                                {isFilterActive && <span
-                                                                    className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-primary"/>}
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent className="w-56 p-2 overflow-x-auto"
-                                                                             align="start">
-                                                            <DropdownMenuLabel
-                                                                className="px-1 py-1 text-xs text-muted-foreground">
-                                                                {column.label} 필터
-                                                            </DropdownMenuLabel>
-                                                            <Input
-                                                                value={columnFilterSearch[columnKey] ?? ""}
-                                                                onChange={(event) => onChangeColumnSearch(columnKey, event.target.value)}
-                                                                placeholder="Search..."
-                                                                className="mb-2 h-8"
-                                                            />
-                                                            <DropdownMenuSeparator/>
-                                                            <ScrollArea className="h-60 w-full">
-                                                                <div className="min-w-max pr-2">
-                                                                    <DropdownMenuCheckboxItem
-                                                                        checked={selectedCount === totalFilterOptionCount
-                                                                            ? true
-                                                                            : selectedCount === 0
-                                                                                ? false
-                                                                                : "indeterminate"}
-                                                                        onSelect={(event) => event.preventDefault()}
-                                                                        onCheckedChange={(checked) => onToggleColumnSelectAll(columnKey, checked === true)}
-                                                                        className="capitalize whitespace-nowrap"
-                                                                    >
-                                                                        (Select All)
-                                                                    </DropdownMenuCheckboxItem>
-                                                                    {(columnFilterOptions.get(columnKey) ?? [])
-                                                                        .filter((value) =>
-                                                                            value.toLowerCase().includes((columnFilterSearch[columnKey] ?? "").toLowerCase()),
-                                                                        )
-                                                                        .map((value) => (
-                                                                            <DropdownMenuCheckboxItem
-                                                                                key={`${String(columnKey)}-${value}`}
-                                                                                checked={effectiveSelectedValues.includes(value)}
-                                                                                onSelect={(event) => event.preventDefault()}
-                                                                                onCheckedChange={(checked) =>
-                                                                                    onToggleColumnFilterValue(columnKey, value, checked === true)
-                                                                                }
-                                                                                className="whitespace-nowrap"
-                                                                            >
-                                                                                {value}
-                                                                            </DropdownMenuCheckboxItem>
-                                                                        ))}
-                                                                </div>
-                                                            </ScrollArea>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                )}
+                <div className="w-full min-w-0 rounded-md border">
+                    <ScrollArea className={`w-full ${tableHeightClassName}`}>
+                        <Table className="min-w-full w-max table-fixed">
+                            <TableHeader className="sticky top-0 z-20 bg-card">
+                                <TableRow className="bg-card hover:bg-card">
+                                    {enableSelect &&
+                                        <TableHead
+                                            className="border-r border-border/40 p-0"
+                                            style={{
+                                                width: `${SELECT_COL_SIZE}px`,
+                                                minWidth: `${SELECT_COL_SIZE}px`,
+                                                maxWidth: `${SELECT_COL_SIZE}px`
+                                            }}
+                                        >
+                                            <div className="flex h-full w-full items-center justify-center p-1">
+                                                <Checkbox
+                                                    checked={isAllRowsSelected ? true : isSomeRowsSelected ? "indeterminate" : false}
+                                                    onCheckedChange={onToggleSelectAll}
+                                                    aria-label="전체 선택"
+                                                />
                                             </div>
                                         </TableHead>
-                                    );
-                                })}
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {isLoading
-                                ? skeletonRows.map((key) =>
-                                    <TableRow key={key}>
-                                        {enableSelect && (
-                                            <TableCell className="w-2 border-r border-border/40">
-                                                <Skeleton className="h-4 w-4"/>
-                                            </TableCell>
-                                        )}
-                                        {columns.map((column, columnIndex) =>
-                                            <TableCell
-                                                key={`${key}-${String(column.key)}`}
-                                                style={getColumnWidthStyle(column.width)}
-                                                className={`${columnIndex === columns.length - 1 ? "" : "border-r border-border/40"}`.trim()}
-                                            >
-                                                <Skeleton className="h-4 w-24"/>
-                                            </TableCell>,
-                                        )}
-                                    </TableRow>,
-                                )
-                                : filteredRows.map((row) => {
-                                    const rowId = getRowId(row);
-                                    return (
-                                        <TableRow key={rowId}>
+                                    }
+                                    {columns.map((column, index) => {
+                                        const isSortable = column.sortable ?? true;
+                                        const columnKey = column.key as keyof T;
+                                        const selectedValues = columnSelectedValues[columnKey];
+                                        const totalFilterOptionCount = (columnFilterOptions.get(columnKey) ?? []).length;
+                                        const effectiveSelectedValues = selectedValues ?? (columnFilterOptions.get(columnKey) ?? []);
+                                        const selectedCount = effectiveSelectedValues.length;
+                                        const isFilterActive = totalFilterOptionCount > 0
+                                            && selectedCount < totalFilterOptionCount;
+
+                                        return (
+                                            <TableHead key={String(column.key)}
+                                                       style={getColumnWidthStyle(column.width)}
+                                                       className={`bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
+                                                <div className="flex min-w-0 items-center gap-1 pr-2">
+                                                    {isSortable ? (
+                                                        <Button
+                                                            className="h-auto min-w-0 max-w-full truncate justify-start px-0 py-0 text-left text-muted-foreground hover:text-foreground"
+                                                            type="button"
+                                                            variant="ghost"
+                                                            onClick={() => onSortChange(columnKey)}
+                                                        >
+                                                            {column.label}
+                                                            {sortIndicator(columnKey)}
+                                                        </Button>
+                                                    ) : (
+                                                        <span
+                                                            className="truncate text-sm text-muted-foreground">{column.label}</span>
+                                                    )}
+
+                                                    {column.filterable && (
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className={`relative h-7 w-7 ${isFilterActive ? "text-primary hover:text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                                                                    aria-label={`${column.label} 필터 열기`}
+                                                                >
+                                                                    <Filter className="h-3.5 w-3.5"/>
+                                                                    {isFilterActive && <span
+                                                                        className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-primary"/>}
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent className="w-56 p-2 overflow-x-auto"
+                                                                                 align="start">
+                                                                <DropdownMenuLabel
+                                                                    className="px-1 py-1 text-xs text-muted-foreground">
+                                                                    {column.label} 필터
+                                                                </DropdownMenuLabel>
+                                                                <Input
+                                                                    value={columnFilterSearch[columnKey] ?? ""}
+                                                                    onChange={(event) => onChangeColumnSearch(columnKey, event.target.value)}
+                                                                    placeholder="Search..."
+                                                                    className="mb-2 h-8"
+                                                                />
+                                                                <DropdownMenuSeparator/>
+                                                                <ScrollArea className="h-60 w-full">
+                                                                    <div className="min-w-max pr-2">
+                                                                        <DropdownMenuCheckboxItem
+                                                                            checked={selectedCount === totalFilterOptionCount
+                                                                                ? true
+                                                                                : selectedCount === 0
+                                                                                    ? false
+                                                                                    : "indeterminate"}
+                                                                            onSelect={(event) => event.preventDefault()}
+                                                                            onCheckedChange={(checked) => onToggleColumnSelectAll(columnKey, checked === true)}
+                                                                            className="capitalize whitespace-nowrap"
+                                                                        >
+                                                                            (Select All)
+                                                                        </DropdownMenuCheckboxItem>
+                                                                        {(columnFilterOptions.get(columnKey) ?? [])
+                                                                            .filter((value) =>
+                                                                                value.toLowerCase().includes((columnFilterSearch[columnKey] ?? "").toLowerCase()),
+                                                                            )
+                                                                            .map((value) => (
+                                                                                <DropdownMenuCheckboxItem
+                                                                                    key={`${String(columnKey)}-${value}`}
+                                                                                    checked={effectiveSelectedValues.includes(value)}
+                                                                                    onSelect={(event) => event.preventDefault()}
+                                                                                    onCheckedChange={(checked) =>
+                                                                                        onToggleColumnFilterValue(columnKey, value, checked === true)
+                                                                                    }
+                                                                                    className="whitespace-nowrap"
+                                                                                >
+                                                                                    {value}
+                                                                                </DropdownMenuCheckboxItem>
+                                                                            ))}
+                                                                    </div>
+                                                                </ScrollArea>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    )}
+                                                </div>
+                                            </TableHead>
+                                        );
+                                    })}
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {isLoading
+                                    ? skeletonRows.map((key) =>
+                                        <TableRow key={key}>
                                             {enableSelect && (
-                                                <TableCell
-                                                    className="border-r border-border/40 p-0"
-                                                    style={{
-                                                        width: `${SELECT_COL_SIZE}px`,
-                                                        minWidth: `${SELECT_COL_SIZE}px`,
-                                                        maxWidth: `${SELECT_COL_SIZE}px`,
-                                                    }}
-                                                >
-                                                    <div className="flex h-full w-full items-center justify-center p-1">
-                                                        <Checkbox
-                                                            checked={selectedRowIdSet.has(rowId)}
-                                                            onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
-                                                            aria-label={`행 선택 ${String(rowId)}`}
-                                                        />
-                                                    </div>
+                                                <TableCell className="w-2 border-r border-border/40">
+                                                    <Skeleton className="h-4 w-4"/>
                                                 </TableCell>
                                             )}
-                                            {columns.map((column) =>
+                                            {columns.map((column, columnIndex) =>
+                                                <TableCell
+                                                    key={`${key}-${String(column.key)}`}
+                                                    style={getColumnWidthStyle(column.width)}
+                                                    className={`${columnIndex === columns.length - 1 ? "" : "border-r border-border/40"}`.trim()}
+                                                >
+                                                    <Skeleton className="h-4 w-24"/>
+                                                </TableCell>,
+                                            )}
+                                        </TableRow>,
+                                    )
+                                    : filteredRows.map((row) => {
+                                        const rowId = getRowId(row);
+                                        return (
+                                            <TableRow key={rowId}>
+                                                {enableSelect && (
                                                     <TableCell
-                                                        key={`${rowId}-${String(column.key)}`}
-                                                        style={getColumnWidthStyle(column.width)}
-                                                        className={`
+                                                        className="border-r border-border/40 p-0"
+                                                        style={{
+                                                            width: `${SELECT_COL_SIZE}px`,
+                                                            minWidth: `${SELECT_COL_SIZE}px`,
+                                                            maxWidth: `${SELECT_COL_SIZE}px`,
+                                                        }}
+                                                    >
+                                                        <div
+                                                            className="flex h-full w-full items-center justify-center p-1">
+                                                            <Checkbox
+                                                                checked={selectedRowIdSet.has(rowId)}
+                                                                onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
+                                                                aria-label={`행 선택 ${String(rowId)}`}
+                                                            />
+                                                        </div>
+                                                    </TableCell>
+                                                )}
+                                                {columns.map((column) =>
+                                                        <TableCell
+                                                            key={`${rowId}-${String(column.key)}`}
+                                                            style={getColumnWidthStyle(column.width)}
+                                                            className={`
                                                             ${column.cellClassName ?? ""}
                                                             overflow-hidden
                                                             text-ellipsis
                                                             whitespace-nowrap
                                                             ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"}
                                                         `}
-                                                    >
-                                                        <div className="truncate">
-                                                            {column.render ? column.render(row) : String(row[column.key as keyof T])}
-                                                        </div>
-                                                    </TableCell>
-                                                ,
-                                            )}
-                                        </TableRow>
-                                    );
-                                })}
-                            {!isLoading && filteredRows.length === 0 && (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={columns.length + (enableSelect ? 1 : 0)}
-                                        className="py-8 text-center text-sm text-muted-foreground"
-                                    >
-                                        조건에 맞는 데이터가 없습니다.
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </ScrollArea>
-            </div>
+                                                        >
+                                                            <div className="truncate">
+                                                                {column.render ? column.render(row) : String(row[column.key as keyof T])}
+                                                            </div>
+                                                        </TableCell>
+                                                    ,
+                                                )}
+                                            </TableRow>
+                                        );
+                                    })}
+                                {!isLoading && filteredRows.length === 0 && (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={columns.length + (enableSelect ? 1 : 0)}
+                                            className="py-8 text-center text-sm text-muted-foreground"
+                                        >
+                                            조건에 맞는 데이터가 없습니다.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </ScrollArea>
+                </div>
             </CardContent>
 
             <CardFooter
-                className="mt-2 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+                className="flex flex-col gap-4 border-t border-border text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-wrap items-center gap-3">
                     <span>
                       Page {currentPage} of {totalPages}
