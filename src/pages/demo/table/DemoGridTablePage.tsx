@@ -172,14 +172,11 @@ const DemoGridTablePage = () => {
   }, []);
 
   const clearManualLoading = useCallback(() => {
-    const grid = gridInstanceRef.current;
-
     if (loadingTimeoutRef.current !== null) {
       window.clearTimeout(loadingTimeoutRef.current);
       loadingTimeoutRef.current = null;
     }
 
-    grid?.hideLoading();
     setManualLoading(false);
   }, []);
 
@@ -286,8 +283,6 @@ const DemoGridTablePage = () => {
         loadingTimeoutRef.current = null;
       }
 
-      setManualLoading(false);
-      grid?.hideLoading();
       grid?.destroy();
       gridInstanceRef.current = null;
     };
@@ -376,10 +371,8 @@ const DemoGridTablePage = () => {
                 if (!grid) return;
                 clearManualLoading();
                 setManualLoading(true);
-                grid.showLoading();
                 setEventMessage("Loading 상태 표시 중...");
                 loadingTimeoutRef.current = window.setTimeout(() => {
-                  grid.hideLoading();
                   loadingTimeoutRef.current = null;
                   setManualLoading(false);
                   applyGridData(gridRows);
