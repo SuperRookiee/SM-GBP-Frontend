@@ -29,5 +29,7 @@ export interface IDemoGridTableSampleDataParams {
   dateFrom?: string;
   dateTo?: string;
   includeDiscontinued?: boolean;
+  categories?: DemoGridCategory[];
+  statuses?: DemoGridStatus[];
   sorters?: IDemoGridSortOption[];
 }

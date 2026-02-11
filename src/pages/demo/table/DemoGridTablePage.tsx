@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Search } from "lucide-react";
 import Grid from "tui-grid";
 import { useQuery } from "@tanstack/react-query";
 import "tui-grid/dist/tui-grid.css";
 import { getDemoGridTableSampleDataApi } from "@/apis/demoGridTable.api.ts";
 import { useGridTablePageStore } from "@/stores/page/gridTablePage.store.ts";
 import { cn } from "@/utils/utils.ts";
-import type { IDemoGridTableRow } from "@/interface/IDemoGridTable.interface.ts";
+import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interface/IDemoGridTable.interface.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
@@ -17,8 +17,8 @@ import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx";
 
-const STATUS_OPTIONS = ["판매중", "품절", "품절임박"] as const;
-const CATEGORY_OPTIONS = ["전자기기", "생활용품", "패션", "사무용품"] as const;
+const STATUS_OPTIONS: DemoGridStatus[] = ["판매중", "품절", "품절임박"];
+const CATEGORY_OPTIONS: DemoGridCategory[] = ["전자기기", "생활용품", "패션", "사무용품"];
 
 const defaultColumnVisibility: Record<string, boolean> = {
   id: true,
@@ -76,20 +76,55 @@ const DatePickerField = ({
   </div>
 );
 
+const MultiCheckboxField = <T extends string>({
+  label,
+  options,
+  selected,
+  onToggle,
+}: {
+  label: string;
+  options: T[];
+  selected: T[];
+  onToggle: (next: T[]) => void;
+}) => (
+  <div className="flex flex-col gap-2">
+    <Label>{label}</Label>
+    <div className="flex flex-wrap gap-3 rounded-md border p-2">
+      {options.map((option) => {
+        const checked = selected.includes(option);
+        return (
+          <div key={option} className="inline-flex items-center gap-2">
+            <Checkbox
+              id={`${label}-${option}`}
+              checked={checked}
+              onCheckedChange={(state) => {
+                if (state === true) onToggle([...selected, option]);
+                else onToggle(selected.filter((item) => item !== option));
+              }}
+            />
+            <Label htmlFor={`${label}-${option}`} className="font-normal">{option}</Label>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+);
+
 const DemoGridTablePage = () => {
   const gridWrapperRef = useRef<HTMLDivElement | null>(null);
   const gridInstanceRef = useRef<Grid | null>(null);
 
-  const keyword = useGridTablePageStore((state) => state.keyword);
-  const dateFrom = useGridTablePageStore((state) => state.dateFrom);
-  const dateTo = useGridTablePageStore((state) => state.dateTo);
-  const includeDiscontinued = useGridTablePageStore((state) => state.includeDiscontinued);
+  const draft = useGridTablePageStore((state) => state.draft);
+  const applied = useGridTablePageStore((state) => state.applied);
   const sorters = useGridTablePageStore((state) => state.sorters);
-  const setKeyword = useGridTablePageStore((state) => state.setKeyword);
-  const setDateFrom = useGridTablePageStore((state) => state.setDateFrom);
-  const setDateTo = useGridTablePageStore((state) => state.setDateTo);
-  const setIncludeDiscontinued = useGridTablePageStore((state) => state.setIncludeDiscontinued);
+  const setDraftKeyword = useGridTablePageStore((state) => state.setDraftKeyword);
+  const setDraftDateFrom = useGridTablePageStore((state) => state.setDraftDateFrom);
+  const setDraftDateTo = useGridTablePageStore((state) => state.setDraftDateTo);
+  const setDraftIncludeDiscontinued = useGridTablePageStore((state) => state.setDraftIncludeDiscontinued);
+  const setDraftCategories = useGridTablePageStore((state) => state.setDraftCategories);
+  const setDraftStatuses = useGridTablePageStore((state) => state.setDraftStatuses);
   const setSorters = useGridTablePageStore((state) => state.setSorters);
+  const applyFilters = useGridTablePageStore((state) => state.applyFilters);
   const resetFilters = useGridTablePageStore((state) => state.resetFilters);
 
   const [rows, setRows] = useState<IDemoGridTableRow[]>([]);
@@ -100,8 +135,8 @@ const DemoGridTablePage = () => {
   const [manualLoading, setManualLoading] = useState(false);
 
   const { isLoading, isFetching, isError, refetch } = useQuery({
-    queryKey: ["demoGridTable", { keyword, dateFrom, dateTo, includeDiscontinued, sorters }],
-    queryFn: () => getDemoGridTableSampleDataApi({ keyword, dateFrom, dateTo, includeDiscontinued, sorters }),
+    queryKey: ["demoGridTable", { applied, sorters }],
+    queryFn: () => getDemoGridTableSampleDataApi({ ...applied, sorters }),
     staleTime: 20_000,
     refetchOnWindowFocus: false,
     onSuccess: (nextRows) => setRows(nextRows),
@@ -131,46 +166,6 @@ const DemoGridTablePage = () => {
     setFrozenEnabled(enabled);
   }, []);
 
-  const handleAddRow = useCallback(() => {
-    const nextId = rows.length ? Math.max(...rows.map((row) => row.id)) + 1 : 1;
-    const newRow: IDemoGridTableRow = {
-      id: nextId,
-      product: "신규 상품",
-      category: "전자기기",
-      price: 10000,
-      stock: 1,
-      status: "판매중",
-      launchDate: "2024-06-01",
-      discontinued: "N",
-    };
-
-    const nextRows = [...rows, newRow];
-    setRows(nextRows);
-    applyGridData(withRowClassName(nextRows));
-    setEventMessage(`행 추가: id=${nextId}`);
-  }, [applyGridData, rows]);
-
-  const handleDeleteRows = useCallback(() => {
-    const grid = gridInstanceRef.current;
-    if (!grid) return;
-
-    const checkedRowKeys = grid.getCheckedRowKeys();
-    if (checkedRowKeys.length === 0) {
-      const focused = grid.getFocusedCell();
-      if (typeof focused?.rowKey === "number") checkedRowKeys.push(focused.rowKey);
-    }
-
-    if (checkedRowKeys.length === 0) {
-      setEventMessage("삭제할 행이 없습니다. 체크박스 또는 포커스를 선택해주세요.");
-      return;
-    }
-
-    const nextRows = rows.filter((_, index) => !checkedRowKeys.includes(index));
-    setRows(nextRows);
-    applyGridData(withRowClassName(nextRows));
-    setEventMessage(`행 삭제: ${checkedRowKeys.length}건`);
-  }, [applyGridData, rows]);
-
   useEffect(() => {
     if (!gridWrapperRef.current) return;
 
@@ -179,15 +174,7 @@ const DemoGridTablePage = () => {
       data: gridRows,
       columns: [
         { header: "상품 ID", name: "id", align: "center", width: 100, sortable: true, validation: { required: true, dataType: "number", min: 1 } },
-        {
-          header: "상품명",
-          name: "product",
-          minWidth: 180,
-          sortable: true,
-          editor: "text",
-          filter: { type: "text", showApplyBtn: true, showClearBtn: true },
-          validation: { required: true },
-        },
+        { header: "상품명", name: "product", minWidth: 180, sortable: true, editor: "text", filter: { type: "text", showApplyBtn: true, showClearBtn: true }, validation: { required: true } },
         {
           header: "카테고리",
           name: "category",
@@ -195,7 +182,6 @@ const DemoGridTablePage = () => {
           width: 140,
           sortable: true,
           editor: { type: "select", options: { listItems: CATEGORY_OPTIONS.map((value) => ({ text: value, value })) } },
-          filter: { type: "select", showApplyBtn: true, showClearBtn: true, listItems: CATEGORY_OPTIONS.map((value) => ({ text: value, value })) },
         },
         {
           header: "가격",
@@ -208,14 +194,7 @@ const DemoGridTablePage = () => {
           formatter: ({ value }: { value: unknown }) => `${Number(value).toLocaleString()}원`,
         },
         { header: "재고", name: "stock", align: "right", width: 100, sortable: true, editor: "text", validation: { required: true, dataType: "number", min: 0, max: 1000 } },
-        {
-          header: "출시일",
-          name: "launchDate",
-          align: "center",
-          width: 160,
-          sortable: true,
-          editor: { type: "datePicker", options: { format: "yyyy-MM-dd", timepicker: false } },
-        },
+        { header: "출시일", name: "launchDate", align: "center", width: 160, sortable: true, editor: { type: "datePicker", options: { format: "yyyy-MM-dd", timepicker: false } } },
         {
           header: "상태",
           name: "status",
@@ -223,7 +202,6 @@ const DemoGridTablePage = () => {
           width: 140,
           sortable: true,
           editor: { type: "select", options: { listItems: STATUS_OPTIONS.map((value) => ({ text: value, value })) } },
-          filter: { type: "select", showApplyBtn: true, showClearBtn: true, listItems: STATUS_OPTIONS.map((value) => ({ text: value, value })) },
         },
         {
           header: "단종",
@@ -277,7 +255,7 @@ const DemoGridTablePage = () => {
         <header className="space-y-2">
           <p className="text-sm font-semibold text-muted-foreground">Demo GridTable</p>
           <h1 className="text-3xl font-semibold tracking-tight">TOAST UI Grid Feature Playground</h1>
-          <p className="text-sm text-muted-foreground">Shadcn UI 기반 컨트롤 패널 + API 시뮬레이션으로 동작합니다.</p>
+          <p className="text-sm text-muted-foreground">돋보기 버튼을 눌렀을 때만 필터가 적용됩니다.</p>
         </header>
 
         <Card>
@@ -289,21 +267,27 @@ const DemoGridTablePage = () => {
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="grid-search">전체 검색</Label>
-                <Input
-                  id="grid-search"
-                  value={keyword}
-                  onChange={(event) => setKeyword(event.target.value)}
-                  placeholder="상품명/카테고리/상태 검색"
-                />
+                <Input id="grid-search" value={draft.keyword} onChange={(event) => setDraftKeyword(event.target.value)} placeholder="상품명/카테고리/상태 검색" />
               </div>
 
-              <DatePickerField label="출시일 시작" value={dateFrom} onChange={setDateFrom} />
-              <DatePickerField label="출시일 종료" value={dateTo} onChange={setDateTo} />
+              <DatePickerField label="출시일 시작" value={draft.dateFrom} onChange={setDraftDateFrom} />
+              <DatePickerField label="출시일 종료" value={draft.dateTo} onChange={setDraftDateTo} />
 
               <div className="flex items-end gap-2">
-                <Button type="button" onClick={handleAddRow}>행 추가</Button>
-                <Button type="button" variant="outline" onClick={handleDeleteRows}>선택 행 삭제</Button>
+                <Button type="button" onClick={() => {
+                  applyFilters();
+                  setEmptyMode(false);
+                  setEventMessage("검색 조건 반영 완료");
+                }}>
+                  <Search className="size-4" />
+                  검색
+                </Button>
               </div>
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <MultiCheckboxField label="카테고리" options={CATEGORY_OPTIONS} selected={draft.categories} onToggle={setDraftCategories} />
+              <MultiCheckboxField label="상태" options={STATUS_OPTIONS} selected={draft.statuses} onToggle={setDraftStatuses} />
             </div>
 
             <div className="flex flex-wrap items-center gap-4 border-t pt-4">
@@ -312,69 +296,53 @@ const DemoGridTablePage = () => {
                 <Label htmlFor="frozenColumn">Frozen Column(앞 2개)</Label>
               </div>
               <div className="inline-flex items-center gap-2">
-                <Checkbox
-                  id="includeDiscontinued"
-                  checked={includeDiscontinued}
-                  onCheckedChange={(checked) => setIncludeDiscontinued(checked === true)}
-                />
+                <Checkbox id="includeDiscontinued" checked={draft.includeDiscontinued} onCheckedChange={(checked) => setDraftIncludeDiscontinued(checked === true)} />
                 <Label htmlFor="includeDiscontinued">단종 포함</Label>
               </div>
 
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSorters([
-                    { key: "price", direction: "asc" },
-                    { key: "stock", direction: "desc" },
-                  ]);
-                  setEventMessage("멀티 정렬 실행: price ASC + stock DESC");
-                  setEmptyMode(false);
-                }}
-              >
+              <Button variant="outline" onClick={() => {
+                setSorters([{ key: "price", direction: "asc" }, { key: "stock", direction: "desc" }]);
+                setEventMessage("멀티 정렬 실행: price ASC + stock DESC");
+                setEmptyMode(false);
+                refetch();
+              }}>
                 멀티 정렬 실행
               </Button>
 
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setEmptyMode(true);
-                  setEventMessage("Empty data 상태 확인 완료");
-                }}
-              >
+              <Button variant="outline" onClick={() => {
+                setEmptyMode(true);
+                setEventMessage("Empty data 상태 확인 완료");
+              }}>
                 Empty 상태
               </Button>
 
-              <Button
-                variant="outline"
-                onClick={() => {
-                  const grid = gridInstanceRef.current;
-                  if (!grid) return;
-                  setManualLoading(true);
-                  grid.showLoading();
-                  setEventMessage("Loading 상태 표시 중...");
-                  window.setTimeout(() => {
-                    grid.hideLoading();
-                    setManualLoading(false);
-                    applyGridData(gridRows);
-                    setEventMessage("Loading 상태 해제 확인 완료");
-                  }, 900);
-                }}
-              >
+              <Button variant="outline" onClick={() => {
+                const grid = gridInstanceRef.current;
+                if (!grid) return;
+                setManualLoading(true);
+                grid.showLoading();
+                setEventMessage("Loading 상태 표시 중...");
+                window.setTimeout(() => {
+                  grid.hideLoading();
+                  setManualLoading(false);
+                  applyGridData(gridRows);
+                  setEventMessage("Loading 상태 해제 확인 완료");
+                }, 900);
+              }}>
                 Loading 상태
               </Button>
 
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  resetFilters();
-                  setFrozenEnabled(true);
-                  setColumnVisible(defaultColumnVisibility);
-                  setSorters([]);
-                  setEmptyMode(false);
-                  refetch();
-                  setEventMessage("필터/정렬/상태 초기화 완료");
-                }}
-              >
+              <Button variant="secondary" onClick={() => {
+                const grid = gridInstanceRef.current;
+                resetFilters();
+                setFrozenEnabled(true);
+                setSorters([]);
+                setEmptyMode(false);
+                setColumnVisible(defaultColumnVisibility);
+                Object.keys(defaultColumnVisibility).forEach((column) => grid?.showColumn(column));
+                refetch();
+                setEventMessage("필터/정렬/상태 초기화 완료");
+              }}>
                 초기화
               </Button>
             </div>
@@ -384,16 +352,16 @@ const DemoGridTablePage = () => {
               <div className="flex flex-wrap gap-4">
                 {Object.keys(columnVisible).map((column) => (
                   <div key={column} className="inline-flex items-center gap-2">
-                    <Checkbox
-                      id={`column-${column}`}
-                      checked={columnVisible[column]}
-                      onCheckedChange={(checked) => handleToggleColumn(column, checked === true)}
-                    />
+                    <Checkbox id={`column-${column}`} checked={columnVisible[column]} onCheckedChange={(checked) => handleToggleColumn(column, checked === true)} />
                     <Label htmlFor={`column-${column}`}>{column}</Label>
                   </div>
                 ))}
               </div>
             </div>
+
+            <p className="text-xs text-muted-foreground">
+              적용된 조건: 검색어({applied.keyword || "-"}) / 기간({applied.dateFrom || "-"} ~ {applied.dateTo || "-"}) / 카테고리({applied.categories.join(", ") || "전체"}) / 상태({applied.statuses.join(", ") || "전체"})
+            </p>
           </CardContent>
         </Card>
 

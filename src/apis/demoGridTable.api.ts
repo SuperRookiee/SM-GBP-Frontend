@@ -26,6 +26,8 @@ export const getDemoGridTableSampleDataApi = async ({
   dateFrom,
   dateTo,
   includeDiscontinued = true,
+  categories = [],
+  statuses = [],
   sorters = [],
 }: IDemoGridTableSampleDataParams): Promise<IDemoGridTableRow[]> => {
   const loweredKeyword = keyword?.trim().toLowerCase() ?? "";
@@ -37,8 +39,10 @@ export const getDemoGridTableSampleDataApi = async ({
     const includeByDateFrom = !dateFrom || row.launchDate >= dateFrom;
     const includeByDateTo = !dateTo || row.launchDate <= dateTo;
     const includeByDiscontinued = includeDiscontinued || row.discontinued !== "Y";
+    const includeByCategory = categories.length === 0 || categories.includes(row.category);
+    const includeByStatus = statuses.length === 0 || statuses.includes(row.status);
 
-    return includeByKeyword && includeByDateFrom && includeByDateTo && includeByDiscontinued;
+    return includeByKeyword && includeByDateFrom && includeByDateTo && includeByDiscontinued && includeByCategory && includeByStatus;
   });
 
   await new Promise((resolve) => setTimeout(resolve, 700));
