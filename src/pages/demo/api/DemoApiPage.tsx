@@ -1,63 +1,104 @@
-import { Suspense } from "react";
-import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
-import { QueryErrorResetBoundary, useSuspenseQuery, } from "@tanstack/react-query";
-import { GetSampleListApi } from "@/apis/demo/sample.api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card";
-
-// #. Error Fallback UI
-const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
-    return (
-        <div className="space-y-3">
-            <p className="text-destructive">{error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다."}</p>
-            <button
-                onClick={resetErrorBoundary}
-                className="text-sm underline"
-            >
-                다시 시도
-            </button>
-        </div>
-    );
-};
-
-// #. 실제 데이터 렌더 컴포넌트
-const DemoContent = () => {
-    const { data } = useSuspenseQuery({
-        queryKey: ["sample", "list"],
-        queryFn: GetSampleListApi,
-    });
-
-    return (
-        <pre className="rounded-md bg-muted p-3 text-xs overflow-auto">
-            {JSON.stringify(data, null, 2)}
-        </pre>
-    );
-};
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
+import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
+import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
+import DataTable from "@/components/table/DataTable";
 
 const DemoApiPage = () => {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Demo API</CardTitle>
-                <CardDescription>
-                    <code>/api/sample/list</code>를 호출합니다.
-                </CardDescription>
-            </CardHeader>
+    const query = useSamplePageStore((s) => s.query);
+    const filterKey = useSamplePageStore((s) => s.filterKey);
+    const sortKey = useSamplePageStore((s) => s.sortKey);
+    const sortDirection = useSamplePageStore((s) => s.sortDirection);
+    const page = useSamplePageStore((s) => s.page);
+    const setPage = useSamplePageStore((s) => s.setPage);
+    const setQuery = useSamplePageStore((s) => s.setQuery);
+    const setFilterKey = useSamplePageStore((s) => s.setFilterKey);
+    const setSort = useSamplePageStore((s) => s.setSort);
+    const pageSize = useSamplePageStore((s) => s.pageSize);
+    const setPageSize = useSamplePageStore((s) => s.setPageSize);
 
-            <CardContent className="space-y-3">
-                <QueryErrorResetBoundary>
-                    {({ reset }) => (
-                        <ErrorBoundary
-                            onReset={reset}
-                            FallbackComponent={ErrorFallback}
-                        >
-                            <Suspense fallback={<p>요청 중...</p>}>
-                                <DemoContent/>
-                            </Suspense>
-                        </ErrorBoundary>
-                    )}
-                </QueryErrorResetBoundary>
-            </CardContent>
-        </Card>
+    useEffect(() => {
+        if (page < 1) setPage(1);
+    }, [page, setPage]);
+
+    const { data, isLoading, isFetching, isError } = useQuery({
+        queryKey: ["sample", "list", { page, pageSize, query, filterKey, sortKey, sortDirection }],
+        queryFn: GetSampleListApi,
+        staleTime: 30_000,
+        gcTime: 5 * 60_000,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        placeholderData: (prev) => prev,
+    });
+
+    const allRows = data?.data ?? [];
+    const trimmedQuery = query.trim().toLowerCase();
+
+    const filteredRows = allRows.filter((row) => {
+        if (!trimmedQuery) return true;
+
+        const fields = filterKey === "all"
+            ? Object.values(row)
+            : [row[filterKey]];
+
+        return fields.some((value) => String(value).toLowerCase().includes(trimmedQuery));
+    });
+
+    const sortedRows = [...filteredRows].sort((a, b) => {
+        if (!sortKey) return 0;
+
+        const aValue = String(a[sortKey]);
+        const bValue = String(b[sortKey]);
+        const compared = aValue.localeCompare(bValue, "ko", { numeric: true });
+
+        return sortDirection === "asc" ? compared : -compared;
+    });
+
+    const total = sortedRows.length;
+    const startIndex = (page - 1) * pageSize;
+    const rows = sortedRows.slice(startIndex, startIndex + pageSize);
+
+    if (isError) {
+        return (
+            <div className="p-6">
+                <p className="text-sm text-destructive">데이터를 불러오지 못했습니다.</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
+            <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 overflow-hidden">
+                <header className="space-y-2">
+                    <p className="text-sm font-semibold text-muted-foreground">Demo API</p>
+                    <h1 className="text-3xl font-semibold tracking-tight">Sample API DataTable</h1>
+                    <p className="text-sm text-muted-foreground">
+                        /sample/list 응답 데이터를 공통 DataTable 컴포넌트로 조회합니다.
+                    </p>
+                </header>
+                <DataTable
+                    title="샘플 목록"
+                    description="검색 조건은 상태 스토어에 저장되어 새로고침 후에도 유지됩니다."
+                    rows={rows}
+                    total={total}
+                    pageSize={pageSize}
+                    isLoading={isLoading || isFetching}
+                    filterOptions={SAMPLE_TABLE_FILTER}
+                    columns={SAMPLE_TABLE_COLUMNS}
+                    query={query}
+                    filterKey={filterKey}
+                    sortKey={sortKey}
+                    sortDirection={sortDirection}
+                    page={page}
+                    onQueryChange={setQuery}
+                    onFilterChange={setFilterKey}
+                    onSortChange={setSort}
+                    onPageChange={setPage}
+                    onPageSizeChange={setPageSize}
+                />
+            </div>
+        </div>
     );
 };
 
