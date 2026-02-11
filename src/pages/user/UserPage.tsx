@@ -6,13 +6,13 @@ import DataTable from "@/components/table/DataTable";
 
 const UserPage = () => {
     const {
-        query,
+        search,
         filterKey,
         sortKey,
         sortDirection,
         page,
         pageSize,
-        setQuery,
+        setSearch,
         setFilterKey,
         setSort,
         setPage,
@@ -20,8 +20,8 @@ const UserPage = () => {
     } = useUserPageStore();
 
     const { data, isLoading, isFetching, isError } = useQuery({
-        queryKey: ["users", { page, pageSize, query, filterKey, sortKey, sortDirection }],
-        queryFn: async () => getUserSampleDataApi({ page, pageSize, query, filterKey, sortKey, sortDirection }),
+        queryKey: ["users", { page, pageSize, search, filterKey, sortKey, sortDirection }],
+        queryFn: async () => getUserSampleDataApi({ page, pageSize, query: search, filterKey, sortKey, sortDirection }),
         staleTime: 30_000,
         gcTime: 5 * 60_000,
         refetchOnWindowFocus: false,
@@ -59,12 +59,12 @@ const UserPage = () => {
                     isLoading={isLoading || isFetching}
                     filterOptions={USER_TABLE_FILTER}
                     columns={USER_TABLE_COLUMNS}
-                    query={query}
+                    query={search}
                     filterKey={filterKey}
                     sortKey={sortKey}
                     sortDirection={sortDirection}
                     page={page}
-                    onQueryChange={setQuery}
+                    onQueryChange={setSearch}
                     onFilterChange={setFilterKey}
                     onSortChange={setSort}
                     onPageChange={setPage}

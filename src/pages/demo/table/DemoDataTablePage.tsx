@@ -7,13 +7,13 @@ import type { DemoDataTableResponse } from "@/types/demo/demoDataTable.types.ts"
 import DataTable from "@/components/table/DataTable";
 
 const DemoDataTablePage = () => {
-    const query = useDataTablePageStore((s) => s.query);
+    const search = useDataTablePageStore((s) => s.search);
     const filterKey = useDataTablePageStore((s) => s.filterKey);
     const sortKey = useDataTablePageStore((s) => s.sortKey);
     const sortDirection = useDataTablePageStore((s) => s.sortDirection);
     const page = useDataTablePageStore((s) => s.page);
     const setPage = useDataTablePageStore((s) => s.setPage);
-    const setQuery = useDataTablePageStore((s) => s.setQuery);
+    const setSearch = useDataTablePageStore((s) => s.setSearch);
     const setFilterKey = useDataTablePageStore((s) => s.setFilterKey);
     const setSort = useDataTablePageStore((s) => s.setSort);
     const pageSize = useDataTablePageStore((s) => s.pageSize);
@@ -25,8 +25,8 @@ const DemoDataTablePage = () => {
     }, [page, setPage]);
 
     const { data, isLoading, isFetching, isError } = useQuery<DemoDataTableResponse>({
-        queryKey: ["demoGridTable", "rows", { page, pageSize, query, filterKey, sortKey, sortDirection}],
-        queryFn: async () =>  await getDemoDataTableSampleDataApi({ page, pageSize, query, filterKey, sortKey, sortDirection}), // 서버에서 rows는 pageSize만큼, total은 전체 count(*) 내려줘야 함
+        queryKey: ["demoGridTable", "rows", { page, pageSize, search, filterKey, sortKey, sortDirection}],
+        queryFn: async () =>  await getDemoDataTableSampleDataApi({ page, pageSize, query: search, filterKey, sortKey, sortDirection}), // 서버에서 rows는 pageSize만큼, total은 전체 count(*) 내려줘야 함
         staleTime: 30_000,
         gcTime: 5 * 60_000,
         refetchOnWindowFocus: false,
@@ -64,12 +64,12 @@ const DemoDataTablePage = () => {
                     isLoading={isLoading || isFetching}
                     filterOptions={DEMO_DATA_TABLE_FILTER}
                     columns={DEMO_DATA_TABLE_COLUMNS}
-                    query={query}
+                    query={search}
                     filterKey={filterKey}
                     sortKey={sortKey}
                     sortDirection={sortDirection}
                     page={page}
-                    onQueryChange={setQuery}
+                    onQueryChange={setSearch}
                     onFilterChange={setFilterKey}
                     onSortChange={setSort}
                     onPageChange={setPage}
