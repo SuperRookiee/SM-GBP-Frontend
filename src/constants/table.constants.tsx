@@ -50,25 +50,33 @@ export const DEMO_DATA_TABLE_ACTION = {
 };
 
 export const DEMO_DATA_TABLE_COLUMNS: DemoDataTableColumn[] = [
-    { key: "id", label: "문서 번호", width: 140, cellClassName: "font-medium", filterable: true },
+    { key: "id", label: "문서 번호", width: 80, cellClassName: "font-medium", filterable: true },
     { key: "customer", label: "담당자", width: 140, filterable: true },
-    { key: "email", label: "이메일", width: 260, filterable: true },
+    { key: "email", label: "이메일", width: 280, filterable: true },
     { key: "role", label: "역할", width: 120, filterable: true },
+    // Test Columns
+    { key: "AA", label: "AA", width: 160, filterable: true },
+    { key: "BB", label: "BB", width: 160, filterable: true },
+    { key: "CC", label: "CC", width: 160, filterable: true },
+    { key: "DD", label: "DD", width: 160, filterable: true },
+    { key: "EE", label: "EE", width: 160, filterable: true },
+    // Test Columns
     {
         key: "status",
         label: "상태",
-        width: 120,
+        width: 100,
         filterable: true,
-        render: row =>
-            <span className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground">
-                {row.status}
-            </span>
+        render: row => (
+            <span className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-xs font-medium">
+        {row.status}
+      </span>
+        ),
     },
     {
         key: "actions",
-        label: DEMO_DATA_TABLE_ACTION.columnLabel,
+        label: "",
         sortable: false,
-        width: 80,
+        width: 56,
         headerClassName: "text-right",
         cellClassName: "text-right",
         render: row =>

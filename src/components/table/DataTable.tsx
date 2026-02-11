@@ -57,21 +57,21 @@ const getColumnWidthStyle = (width?: string | number) => {
 };
 
 const DataTable = <T, >({
-    rows, total, pageSize, title, description, columns, filterOptions,
-    query, filterKey, sortKey, sortDirection, page,
-    onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
-    isLoading = false,
-    searchLabel = "검색",
-    searchPlaceholder = "검색어를 입력하세요",
-    filterLabel = "검색 조건",
-    getRowId = (row) => (row as { id: string | number }).id,
-    captionRenderer = (count) => `총 ${count} 건`,
-    enableSelect = false,
-    selectedRowIds = [],
-    onSelectedRowIdsChange,
-    tableHeightClassName = "h-105",
-    pageSizeOptions = [5, 10, 25, 50, 100],
-}: IGridTableClientProps<T>) => {
+                            rows, total, pageSize, title, description, columns, filterOptions,
+                            query, filterKey, sortKey, sortDirection, page,
+                            onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
+                            isLoading = false,
+                            searchLabel = "검색",
+                            searchPlaceholder = "검색어를 입력하세요",
+                            filterLabel = "검색 조건",
+                            getRowId = (row) => (row as { id: string | number }).id,
+                            captionRenderer = (count) => `총 ${count} 건`,
+                            enableSelect = false,
+                            selectedRowIds = [],
+                            onSelectedRowIdsChange,
+                            tableHeightClassName = "h-105",
+                            pageSizeOptions = [5, 10, 25, 50, 100],
+                        }: IGridTableClientProps<T>) => {
     const [draftQuery, setDraftQuery] = useState(query);
     const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
     const [columnFilterSearch, setColumnFilterSearch] = useState<Partial<Record<keyof T, string>>>({});
@@ -79,6 +79,7 @@ const DataTable = <T, >({
     const [internalSelectedRowIds, setInternalSelectedRowIds] = useState<Array<string | number>>([]);
     const totalPages = Math.max(Math.ceil(total / pageSize), 1);
     const currentPage = Math.min(Math.max(page, 1), totalPages);
+    const SELECT_COL_SIZE = 28;
 
     // #. 페이지 유효성 검사 및 보정 로직
     useEffect(() => {
@@ -146,8 +147,8 @@ const DataTable = <T, >({
     const pageWindowStart = Math.floor((currentPage - 1) / DEFAULT_TABLE.pageWindow) * DEFAULT_TABLE.pageWindow + 1;
     const pageWindowEnd = Math.min(totalPages, pageWindowStart + DEFAULT_TABLE.pageWindow - 1);
     const pageNumbers = useMemo(() =>
-        Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
-    [pageWindowEnd, pageWindowStart]);
+            Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
+        [pageWindowEnd, pageWindowStart]);
 
     const sortIndicator = (key: keyof T) => {
         if (sortKey !== key) return null;
@@ -234,7 +235,7 @@ const DataTable = <T, >({
 
     return (
         <section
-            className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm">
+            className="mx-auto w-full min-w-0 max-w-full rounded-2xl border border-border bg-card p-4 shadow-sm sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1235px]">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">{title}</h2>
@@ -274,18 +275,27 @@ const DataTable = <T, >({
                 </div>
             </div>
 
-            <div className="w-full min-w-0 overflow-x-auto rounded-md border">
-                <Table className="w-full min-w-max table-fixed">
-                    <ScrollArea className={`${tableHeightClassName}`}>
+            <div className="w-full min-w-0 rounded-md border">
+                <ScrollArea className={`w-full ${tableHeightClassName}`}>
+                    <Table className="w-full table-fixed">
                         <TableHeader className="sticky top-0 z-20 bg-card">
                             <TableRow className="bg-card hover:bg-card">
                                 {enableSelect &&
-                                    <TableHead className="w-10 bg-card border-r border-border/40" style={{ width: "40px", minWidth: "40px", maxWidth: "40px" }}>
-                                        <Checkbox
-                                            checked={isAllRowsSelected ? true : (isSomeRowsSelected ? "indeterminate" : false)}
-                                            onCheckedChange={onToggleSelectAll}
-                                            aria-label="전체 선택"
-                                        />
+                                    <TableHead
+                                        className="border-r border-border/40 p-0"
+                                        style={{
+                                            width: `${SELECT_COL_SIZE}px`,
+                                            minWidth: `${SELECT_COL_SIZE}px`,
+                                            maxWidth: `${SELECT_COL_SIZE}px`,
+                                        }}
+                                    >
+                                        <div className="flex h-full w-full items-center justify-center p-1">
+                                            <Checkbox
+                                                checked={isAllRowsSelected ? true : isSomeRowsSelected ? "indeterminate" : false}
+                                                onCheckedChange={onToggleSelectAll}
+                                                aria-label="전체 선택"
+                                            />
+                                        </div>
                                     </TableHead>
                                 }
                                 {columns.map((column, index) => {
@@ -393,7 +403,7 @@ const DataTable = <T, >({
                                 ? skeletonRows.map((key) =>
                                     <TableRow key={key}>
                                         {enableSelect && (
-                                            <TableCell className="w-10 border-r border-border/40" style={{ width: "40px", minWidth: "40px", maxWidth: "40px" }}>
+                                            <TableCell className="w-2 border-r border-border/40">
                                                 <Skeleton className="h-4 w-4"/>
                                             </TableCell>
                                         )}
@@ -413,20 +423,40 @@ const DataTable = <T, >({
                                     return (
                                         <TableRow key={rowId}>
                                             {enableSelect && (
-                                                <TableCell className="w-10 border-r border-border/40" style={{ width: "40px", minWidth: "40px", maxWidth: "40px" }}>
-                                                    <Checkbox
-                                                        checked={selectedRowIdSet.has(rowId)}
-                                                        onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
-                                                        aria-label={`행 선택 ${String(rowId)}`}
-                                                    />
+                                                <TableCell
+                                                    className="border-r border-border/40 p-0"
+                                                    style={{
+                                                        width: `${SELECT_COL_SIZE}px`,
+                                                        minWidth: `${SELECT_COL_SIZE}px`,
+                                                        maxWidth: `${SELECT_COL_SIZE}px`,
+                                                    }}
+                                                >
+                                                    <div className="flex h-full w-full items-center justify-center p-1">
+                                                        <Checkbox
+                                                            checked={selectedRowIdSet.has(rowId)}
+                                                            onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
+                                                            aria-label={`행 선택 ${String(rowId)}`}
+                                                        />
+                                                    </div>
                                                 </TableCell>
                                             )}
                                             {columns.map((column) =>
-                                                <TableCell key={`${rowId}-${String(column.key)}`}
-                                                           style={getColumnWidthStyle(column.width)}
-                                                           className={`${column.cellClassName ?? ""} ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"}`.trim()}>
-                                                    {column.render ? column.render(row) : String(row[column.key as keyof T])}
-                                                </TableCell>,
+                                                    <TableCell
+                                                        key={`${rowId}-${String(column.key)}`}
+                                                        style={getColumnWidthStyle(column.width)}
+                                                        className={`
+                                                            ${column.cellClassName ?? ""}
+                                                            overflow-hidden
+                                                            text-ellipsis
+                                                            whitespace-nowrap
+                                                            ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"}
+                                                        `}
+                                                    >
+                                                        <div className="truncate">
+                                                            {column.render ? column.render(row) : String(row[column.key as keyof T])}
+                                                        </div>
+                                                    </TableCell>
+                                                ,
                                             )}
                                         </TableRow>
                                     );
