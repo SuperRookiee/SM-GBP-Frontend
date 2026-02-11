@@ -235,7 +235,7 @@ const DataTable = <T, >({
 
     return (
         <section
-            className="mx-auto w-full min-w-0 max-w-full rounded-2xl border border-border bg-card p-4 shadow-sm sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1235px]">
+            className="mx-auto w-full min-w-0 rounded-2xl border border-border bg-card p-4 shadow-sm max-w-112.5 sm:max-w-160 md:max-w-3xl lg:max-w-5xl xl:max-w-308.75">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">{title}</h2>
@@ -277,7 +277,7 @@ const DataTable = <T, >({
 
             <div className="w-full min-w-0 rounded-md border">
                 <ScrollArea className={`w-full ${tableHeightClassName}`}>
-                    <Table className="w-full table-fixed">
+                    <Table className="min-w-full w-max table-fixed">
                         <TableHeader className="sticky top-0 z-20 bg-card">
                             <TableRow className="bg-card hover:bg-card">
                                 {enableSelect &&
@@ -286,7 +286,7 @@ const DataTable = <T, >({
                                         style={{
                                             width: `${SELECT_COL_SIZE}px`,
                                             minWidth: `${SELECT_COL_SIZE}px`,
-                                            maxWidth: `${SELECT_COL_SIZE}px`,
+                                            maxWidth: `${SELECT_COL_SIZE}px`
                                         }}
                                     >
                                         <div className="flex h-full w-full items-center justify-center p-1">
@@ -476,7 +476,8 @@ const DataTable = <T, >({
                 </ScrollArea>
             </div>
 
-            <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <div
+                className="mt-4 flex flex-col gap-4 border-t border-border pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-wrap items-center gap-3">
                     <span>
                       Page {currentPage} of {totalPages}

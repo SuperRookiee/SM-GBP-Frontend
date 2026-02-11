@@ -50,17 +50,10 @@ export const DEMO_DATA_TABLE_ACTION = {
 };
 
 export const DEMO_DATA_TABLE_COLUMNS: DemoDataTableColumn[] = [
-    { key: "id", label: "문서 번호", width: 80, cellClassName: "font-medium", filterable: true },
+    { key: "id", label: "문서 번호", width: 100, cellClassName: "font-medium", filterable: true },
     { key: "customer", label: "담당자", width: 140, filterable: true },
     { key: "email", label: "이메일", width: 280, filterable: true },
     { key: "role", label: "역할", width: 120, filterable: true },
-    // Test Columns
-    { key: "AA", label: "AA", width: 160, filterable: true },
-    { key: "BB", label: "BB", width: 160, filterable: true },
-    { key: "CC", label: "CC", width: 160, filterable: true },
-    { key: "DD", label: "DD", width: 160, filterable: true },
-    { key: "EE", label: "EE", width: 160, filterable: true },
-    // Test Columns
     {
         key: "status",
         label: "상태",
