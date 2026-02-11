@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtool } from "@/utils/devtools.ts";
-import type { DemoGridCategory, DemoGridStatus, IDemoGridSortOption } from "@/interface/IDemoGridTable.interface.ts";
+import type { DemoGridCategory, DemoGridStatus, IDemoGridSortOption } from "@/interface/demo/IDemoGridTable.interface.ts";
 
 type GridTableFilterState = {
   keyword: string;

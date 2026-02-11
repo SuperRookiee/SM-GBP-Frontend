@@ -2,9 +2,9 @@ import type { AxiosError, AxiosRequestConfig } from "axios";
 import axios from "axios";
 
 const apiClient = axios.create({
-    baseURL: "/api",
+    baseURL: import.meta.env.MIRACLE_API_HOST,
     withCredentials: true,
-    timeout: 15_000,
+    timeout: 10_000,
 });
 
 const tokenStore = {

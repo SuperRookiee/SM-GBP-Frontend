@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getDemoDataTableSampleDataApi } from "@/apis/demoDataTable.api";
+import { getDemoDataTableSampleDataApi } from "@/apis/demo/demoDataTable.api.ts";
 import { DEMO_DATA_TABLE_COLUMNS, DEMO_DATA_TABLE_FILTER } from "@/constants/table.constants.tsx";
-import { useDataTablePageStore } from "@/stores/page/dataTablePage.store.ts";
-import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
+import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";
+import type { DemoDataTableResponse } from "@/types/demo/demoDataTable.types.ts";
 import DataTable from "@/components/table/DataTable";
 
 const DemoDataTablePage = () => {

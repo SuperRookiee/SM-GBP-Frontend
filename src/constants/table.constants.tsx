@@ -1,6 +1,6 @@
-import type { IDemoDataTableRow } from "@/interface/IDemoDataTable.interface.ts";
+import type { IDemoDataTableRow } from "@/interface/demo/IDemoDataTable.interface.ts";
 import type { ActionItem } from "@/types/ActionItem.type.ts";
-import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types.ts";
+import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demo/demoDataTable.types.ts";
 import type { UserColumn, UserFilterOption } from "@/types/user.types.ts";
 import ActionMenu from "@/components/common/ActionMenu";
 

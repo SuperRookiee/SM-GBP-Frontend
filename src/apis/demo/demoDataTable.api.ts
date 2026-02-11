@@ -1,5 +1,5 @@
-import type { IDemoDataTableSampleDataParams } from "@/interface/IDemoDataTable.interface.ts";
-import type { DemoDataTableResponse } from "@/types/demoDataTable.types";
+import type { IDemoDataTableSampleDataParams } from "@/interface/demo/IDemoDataTable.interface.ts";
+import type { DemoDataTableResponse } from "@/types/demo/demoDataTable.types.ts";
 import { DEMO_DATA_TABLE_SAMPLE_DATA } from "@/tests/data/demoDataTableSampleData.test.ts";
 
 /**

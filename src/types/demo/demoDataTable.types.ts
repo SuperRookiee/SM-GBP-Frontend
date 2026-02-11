@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { IDemoDataTableRow } from "@/interface/IDemoDataTable.interface.ts";
+import type { IDemoDataTableRow } from "@/interface/demo/IDemoDataTable.interface.ts";
 
 export type DemoDataTableColumn<T = IDemoDataTableRow> = {
   key: keyof T | string;

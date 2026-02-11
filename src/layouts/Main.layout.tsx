@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useDataTablePageStore } from "@/stores/page/dataTablePage.store.ts";
+import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";
 import { useUserPageStore } from "@/stores/page/userPage.store.ts";
 import useLogout from "@/hooks/useLogout.tsx";
 import { useResetStore } from "@/hooks/useResetStore";

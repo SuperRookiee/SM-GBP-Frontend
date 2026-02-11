@@ -1,7 +1,7 @@
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
 import { DEFAULT_TABLE, SELECT_COL_SIZE } from "@/constants/table.constants.tsx";
-import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
+import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demo/demoDataTable.types.ts";
 import Pagination from "@/components/table/Pagination.tsx";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -228,7 +228,7 @@ const DataTable = <T, >({
 
     return (
         <Card className="mx-auto w-full min-w-0 shadow-sm max-w-112.5
-                        sm:max-w-160 md:max-w-3xl lg:max-w-5xl xl:max-w-308.75">
+                        sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
             <CardHeader className="flex justify-between">
                 <div>
                     <CardTitle>{title}</CardTitle>
