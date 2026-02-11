@@ -6,9 +6,11 @@ import Grid from "tui-grid";
 import { useQuery } from "@tanstack/react-query";
 import "tui-grid/dist/tui-grid.css";
 import { getDemoGridTableSampleDataApi } from "@/apis/demoGridTable.api.ts";
+import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { useGridTablePageStore } from "@/stores/page/gridTablePage.store.ts";
 import { cn } from "@/utils/utils.ts";
 import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interface/IDemoGridTable.interface.ts";
+import TablePagination from "@/components/table/Pagination.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
@@ -92,6 +94,7 @@ const MultiCheckboxField = <T extends string>({
     <div className="flex flex-wrap gap-3 rounded-md border p-2">
       {options.map((option) => {
         const checked = selected.includes(option);
+
         return (
           <div key={option} className="inline-flex items-center gap-2">
             <Checkbox
@@ -132,6 +135,8 @@ const DemoGridTablePage = () => {
   const [columnVisible, setColumnVisible] = useState<Record<string, boolean>>(defaultColumnVisibility);
   const [emptyMode, setEmptyMode] = useState(false);
   const [manualLoading, setManualLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_TABLE.pageSize);
 
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ["demoGridTable", { applied, sorters }],
@@ -140,7 +145,24 @@ const DemoGridTablePage = () => {
     refetchOnWindowFocus: false,
   });
 
-  const gridRows = useMemo(() => withRowClassName(emptyMode ? [] : (data ?? [])), [data, emptyMode]);
+  const resolvedRows = useMemo(() => (emptyMode ? [] : (data ?? [])), [data, emptyMode]);
+
+  const total = resolvedRows.length;
+  const totalPages = Math.max(Math.ceil(total / pageSize), 1);
+  const currentPage = Math.min(Math.max(page, 1), totalPages);
+  const previousPage = currentPage > 1 ? currentPage - 1 : null;
+  const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+  const pageWindowStart = Math.max(1, currentPage - Math.floor(DEFAULT_TABLE.pageWindow / 2));
+  const pageWindowEnd = Math.min(totalPages, pageWindowStart + DEFAULT_TABLE.pageWindow - 1);
+  const pageNumbers = useMemo(() =>
+    Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
+  [pageWindowEnd, pageWindowStart]);
+
+  const gridRows = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return withRowClassName(resolvedRows.slice(start, start + pageSize));
+  }, [currentPage, pageSize, resolvedRows]);
+
 
   const applyGridData = useCallback((nextRows: IDemoGridTableRow[]) => {
     if (!gridInstanceRef.current) return;
@@ -215,7 +237,6 @@ const DemoGridTablePage = () => {
       scrollX: true,
       scrollY: true,
       columnOptions: { resizable: true, frozenCount: 2 },
-      pageOptions: { perPage: 8, useClient: true },
     });
 
     grid.on("click", (event) => {
@@ -266,6 +287,7 @@ const DemoGridTablePage = () => {
               <div className="flex items-end gap-2">
                 <Button type="button" onClick={() => {
                   applyFilters();
+                  setPage(1);
                   setEmptyMode(false);
                   setEventMessage("검색 조건 반영 완료");
                 }}>
@@ -292,6 +314,7 @@ const DemoGridTablePage = () => {
 
               <Button variant="outline" onClick={() => {
                 setSorters([{ key: "price", direction: "asc" }, { key: "stock", direction: "desc" }]);
+                setPage(1);
                 setEventMessage("멀티 정렬 실행: price ASC + stock DESC");
                 setEmptyMode(false);
                 refetch();
@@ -325,6 +348,8 @@ const DemoGridTablePage = () => {
               <Button variant="secondary" onClick={() => {
                 const grid = gridInstanceRef.current;
                 resetFilters();
+                setPage(1);
+                setPageSize(DEFAULT_TABLE.pageSize);
                 setFrozenEnabled(true);
                 setSorters([]);
                 setEmptyMode(false);
@@ -364,6 +389,20 @@ const DemoGridTablePage = () => {
             </div>
             <div ref={gridWrapperRef} />
           </CardContent>
+
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageNumbers={pageNumbers}
+            previousPage={previousPage}
+            nextPage={nextPage}
+            totalCount={total}
+            isLoading={isLoading || isFetching}
+            pageSize={pageSize}
+            onPageSizeChange={setPageSize}
+            onPageChange={setPage}
+            caption={`총 ${total} 건`}
+          />
         </Card>
 
         <style>

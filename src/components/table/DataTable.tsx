@@ -1,15 +1,15 @@
-import { Activity, type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
 import { DEFAULT_TABLE, SELECT_COL_SIZE } from "@/constants/table.constants.tsx";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demoDataTable.types";
+import TablePagination from "@/components/table/Pagination.tsx";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface IGridTableClientProps<T> {
@@ -224,14 +224,6 @@ const DataTable = <T, >({
     };
 
     // #. 페이지당 표시할 행 수 변경 시 호출
-    const onChangePageSize = (value: string) => {
-        if (!onPageSizeChange) return;
-        const nextPageSize = Number(value);
-        if (Number.isNaN(nextPageSize)) return;
-
-        onPageSizeChange(nextPageSize);
-        onPageChange(1);
-    };
 
     return (
         <Card className="mx-auto w-full min-w-0 shadow-sm max-w-112.5
@@ -479,60 +471,20 @@ const DataTable = <T, >({
                 </div>
             </CardContent>
 
-            <CardFooter
-                className="flex flex-col gap-4 border-t border-border text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex flex-wrap items-center gap-3">
-                    <span>
-                      Page {currentPage} of {totalPages}
-                    </span>
-                    <Activity mode={isLoading ? "visible" : "hidden"}>
-                        <div className="flex items-center gap-2">
-                            <Skeleton className="h-4 w-6"/>
-                            <Skeleton className="h-4 w-6"/>
-                        </div>
-                    </Activity>
-                    <Activity mode={isLoading ? "hidden" : "visible"}>{captionRenderer(total)}</Activity>
-
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">Rows</span>
-                        <Select value={String(pageSize)} onValueChange={onChangePageSize}>
-                            <SelectTrigger className="h-8 w-20">
-                                <SelectValue/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {pageSizeOptions.map((size) =>
-                                    <SelectItem key={size} value={String(size)}>{size}</SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(1)}
-                            disabled={currentPage === 1}>처음</Button>
-                    <Button type="button" variant="outline" size="sm"
-                            onClick={() => previousPage && onPageChange(previousPage)}
-                            disabled={!previousPage}>이전</Button>
-                    {pageNumbers.map((pageNumber) =>
-                        <Button
-                            key={pageNumber}
-                            type="button"
-                            size="sm"
-                            variant={pageNumber === currentPage ? "default" : "outline"}
-                            className={pageNumber === currentPage ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90" : undefined}
-                            onClick={() => onPageChange(pageNumber)}
-                        >
-                            {pageNumber}
-                        </Button>,
-                    )}
-                    <Button type="button" variant="outline" size="sm"
-                            onClick={() => nextPage && onPageChange(nextPage)}
-                            disabled={!nextPage}>다음</Button>
-                    <Button type="button" variant="outline" size="sm"
-                            onClick={() => onPageChange(totalPages)}
-                            disabled={currentPage === totalPages}>마지막</Button>
-                </div>
-            </CardFooter>
+            <TablePagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                pageNumbers={pageNumbers}
+                previousPage={previousPage}
+                nextPage={nextPage}
+                totalCount={total}
+                caption={captionRenderer(total)}
+                isLoading={isLoading}
+                pageSize={pageSize}
+                pageSizeOptions={pageSizeOptions}
+                onPageSizeChange={onPageSizeChange}
+                onPageChange={onPageChange}
+            />
         </Card>
     );
 };
