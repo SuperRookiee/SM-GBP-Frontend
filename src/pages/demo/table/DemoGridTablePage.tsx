@@ -117,6 +117,7 @@ const MultiCheckboxField = <T extends string>({
 const DemoGridTablePage = () => {
   const gridWrapperRef = useRef<HTMLDivElement | null>(null);
   const gridInstanceRef = useRef<Grid | null>(null);
+  const loadingTimeoutRef = useRef<number | null>(null);
 
   const draft = useGridTablePageStore((state) => state.draft);
   const applied = useGridTablePageStore((state) => state.applied);
@@ -168,6 +169,18 @@ const DemoGridTablePage = () => {
   const applyGridData = useCallback((nextRows: IDemoGridTableRow[]) => {
     if (!gridInstanceRef.current) return;
     gridInstanceRef.current.resetData(nextRows);
+  }, []);
+
+  const clearManualLoading = useCallback(() => {
+    const grid = gridInstanceRef.current;
+
+    if (loadingTimeoutRef.current !== null) {
+      window.clearTimeout(loadingTimeoutRef.current);
+      loadingTimeoutRef.current = null;
+    }
+
+    grid?.hideLoading();
+    setManualLoading(false);
   }, []);
 
   const handleToggleColumn = useCallback((columnName: string, visible: boolean) => {
@@ -267,6 +280,14 @@ const DemoGridTablePage = () => {
 
     return () => {
       cancelAnimationFrame(frameId);
+
+      if (loadingTimeoutRef.current !== null) {
+        window.clearTimeout(loadingTimeoutRef.current);
+        loadingTimeoutRef.current = null;
+      }
+
+      setManualLoading(false);
+      grid?.hideLoading();
       grid?.destroy();
       gridInstanceRef.current = null;
     };
@@ -353,11 +374,13 @@ const DemoGridTablePage = () => {
               <Button variant="outline" onClick={() => {
                 const grid = gridInstanceRef.current;
                 if (!grid) return;
+                clearManualLoading();
                 setManualLoading(true);
                 grid.showLoading();
                 setEventMessage("Loading 상태 표시 중...");
-                window.setTimeout(() => {
+                loadingTimeoutRef.current = window.setTimeout(() => {
                   grid.hideLoading();
+                  loadingTimeoutRef.current = null;
                   setManualLoading(false);
                   applyGridData(gridRows);
                   setEventMessage("Loading 상태 해제 확인 완료");
@@ -368,6 +391,7 @@ const DemoGridTablePage = () => {
 
               <Button variant="secondary" onClick={() => {
                 const grid = gridInstanceRef.current;
+                clearManualLoading();
                 resetFilters();
                 setPage(1);
                 setPageSize(DEFAULT_TABLE.pageSize);
