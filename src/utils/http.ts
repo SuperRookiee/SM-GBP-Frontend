@@ -31,7 +31,6 @@ type RefreshResponse = {
 let isRefreshing = false;// 현재 refresh 요청 진행 여부
 let refreshQueue: Array<(token: string | null) => void> = []; // refresh 완료 후 재시도할 요청 대기열
 
-
 // #. Refresh 대기열 등록
 const enqueue = (cb: (token: string | null) => void) => refreshQueue.push(cb);
 
