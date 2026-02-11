@@ -234,7 +234,7 @@ const DataTable = <T, >({
 
     return (
         <section
-            className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm">
+            className="mx-auto w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px]">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">{title}</h2>
@@ -274,9 +274,9 @@ const DataTable = <T, >({
                 </div>
             </div>
 
-            <div className="w-full min-w-0 overflow-x-auto rounded-md border">
-                <Table className="w-full min-w-max table-fixed">
-                    <ScrollArea className={`${tableHeightClassName}`}>
+            <div className="w-full min-w-0 rounded-md border">
+                <ScrollArea className={`w-full ${tableHeightClassName}`}>
+                    <Table className="w-full min-w-max table-fixed">
                         <TableHeader className="sticky top-0 z-20 bg-card">
                             <TableRow className="bg-card hover:bg-card">
                                 {enableSelect &&
