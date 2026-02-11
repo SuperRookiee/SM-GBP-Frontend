@@ -136,7 +136,7 @@ const DemoGridTablePage = () => {
   const [emptyMode, setEmptyMode] = useState(false);
   const [manualLoading, setManualLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DEFAULT_TABLE.pageSize);
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_TABLE.pageSize);
 
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ["demoGridTable", { applied, sorters }],
