@@ -188,71 +188,86 @@ const DemoGridTablePage = () => {
   }, []);
 
   useEffect(() => {
-    if (!gridWrapperRef.current) return;
+    let grid: Grid | null = null;
+    let frameId: number;
 
-    const grid = new Grid({
-      el: gridWrapperRef.current,
-      data: gridRows,
-      columns: [
-        { header: "상품 ID", name: "id", align: "center", width: 100, sortable: true, validation: { required: true, dataType: "number", min: 1 } },
-        { header: "상품명", name: "product", minWidth: 180, sortable: true, editor: "text", filter: { type: "text", showApplyBtn: true, showClearBtn: true }, validation: { required: true } },
-        {
-          header: "카테고리",
-          name: "category",
-          align: "center",
-          width: 140,
-          sortable: true,
-          editor: { type: "select", options: { listItems: CATEGORY_OPTIONS.map((value) => ({ text: value, value })) } },
-        },
-        {
-          header: "가격",
-          name: "price",
-          align: "right",
-          width: 140,
-          sortable: true,
-          editor: "text",
-          validation: { required: true, dataType: "number", min: 1000, max: 999999 },
-          formatter: ({ value }: { value: unknown }) => `${Number(value).toLocaleString()}원`,
-        },
-        { header: "재고", name: "stock", align: "right", width: 100, sortable: true, editor: "text", validation: { required: true, dataType: "number", min: 0, max: 1000 } },
-        { header: "출시일", name: "launchDate", align: "center", width: 160, sortable: true, editor: { type: "datePicker", options: { format: "yyyy-MM-dd", timepicker: false } } },
-        {
-          header: "상태",
-          name: "status",
-          align: "center",
-          width: 140,
-          sortable: true,
-          editor: { type: "select", options: { listItems: STATUS_OPTIONS.map((value) => ({ text: value, value })) } },
-        },
-        {
-          header: "단종",
-          name: "discontinued",
-          align: "center",
-          width: 100,
-          editor: { type: "checkbox", options: { listItems: [{ text: "Y", value: "Y" }, { text: "N", value: "N" }] } },
-          formatter: ({ value }: { value: unknown }) => (value === "Y" ? "✅" : "-"),
-        },
-      ],
-      bodyHeight: 420,
-      rowHeaders: ["rowNum", "checkbox"],
-      scrollX: true,
-      scrollY: true,
-      columnOptions: { resizable: true, frozenCount: 2 },
-    });
+    const initGrid = () => {
+      const el = gridWrapperRef.current;
+      if (!el) return;
 
-    grid.on("click", (event) => {
-      const ev = event as { rowKey?: number | string; columnName?: string };
-      setEventMessage(`onClick: rowKey=${String(ev.rowKey)} / column=${ev.columnName ?? "-"}`);
-    });
+      // height가 아직 0이면 다음 프레임까지 대기
+      if (el.clientHeight === 0) {
+        frameId = requestAnimationFrame(initGrid);
+        return;
+      }
 
-    grid.on("afterChange", () => {
-      setEventMessage("셀 편집 완료");
-    });
+      grid = new Grid({
+        el,
+        data: gridRows,
+        columns: [
+          { header: "상품 ID", name: "id", align: "center", width: 100, sortable: true, validation: { required: true, dataType: "number", min: 1 } },
+          { header: "상품명", name: "product", minWidth: 180, sortable: true, editor: "text", filter: { type: "text", showApplyBtn: true, showClearBtn: true }, validation: { required: true } },
+          {
+            header: "카테고리",
+            name: "category",
+            align: "center",
+            width: 140,
+            sortable: true,
+            editor: { type: "select", options: { listItems: CATEGORY_OPTIONS.map((value) => ({ text: value, value })) } },
+          },
+          {
+            header: "가격",
+            name: "price",
+            align: "right",
+            width: 140,
+            sortable: true,
+            editor: "text",
+            validation: { required: true, dataType: "number", min: 1000, max: 999999 },
+            formatter: ({ value }: { value: unknown }) => `${Number(value).toLocaleString()}원`,
+          },
+          { header: "재고", name: "stock", align: "right", width: 100, sortable: true, editor: "text", validation: { required: true, dataType: "number", min: 0, max: 1000 } },
+          { header: "출시일", name: "launchDate", align: "center", width: 160, sortable: true, editor: { type: "datePicker", options: { format: "yyyy-MM-dd", timepicker: false } } },
+          {
+            header: "상태",
+            name: "status",
+            align: "center",
+            width: 140,
+            sortable: true,
+            editor: { type: "select", options: { listItems: STATUS_OPTIONS.map((value) => ({ text: value, value })) } },
+          },
+          {
+            header: "단종",
+            name: "discontinued",
+            align: "center",
+            width: 100,
+            editor: { type: "checkbox", options: { listItems: [{ text: "Y", value: "Y" }, { text: "N", value: "N" }] } },
+            formatter: ({ value }: { value: unknown }) => (value === "Y" ? "✅" : "-"),
+          },
+        ],
+        bodyHeight: 420,
+        rowHeaders: ["rowNum", "checkbox"],
+        scrollX: true,
+        scrollY: true,
+        columnOptions: { resizable: true, frozenCount: 2 },
+      });
 
-    gridInstanceRef.current = grid;
+      grid.on("click", (event) => {
+        const ev = event as { rowKey?: number | string; columnName?: string };
+        setEventMessage(`onClick: rowKey=${String(ev.rowKey)} / column=${ev.columnName ?? "-"}`);
+      });
+
+      grid.on("afterChange", () => {
+        setEventMessage("셀 편집 완료");
+      });
+
+      gridInstanceRef.current = grid;
+    };
+
+    frameId = requestAnimationFrame(initGrid);
 
     return () => {
-      grid.destroy();
+      cancelAnimationFrame(frameId);
+      grid?.destroy();
       gridInstanceRef.current = null;
     };
   }, []);
@@ -279,11 +294,12 @@ const DemoGridTablePage = () => {
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="grid-search">전체 검색</Label>
-                <Input id="grid-search" value={draft.keyword} onChange={(event) => setDraftKeyword(event.target.value)} placeholder="상품명/카테고리/상태 검색" />
+                <Input id="grid-search" value={draft.keyword} onChange={(event) => setDraftKeyword(event.target.value)}
+                       placeholder="상품명/카테고리/상태 검색"/>
               </div>
 
-              <DatePickerField label="출시일 시작" value={draft.dateFrom} onChange={setDraftDateFrom} />
-              <DatePickerField label="출시일 종료" value={draft.dateTo} onChange={setDraftDateTo} />
+              <DatePickerField label="출시일 시작" value={draft.dateFrom} onChange={setDraftDateFrom}/>
+              <DatePickerField label="출시일 종료" value={draft.dateTo} onChange={setDraftDateTo}/>
 
               <div className="flex items-end gap-2">
                 <Button type="button" onClick={() => {
@@ -292,24 +308,28 @@ const DemoGridTablePage = () => {
                   setEmptyMode(false);
                   setEventMessage("검색 조건 반영 완료");
                 }}>
-                  <Search className="size-4" />
+                  <Search className="size-4"/>
                   검색
                 </Button>
               </div>
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">
-              <MultiCheckboxField label="카테고리" options={CATEGORY_OPTIONS} selected={draft.categories} onToggle={setDraftCategories} />
-              <MultiCheckboxField label="상태" options={STATUS_OPTIONS} selected={draft.statuses} onToggle={setDraftStatuses} />
+              <MultiCheckboxField label="카테고리" options={CATEGORY_OPTIONS} selected={draft.categories}
+                                  onToggle={setDraftCategories}/>
+              <MultiCheckboxField label="상태" options={STATUS_OPTIONS} selected={draft.statuses}
+                                  onToggle={setDraftStatuses}/>
             </div>
 
             <div className="flex flex-wrap items-center gap-4 border-t pt-4">
               <div className="inline-flex items-center gap-2">
-                <Checkbox id="frozenColumn" checked={frozenEnabled} onCheckedChange={(checked) => handleFrozenToggle(checked === true)} />
+                <Checkbox id="frozenColumn" checked={frozenEnabled}
+                          onCheckedChange={(checked) => handleFrozenToggle(checked === true)}/>
                 <Label htmlFor="frozenColumn">Frozen Column(앞 2개)</Label>
               </div>
               <div className="inline-flex items-center gap-2">
-                <Checkbox id="includeDiscontinued" checked={draft.includeDiscontinued} onCheckedChange={(checked) => setDraftIncludeDiscontinued(checked === true)} />
+                <Checkbox id="includeDiscontinued" checked={draft.includeDiscontinued}
+                          onCheckedChange={(checked) => setDraftIncludeDiscontinued(checked === true)}/>
                 <Label htmlFor="includeDiscontinued">단종 포함</Label>
               </div>
 
@@ -367,28 +387,32 @@ const DemoGridTablePage = () => {
               <p className="mb-2 text-sm font-medium">컬럼 표시/숨김</p>
               <div className="flex flex-wrap gap-4">
                 {Object.keys(columnVisible).map((column) => (
-                  <div key={column} className="inline-flex items-center gap-2">
-                    <Checkbox id={`column-${column}`} checked={columnVisible[column]} onCheckedChange={(checked) => handleToggleColumn(column, checked === true)} />
-                    <Label htmlFor={`column-${column}`}>{column}</Label>
-                  </div>
+                    <div key={column} className="inline-flex items-center gap-2">
+                      <Checkbox id={`column-${column}`} checked={columnVisible[column]}
+                                onCheckedChange={(checked) => handleToggleColumn(column, checked === true)}/>
+                      <Label htmlFor={`column-${column}`}>{column}</Label>
+                    </div>
                 ))}
               </div>
             </div>
 
             <p className="text-xs text-muted-foreground">
-              적용된 조건: 검색어({applied.keyword || "-"}) / 기간({applied.dateFrom || "-"} ~ {applied.dateTo || "-"}) / 카테고리({applied.categories.join(", ") || "전체"}) / 상태({applied.statuses.join(", ") || "전체"})
+              적용된 조건: 검색어({applied.keyword || "-"}) / 기간({applied.dateFrom || "-"} ~ {applied.dateTo || "-"}) /
+              카테고리({applied.categories.join(", ") || "전체"}) / 상태({applied.statuses.join(", ") || "전체"})
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="pt-6">
-            <div className="mb-2 text-sm text-muted-foreground">
-              이벤트 로그: {eventMessage}
-              {(isLoading || isFetching || manualLoading) && " · 데이터 로딩 중"}
-              {isError && " · 데이터 조회 실패"}
+            <div className="h-100">
+              <div className="text-sm text-muted-foreground">
+                이벤트 로그: {eventMessage}
+                {(isLoading || isFetching || manualLoading) && " · 데이터 로딩 중"}
+                {isError && " · 데이터 조회 실패"}
+              </div>
+              <div ref={gridWrapperRef} className="h-full"/>
             </div>
-            <div ref={gridWrapperRef} />
           </CardContent>
 
           <Pagination
