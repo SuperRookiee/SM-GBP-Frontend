@@ -4,7 +4,7 @@ import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import DataTable from "@/components/table/DataTable";
-import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/api-result.enum.ts";
+import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
 
 const DemoApiPage = () => {
     const search = useSamplePageStore((s) => s.search);

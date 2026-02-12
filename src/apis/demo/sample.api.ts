@@ -1,25 +1,5 @@
 import { Get } from "@/utils/http.ts";
-import type { ApiResult, ErrorType } from "@/enums/api-result.enum.ts";
-
-export interface IFieldError {
-    field: string;
-    reason: string;
-}
-
-export interface IErrorDetail {
-    type: ErrorType | string;
-    detail: string;
-    instance: string;
-    fieldErrors: IFieldError[] | null;
-}
-
-export interface IApiResponse<T> {
-    result: ApiResult;
-    code: string;
-    message: string;
-    data: T | null;
-    error: IErrorDetail | null;
-}
+import type { IApiResponse } from "@/interface/IApiResponse.ts";
 
 export interface ISampleApiItem {
     id: number;
