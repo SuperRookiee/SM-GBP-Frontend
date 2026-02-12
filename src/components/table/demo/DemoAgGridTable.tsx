@@ -7,6 +7,7 @@ import type { IDemoGridTableRow } from "@/interface/demo/IDemoGridTable.interfac
 import Pagination from "@/components/table/Pagination.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import style from "@/styles/demoGridTable.module.css";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -80,7 +81,7 @@ const DemoAgGridTable = ({
           <p className="text-sm text-muted-foreground">선택된 행: {selectedCount}개</p>
         </div>
 
-        <div className="ag-theme-quartz h-[520px] w-full">
+        <div className={`ag-theme-quartz h-[520px] w-full ${style.demoAgGridTheme}`}>
           <AgGridReact
             rowData={filteredRows}
             columnDefs={columnDefs}

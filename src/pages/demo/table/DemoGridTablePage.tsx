@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { CalendarIcon, Search } from "lucide-react";
+import { CalendarIcon, ChevronDown, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getDemoGridTableSampleDataApi } from "@/apis/demo/demoGridTable.api.ts";
 import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx";
@@ -127,6 +128,7 @@ const DemoGridTablePage = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_TABLE.pageSize);
   const [activeTab, setActiveTab] = useState("toast-ui");
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(true);
 
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ["demoGridTable", { applied, sorters }],
@@ -156,12 +158,24 @@ const DemoGridTablePage = () => {
 
   return (
     <div className={`space-y-4 ${style.demoGridPlayground}`}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Grid Table</CardTitle>
-          <CardDescription>같은 store를 공유하면서 Toast UI / AG Grid를 비교합니다.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <Collapsible open={isFilterPanelOpen} onOpenChange={setIsFilterPanelOpen}>
+        <Card>
+          <CardHeader>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <CardTitle>Grid Table</CardTitle>
+                <CardDescription>같은 store를 공유하면서 Toast UI / AG Grid를 비교합니다.</CardDescription>
+              </div>
+              <CollapsibleTrigger asChild>
+                <Button variant="outline" size="sm">
+                  {isFilterPanelOpen ? "접기" : "펼치기"}
+                  <ChevronDown className={cn("size-4 transition-transform", isFilterPanelOpen && "rotate-180")} />
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+          </CardHeader>
+          <CollapsibleContent>
+            <CardContent className="space-y-4">
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="grid-search">전체 검색</Label>
@@ -226,12 +240,14 @@ const DemoGridTablePage = () => {
             </Button>
           </div>
 
-          <p className="text-xs text-muted-foreground">
-            적용된 조건: 검색어({applied.keyword || "-"}) / 기간({applied.dateFrom || "-"} ~ {applied.dateTo || "-"}) /
-            카테고리({applied.categories.join(", ") || "전체"}) / 상태({applied.statuses.join(", ") || "전체"})
-          </p>
-        </CardContent>
+            <p className="text-xs text-muted-foreground">
+              적용된 조건: 검색어({applied.keyword || "-"}) / 기간({applied.dateFrom || "-"} ~ {applied.dateTo || "-"}) /
+              카테고리({applied.categories.join(", ") || "전체"}) / 상태({applied.statuses.join(", ") || "전체"})
+            </p>
+          </CardContent>
+        </CollapsibleContent>
       </Card>
+      </Collapsible>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-3">
         <TabsList>
