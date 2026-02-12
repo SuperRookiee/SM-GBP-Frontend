@@ -49,11 +49,13 @@ const DemoApiPage = () => {
 
     const rows: ISampleApiItem[] = pageData?.content ?? [];
     const total = pageData?.totalElements ?? 0;
-    const totalPages = pageData?.totalPages ?? 1;
+    const totalPages = pageData?.totalPages;
 
     useEffect(() => {
-        if (page > totalPages) setPage(totalPages);
-    }, [page, setPage, totalPages]);
+        if (!hasSuccessfulResponse || totalPages === undefined) return;
+        const safeTotalPages = Math.max(totalPages, 1);
+        if (page > safeTotalPages) setPage(safeTotalPages);
+    }, [hasSuccessfulResponse, page, setPage, totalPages]);
 
     return (
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
