@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { GetSampleListApi, type ISampleApiItem } from "@/apis/demo/sample.api.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
@@ -23,7 +23,7 @@ const DemoApiPage = () => {
         if (page < 1) setPage(1);
     }, [page, setPage]);
 
-    const { data, isLoading, isError, error } = useQuery({
+    const { data, isLoading, isFetching, isError, error } = useQuery({
         queryKey: ["sample", "list", { page, size, search, filterKey, sortKey, sortDirection }],
         queryFn: ({ queryKey }) => {
             const [, , params] = queryKey as [string, string, {
@@ -38,6 +38,9 @@ const DemoApiPage = () => {
         },
         staleTime: 30_000,
         gcTime: 5 * 60_000,
+        // React Query v5 권장 패턴:
+        // queryKey 변경 시 이전 성공 데이터를 유지해 rows/total이 잠깐 비는 현상을 제거합니다.
+        placeholderData: keepPreviousData,
     });
 
     const hasSuccessfulResponse = data?.result === ApiResultEnum.SUCCESS && data.code === SuccessResultCodeEnum.OK;
@@ -93,6 +96,7 @@ const DemoApiPage = () => {
                         total={total}
                         pageSize={size}
                         isLoading={isLoading}
+                        isFetching={isFetching}
                         filterOptions={SAMPLE_TABLE_FILTER}
                         columns={SAMPLE_TABLE_COLUMNS}
                         query={search}
