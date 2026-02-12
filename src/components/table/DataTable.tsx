@@ -461,15 +461,6 @@ const DataTable = <T, >({
                                 </TableBody>
                             </Table>
                         </ScrollArea>
-
-                        {isFetching && (
-                            // 재조회 중에는 기존 rows/total을 유지하고 오버레이만 표시합니다.
-                            <div className="pointer-events-none absolute inset-0 z-30 flex items-start justify-end bg-background/20 p-3">
-                                <div className="rounded-md border bg-card/95 px-3 py-1.5 text-xs text-muted-foreground shadow-sm">
-                                    데이터 업데이트 중...
-                                </div>
-                            </div>
-                        )}
                     </div>
                 )}
             </CardContent>
