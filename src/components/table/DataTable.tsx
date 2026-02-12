@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface IGridTableClientProps<T> {
@@ -42,6 +43,7 @@ interface IGridTableClientProps<T> {
     // UI 레이아웃 및 라벨 설정
     description?: string;                      // 테이블 설명
     isLoading?: boolean;                       // 로딩 상태 여부
+    isFetching?: boolean;                      // 백그라운드 재조회 여부 (기존 데이터를 유지한 채 갱신)
     searchLabel?: string;                      // 검색창 라벨 텍스트
     searchPlaceholder?: string;                // 검색창 플레이스홀더
     filterLabel?: string;                      // 필터 선택창 라벨 텍스트
@@ -62,6 +64,7 @@ const DataTable = <T, >({
     query, filterKey, sortKey, sortDirection, page,
     onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
     isLoading = false,
+    isFetching = false,
     searchLabel = "검색",
     searchPlaceholder = "검색어를 입력하세요",
     filterLabel = "검색 조건",
@@ -267,9 +270,20 @@ const DataTable = <T, >({
             </CardHeader>
 
             <CardContent>
-                <div className="w-full min-w-0 rounded-md border">
-                    <ScrollArea className={`w-full ${tableHeightClassName}`}>
-                        <Table className="min-w-full w-max table-fixed">
+                {isLoading ? (
+                    // 초기 로딩 시에만 스켈레톤을 노출합니다.
+                    // refetch 단계에서는 이전 데이터(placeholderData)를 유지하여 깜빡임을 방지합니다.
+                    <div className="w-full min-w-0 rounded-md border p-4">
+                        <div className="space-y-3">
+                            {Array.from({ length: Math.min(pageSize, 8) }).map((_, index) => (
+                                <Skeleton key={`table-skeleton-${index}`} className="h-8 w-full" />
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="relative w-full min-w-0 rounded-md border">
+                        <ScrollArea className={`w-full ${tableHeightClassName}`}>
+                            <Table className="min-w-full w-max table-fixed">
                             <TableHeader className="sticky top-0 z-20 bg-card">
                                 <TableRow className="bg-card hover:bg-card">
                                     {enableSelect &&
@@ -390,8 +404,8 @@ const DataTable = <T, >({
                                     })}
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
-                                {filteredRows.map((row) => {
+                                <TableBody>
+                                    {filteredRows.map((row) => {
                                     const rowId = getRowId(row);
                                     return (
                                         <TableRow key={rowId}>
@@ -434,20 +448,30 @@ const DataTable = <T, >({
                                         </TableRow>
                                     );
                                 })}
-                                {filteredRows.length === 0 && (
-                                    <TableRow>
-                                        <TableCell
-                                            colSpan={columns.length + (enableSelect ? 1 : 0)}
-                                            className="py-8 text-center text-sm text-muted-foreground"
-                                        >
-                                            조건에 맞는 데이터가 없습니다.
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </ScrollArea>
-                </div>
+                                    {filteredRows.length === 0 && (
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={columns.length + (enableSelect ? 1 : 0)}
+                                                className="py-8 text-center text-sm text-muted-foreground"
+                                            >
+                                                조건에 맞는 데이터가 없습니다.
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </ScrollArea>
+
+                        {isFetching && (
+                            // 재조회 중에는 기존 rows/total을 유지하고 오버레이만 표시합니다.
+                            <div className="pointer-events-none absolute inset-0 z-30 flex items-start justify-end bg-background/20 p-3">
+                                <div className="rounded-md border bg-card/95 px-3 py-1.5 text-xs text-muted-foreground shadow-sm">
+                                    데이터 업데이트 중...
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
             </CardContent>
 
             <Pagination
@@ -458,7 +482,7 @@ const DataTable = <T, >({
                 nextPage={nextPage}
                 totalCount={total}
                 caption={captionRenderer(total)}
-                isLoading={isLoading}
+                isLoading={isLoading || isFetching}
                 pageSize={pageSize}
                 pageSizeOptions={pageSizeOptions}
                 onPageSizeChange={onPageSizeChange}
