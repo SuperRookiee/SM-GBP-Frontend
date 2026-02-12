@@ -7,7 +7,7 @@ import ActionMenu from "@/components/common/ActionMenu";
 
 /** Default **/
 export const DEFAULT_TABLE = {
-    pageSize: 5,
+    pageSize: 10,
     pageWindow: 5,
 } as const;
 

@@ -17,8 +17,7 @@ export const myTheme = themeQuartz.withParams({
 
     /* ===== Row / Cell ===== */
     rowHoverColor: "color-mix(in srgb, var(--color-foreground) 3%, transparent)",
-    selectedRowBackgroundColor:
-        "color-mix(in srgb, var(--color-primary) 15%, transparent)",
+    selectedRowBackgroundColor: "color-mix(in srgb, var(--color-primary) 15%, transparent)",
 
     rowBorder: true,
     columnBorder: false,
