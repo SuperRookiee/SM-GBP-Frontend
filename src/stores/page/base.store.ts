@@ -11,19 +11,19 @@ export type BasePageStore<T extends object> = {
     sortKey: keyof T | null;
     sortDirection: "asc" | "desc";
     page: number;
-    pageSize: number;
+    size: number;
     setSearch: (search: string) => void;
     setFilterKey: (filterKey: "all" | keyof T) => void;
     setSort: (key: keyof T) => void;
     setPage: (page: number) => void;
-    setPageSize: (pageSize: number) => void;
+    setSize: (size: number) => void;
     reset: () => void;
     resetStore: () => void;
 };
 
 type BasePageState<T extends object> = Pick<
     BasePageStore<T>,
-    "search" | "filterKey" | "sortKey" | "sortDirection" | "page" | "pageSize"
+    "search" | "filterKey" | "sortKey" | "sortDirection" | "page" | "size"
 >;
 
 type CreateTablePageStoreOptions<T extends object> = {
@@ -39,7 +39,7 @@ const defaultState = {
     sortKey: null,
     sortDirection: "asc" as const,
     page: 1,
-    pageSize: DEFAULT_TABLE.pageSize,
+    size: DEFAULT_TABLE.pageSize,
 };
 
 export const createTablePageStore = <T extends object>({
@@ -59,7 +59,7 @@ export const createTablePageStore = <T extends object>({
                     sortKey: state.sortKey ?? null,
                     sortDirection: state.sortDirection ?? "asc",
                     page: state.page ?? 1,
-                    pageSize: state.pageSize ?? DEFAULT_TABLE.pageSize,
+                    size: state.size ?? DEFAULT_TABLE.pageSize,
                 }),
                 comparators: {
                     search: (current, defaults) =>
@@ -82,7 +82,7 @@ export const createTablePageStore = <T extends object>({
                     setWithPageReset(next);
                 },
                 setPage: page => setIfChanged({ page }),
-                setPageSize: pageSize => setWithPageReset({ pageSize }),
+                setSize: size => setWithPageReset({ size }),
                 reset,
                 resetStore,
             };
@@ -95,7 +95,7 @@ export const createTablePageStore = <T extends object>({
                 sortKey: state.sortKey,
                 sortDirection: state.sortDirection,
                 page: state.page,
-                pageSize: state.pageSize,
+                size: state.size,
             }),
         }
     )));

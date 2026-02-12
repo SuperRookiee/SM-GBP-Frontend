@@ -16,8 +16,8 @@ const DemoDataTablePage = () => {
     const setSearch = useDataTablePageStore((s) => s.setSearch);
     const setFilterKey = useDataTablePageStore((s) => s.setFilterKey);
     const setSort = useDataTablePageStore((s) => s.setSort);
-    const pageSize = useDataTablePageStore((s) => s.pageSize);
-    const setPageSize = useDataTablePageStore((s) => s.setPageSize);
+    const size = useDataTablePageStore((s) => s.size);
+    const setSize = useDataTablePageStore((s) => s.setSize);
 
     // #. page가 0 이하로 가는 방지
     useEffect(() => {
@@ -25,8 +25,8 @@ const DemoDataTablePage = () => {
     }, [page, setPage]);
 
     const { data, isLoading, isFetching, isError } = useQuery<DemoDataTableResponse>({
-        queryKey: ["demoGridTable", "rows", { page, pageSize, search, filterKey, sortKey, sortDirection}],
-        queryFn: async () =>  await getDemoDataTableSampleDataApi({ page, pageSize, query: search, filterKey, sortKey, sortDirection}), // 서버에서 rows는 pageSize만큼, total은 전체 count(*) 내려줘야 함
+        queryKey: ["demoGridTable", "rows", { page, size, search, filterKey, sortKey, sortDirection}],
+        queryFn: async () =>  await getDemoDataTableSampleDataApi({ page, pageSize: size, query: search, filterKey, sortKey, sortDirection}), // 서버에서 rows는 pageSize만큼, total은 전체 count(*) 내려줘야 함
         staleTime: 30_000,
         gcTime: 5 * 60_000,
         refetchOnWindowFocus: false,
@@ -60,7 +60,7 @@ const DemoDataTablePage = () => {
                     description="검색 조건은 저장되어 새로고침 후에도 유지됩니다."
                     rows={rows}
                     total={total}
-                    pageSize={pageSize}
+                    pageSize={size}
                     isLoading={isLoading || isFetching}
                     filterOptions={DEMO_DATA_TABLE_FILTER}
                     columns={DEMO_DATA_TABLE_COLUMNS}
@@ -73,7 +73,7 @@ const DemoDataTablePage = () => {
                     onFilterChange={setFilterKey}
                     onSortChange={setSort}
                     onPageChange={setPage}
-                    onPageSizeChange={setPageSize}
+                    onPageSizeChange={setSize}
                     enableSelect
                 />
             </div>

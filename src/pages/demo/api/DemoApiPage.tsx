@@ -4,6 +4,7 @@ import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import DataTable from "@/components/table/DataTable";
+import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
 
 const DemoApiPage = () => {
     const search = useSamplePageStore((s) => s.search);
@@ -15,19 +16,19 @@ const DemoApiPage = () => {
     const setSearch = useSamplePageStore((s) => s.setSearch);
     const setFilterKey = useSamplePageStore((s) => s.setFilterKey);
     const setSort = useSamplePageStore((s) => s.setSort);
-    const pageSize = useSamplePageStore((s) => s.pageSize);
-    const setPageSize = useSamplePageStore((s) => s.setPageSize);
+    const size = useSamplePageStore((s) => s.size);
+    const setSize = useSamplePageStore((s) => s.setSize);
 
     useEffect(() => {
         if (page < 1) setPage(1);
     }, [page, setPage]);
 
-    const { data, isLoading, isFetching, isError } = useQuery({
-        queryKey: ["sample", "list", { page, pageSize, search, filterKey, sortKey, sortDirection }],
+    const { data, isLoading, isFetching, isError, error } = useQuery({
+        queryKey: ["sample", "list", { page, size, search, filterKey, sortKey, sortDirection }],
         queryFn: ({ queryKey }) => {
             const [, , params] = queryKey as [string, string, {
                 page: number;
-                pageSize: number;
+                size: number;
                 search: string;
                 filterKey: string;
                 sortKey: string | null;
@@ -39,7 +40,12 @@ const DemoApiPage = () => {
         gcTime: 5 * 60_000,
     });
 
-    const allRows = data?.data ?? [];
+    const hasSuccessfulResponse = data?.result === ApiResultEnum.SUCCESS && data.code === SuccessResultCodeEnum.OK;
+    const allRows = hasSuccessfulResponse ? (data.data ?? []) : [];
+
+    const apiError = data?.result === ApiResultEnum.FAIL ? data.error : null;
+    const apiErrorCode = data?.result === ApiResultEnum.FAIL ? data.code : null;
+    const queryErrorMessage = error instanceof Error ? error.message : null;
     const trimmedQuery = search.trim().toLowerCase();
 
     const filteredRows = allRows.filter((row) => {
@@ -63,8 +69,8 @@ const DemoApiPage = () => {
     });
 
     const total = sortedRows.length;
-    const startIndex = (page - 1) * pageSize;
-    const rows = sortedRows.slice(startIndex, startIndex + pageSize);
+    const startIndex = (page - 1) * size;
+    const rows = sortedRows.slice(startIndex, startIndex + size);
 
     return (
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
@@ -79,11 +85,20 @@ const DemoApiPage = () => {
                     </p>
                 </header>
 
-                {isError ? (
-                    <div className="flex h-64 items-center justify-center rounded-md border border-destructive/30 bg-destructive/5">
-                        <p className="text-sm text-destructive">
-                            데이터를 불러오지 못했습니다.
+                {isError || data?.result === ApiResultEnum.FAIL ? (
+                    <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-6 text-center">
+                        <p className="text-sm font-medium text-destructive">
+                            {`[${apiErrorCode ?? ErrorResultCodeEnum.INTERNAL_ERROR}] ${apiError?.detail ?? queryErrorMessage ?? "데이터를 불러오지 못했습니다."}`}
                         </p>
+                        {apiError?.fieldErrors?.length ? (
+                            <ul className="space-y-1 text-xs text-destructive/80">
+                                {apiError.fieldErrors.map((fieldError) => (
+                                    <li key={`${fieldError.field}-${fieldError.reason}`}>
+                                        {fieldError.field}: {fieldError.reason}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : null}
                     </div>
                 ) : (
                     <DataTable
@@ -91,7 +106,7 @@ const DemoApiPage = () => {
                         description="검색 조건은 상태 스토어에 저장되어 새로고침 후에도 유지됩니다."
                         rows={rows}
                         total={total}
-                        pageSize={pageSize}
+                        pageSize={size}
                         isLoading={isLoading || isFetching}
                         filterOptions={SAMPLE_TABLE_FILTER}
                         columns={SAMPLE_TABLE_COLUMNS}
@@ -104,7 +119,7 @@ const DemoApiPage = () => {
                         onFilterChange={setFilterKey}
                         onSortChange={setSort}
                         onPageChange={setPage}
-                        onPageSizeChange={setPageSize}
+                        onPageSizeChange={setSize}
                     />
                 )}
             </div>
