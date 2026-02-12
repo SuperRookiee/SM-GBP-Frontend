@@ -16,15 +16,15 @@ const DemoApiPage = () => {
     const setSearch = useSamplePageStore((s) => s.setSearch);
     const setFilterKey = useSamplePageStore((s) => s.setFilterKey);
     const setSort = useSamplePageStore((s) => s.setSort);
-    const pageSize = useSamplePageStore((s) => s.pageSize);
-    const setPageSize = useSamplePageStore((s) => s.setPageSize);
+    const size = useSamplePageStore((s) => s.size);
+    const setSize = useSamplePageStore((s) => s.setSize);
 
     useEffect(() => {
         if (page < 1) setPage(1);
     }, [page, setPage]);
 
     const { data, isLoading, isFetching, isError, error } = useQuery({
-        queryKey: ["sample", "list", { page, size: pageSize, search, filterKey, sortKey, sortDirection }],
+        queryKey: ["sample", "list", { page, size, search, filterKey, sortKey, sortDirection }],
         queryFn: ({ queryKey }) => {
             const [, , params] = queryKey as [string, string, {
                 page: number;
@@ -69,8 +69,8 @@ const DemoApiPage = () => {
     });
 
     const total = sortedRows.length;
-    const startIndex = (page - 1) * pageSize;
-    const rows = sortedRows.slice(startIndex, startIndex + pageSize);
+    const startIndex = (page - 1) * size;
+    const rows = sortedRows.slice(startIndex, startIndex + size);
 
     return (
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
@@ -106,7 +106,7 @@ const DemoApiPage = () => {
                         description="검색 조건은 상태 스토어에 저장되어 새로고침 후에도 유지됩니다."
                         rows={rows}
                         total={total}
-                        pageSize={pageSize}
+                        pageSize={size}
                         isLoading={isLoading || isFetching}
                         filterOptions={SAMPLE_TABLE_FILTER}
                         columns={SAMPLE_TABLE_COLUMNS}
@@ -119,7 +119,7 @@ const DemoApiPage = () => {
                         onFilterChange={setFilterKey}
                         onSortChange={setSort}
                         onPageChange={setPage}
-                        onPageSizeChange={setPageSize}
+                        onPageSizeChange={setSize}
                     />
                 )}
             </div>

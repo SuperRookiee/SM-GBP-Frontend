@@ -11,17 +11,17 @@ const UserPage = () => {
         sortKey,
         sortDirection,
         page,
-        pageSize,
+        size,
         setSearch,
         setFilterKey,
         setSort,
         setPage,
-        setPageSize
+        setSize
     } = useUserPageStore();
 
     const { data, isLoading, isFetching, isError } = useQuery({
-        queryKey: ["users", { page, pageSize, search, filterKey, sortKey, sortDirection }],
-        queryFn: async () => getUserSampleDataApi({ page, pageSize, query: search, filterKey, sortKey, sortDirection }),
+        queryKey: ["users", { page, size, search, filterKey, sortKey, sortDirection }],
+        queryFn: async () => getUserSampleDataApi({ page, pageSize: size, query: search, filterKey, sortKey, sortDirection }),
         staleTime: 30_000,
         gcTime: 5 * 60_000,
         refetchOnWindowFocus: false,
@@ -55,7 +55,7 @@ const UserPage = () => {
                     description="검색 및 정렬 결과는 페이지 이동 시 유지됩니다."
                     rows={rows}
                     total={total}
-                    pageSize={pageSize}
+                    pageSize={size}
                     isLoading={isLoading || isFetching}
                     filterOptions={USER_TABLE_FILTER}
                     columns={USER_TABLE_COLUMNS}
@@ -68,7 +68,7 @@ const UserPage = () => {
                     onFilterChange={setFilterKey}
                     onSortChange={setSort}
                     onPageChange={setPage}
-                    onPageSizeChange={setPageSize}
+                    onPageSizeChange={setSize}
                     enableSelect
                     searchPlaceholder="이름, 권한, User ID로 검색"
                 />
