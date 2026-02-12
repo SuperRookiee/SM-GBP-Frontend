@@ -1,30 +1,34 @@
 import { themeQuartz } from "ag-grid-community";
 
 export const myTheme = themeQuartz.withParams({
-    accentColor: "#15BDE8",
-    backgroundColor: "#0C0C0D",
-    borderColor: "#ffffff00",
-    borderRadius: 20,
-    browserColorScheme: "dark",
-    cellHorizontalPaddingScale: 1,
+    /* ===== Base ===== */
+    backgroundColor: "var(--color-background)",
+    foregroundColor: "var(--color-foreground)",
+    borderColor: "var(--color-border)",
+    browserColorScheme: "light",
+
+    /* ===== Header ===== */
+    headerBackgroundColor: "var(--color-card)",
+    headerTextColor: "var(--color-foreground)",
+    headerFontWeight: 500,
+
+    /* ===== Accent ===== */
+    accentColor: "var(--color-primary)",
+
+    /* ===== Row / Cell ===== */
+    rowHoverColor: "color-mix(in srgb, var(--color-foreground) 3%, transparent)",
+    selectedRowBackgroundColor:
+        "color-mix(in srgb, var(--color-primary) 15%, transparent)",
+
+    rowBorder: true,
+    columnBorder: false,
+
+    /* ===== Spacing ===== */
+    spacing: 8,
+    fontSize: 14,
+    borderRadius: 12,
+
     chromeBackgroundColor: {
         ref: "backgroundColor",
     },
-    columnBorder: false,
-    fontFamily: {
-        googleFont: "Roboto",
-    },
-    fontSize: 16,
-    foregroundColor: "#BBBEC9",
-    headerBackgroundColor: "#182226",
-    headerFontWeight: 500,
-    headerTextColor: "#FFFFFF",
-    headerVerticalPaddingScale: 0.9,
-    iconSize: 20,
-    rowBorder: false,
-    rowVerticalPaddingScale: 1.2,
-    sidePanelBorder: false,
-    spacing: 8,
-    wrapperBorder: false,
-    wrapperBorderRadius: 0,
 });
