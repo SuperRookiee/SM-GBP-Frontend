@@ -161,8 +161,8 @@ const DemoToastGridTable = ({
   }, [visible]);
 
   return (
-    <Card>
-      <CardContent className="space-y-4 pt-6">
+    <Card className="pb-0">
+      <CardContent className="space-y-4">
         <div className="flex flex-wrap items-center gap-4">
           <div className="inline-flex items-center gap-2">
             <Checkbox id="frozenColumn" checked={frozenEnabled} onCheckedChange={(checked) => onToggleFrozen(checked === true)} />
@@ -182,7 +182,7 @@ const DemoToastGridTable = ({
           </div>
         </div>
 
-        <div className="h-100">
+        <div className="h-90">
           <div className="text-sm text-muted-foreground">
             이벤트 로그: {eventMessage}
             {(isLoading || isFetching) && " · 데이터 로딩 중"}

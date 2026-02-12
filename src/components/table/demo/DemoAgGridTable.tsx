@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AllCommunityModule, ModuleRegistry, type ColDef, type SelectionChangedEvent } from "ag-grid-community";
+import { AllCommunityModule, type ColDef, ModuleRegistry, type SelectionChangedEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -71,8 +71,8 @@ const DemoAgGridTable = ({
   }, [quickFilter, rows]);
 
   return (
-    <Card>
-      <CardContent className="space-y-3 pt-6">
+    <Card className="pb-0">
+      <CardContent className="space-y-3">
         <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
           <div className="space-y-1">
             <p className="text-sm font-medium">AG Grid Quick Filter</p>
@@ -81,7 +81,7 @@ const DemoAgGridTable = ({
           <p className="text-sm text-muted-foreground">선택된 행: {selectedCount}개</p>
         </div>
 
-        <div className={`ag-theme-quartz h-[520px] w-full ${style.demoAgGridTheme}`}>
+        <div className={`ag-theme-quartz h-90 w-full ${style.demoAgGridTheme}`}>
           <AgGridReact
             rowData={filteredRows}
             columnDefs={columnDefs}

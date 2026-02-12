@@ -168,7 +168,6 @@ const DemoGridTablePage = () => {
               </div>
               <CollapsibleTrigger asChild>
                 <Button variant="outline" size="sm">
-                  {isFilterPanelOpen ? "접기" : "펼치기"}
                   <ChevronDown className={cn("size-4 transition-transform", isFilterPanelOpen && "rotate-180")} />
                 </Button>
               </CollapsibleTrigger>

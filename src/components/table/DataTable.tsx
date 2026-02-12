@@ -227,7 +227,7 @@ const DataTable = <T, >({
     // #. 페이지당 표시할 행 수 변경 시 호출
 
     return (
-        <Card className="mx-auto w-full min-w-0 shadow-sm max-w-112.5
+        <Card className="mx-auto w-full min-w-0 shadow-sm pb-0 max-w-112.5
                         sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
             <CardHeader className="flex justify-between">
                 <div>

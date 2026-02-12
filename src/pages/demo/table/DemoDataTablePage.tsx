@@ -46,8 +46,8 @@ const DemoDataTablePage = () => {
     }
 
     return (
-        <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
-            <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 overflow-hidden">
+        <div className="flex min-h-full min-w-0 items-center justify-center">
+            <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6">
                 <header className="space-y-2">
                     <p className="text-sm font-semibold text-muted-foreground">Demo GridTable</p>
                     <h1 className="text-3xl font-semibold tracking-tight">Demo GridTable</h1>
