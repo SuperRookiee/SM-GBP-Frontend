@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { AllCommunityModule, type ColDef, ModuleRegistry, type SelectionChangedEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
 import type { IDemoGridTableRow } from "@/interface/demo/IDemoGridTable.interface.ts";
+import { myTheme } from "@/components/table/demo/demoAgGridTheme.ts";
 import Pagination from "@/components/table/Pagination.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
@@ -27,7 +27,7 @@ type Props = {
 };
 
 const columnDefs: ColDef<IDemoGridTableRow>[] = [
-    { field: "id", headerName: "상품 ID", width: 110, checkboxSelection: true, headerCheckboxSelection: true },
+    { field: "id", headerName: "상품 ID", width: 110, checkboxSelection: true, headerCheckboxSelection: true, pinned: "left" },
     { field: "product", headerName: "상품명", flex: 1, minWidth: 180, editable: true },
     { field: "category", headerName: "카테고리", width: 140 },
     {
@@ -39,7 +39,7 @@ const columnDefs: ColDef<IDemoGridTableRow>[] = [
     },
     { field: "stock", headerName: "재고", width: 110, editable: true },
     { field: "launchDate", headerName: "출시일", width: 160 },
-    { field: "status", headerName: "상태", width: 120 },
+    { field: "status", headerName: "상태", width: 120, pinned: "right" },
     { field: "discontinued", headerName: "단종", width: 100 },
 ];
 
@@ -78,11 +78,15 @@ const DemoAgGridTable = ({
                         <p className="text-sm font-medium">AG Grid Quick Filter</p>
                         <Input value={quickFilter} onChange={(event) => setQuickFilter(event.target.value)} placeholder="상품명/카테고리/상태 검색" />
                     </div>
-                    <p className="text-sm text-muted-foreground">선택된 행: {selectedCount}개</p>
+                    <div className="space-y-1 text-right text-sm text-muted-foreground">
+                        <p>선택된 행: {selectedCount}개</p>
+                        <p>컬럼 헤더 메뉴에서 Pin Column으로 고정 위치를 바꿀 수 있습니다.</p>
+                    </div>
                 </div>
 
-                <div className={`ag-theme-quartz h-90 w-full ${style.demoAgGridTheme}`}>
+                <div className={`h-90 w-full ${style.demoAgGridTheme}`}>
                     <AgGridReact
+                        theme={myTheme}
                         rowData={filteredRows}
                         columnDefs={columnDefs}
                         defaultColDef={{ sortable: true, filter: true, floatingFilter: true, resizable: true }}

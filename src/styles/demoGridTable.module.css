@@ -11,15 +11,5 @@
 }
 
 .demoAgGridTheme {
-    --ag-background-color: var(--card);
-    --ag-foreground-color: var(--foreground);
-    --ag-border-color: var(--border);
-    --ag-header-background-color: var(--muted);
-    --ag-header-foreground-color: var(--foreground);
-    --ag-odd-row-background-color: color-mix(in oklab, var(--card) 88%, var(--muted));
-    --ag-row-hover-color: color-mix(in oklab, var(--accent) 45%, transparent);
-    --ag-selected-row-background-color: color-mix(in oklab, var(--accent) 35%, transparent);
-    --ag-input-focus-border-color: var(--ring);
-    --ag-font-family: var(--font-sans);
-    --ag-border-radius: var(--radius);
+    overflow: hidden;
 }
