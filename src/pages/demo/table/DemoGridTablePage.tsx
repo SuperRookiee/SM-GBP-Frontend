@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ColDef } from "ag-grid-community";
+import { AllCommunityModule, ModuleRegistry, type ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -27,6 +27,7 @@ import style from "@/styles/demoGridTable.module.css";
 
 const STATUS_OPTIONS: DemoGridStatus[] = ["판매중", "품절", "품절임박"];
 const CATEGORY_OPTIONS: DemoGridCategory[] = ["전자기기", "생활용품", "패션", "사무용품"];
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const defaultColumnVisibility: Record<string, boolean> = {
   id: true,
@@ -150,6 +151,7 @@ const DemoGridTablePage = () => {
   const [emptyMode, setEmptyMode] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_TABLE.pageSize);
+  const [activeTab, setActiveTab] = useState("toast-ui");
 
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ["demoGridTable", { applied, sorters }],
@@ -233,7 +235,10 @@ const DemoGridTablePage = () => {
       });
 
       grid.setFrozenColumnCount(frozenEnabled ? 2 : 0);
-      grid.on("click", (event: { rowKey: number; columnName: string }) => setEventMessage(`Toast UI 셀 클릭: rowKey=${event.rowKey}, column=${event.columnName}`));
+      grid.on("click", (event) => {
+        const typedEvent = event as { rowKey: number; columnName: string };
+        setEventMessage(`Toast UI 셀 클릭: rowKey=${typedEvent.rowKey}, column=${typedEvent.columnName}`);
+      });
       gridInstanceRef.current = grid;
     };
 
@@ -249,6 +254,16 @@ const DemoGridTablePage = () => {
   useEffect(() => {
     applyGridData(gridRows);
   }, [applyGridData, gridRows]);
+
+  useEffect(() => {
+    if (activeTab !== "toast-ui") return;
+
+    const rafId = window.requestAnimationFrame(() => {
+      (gridInstanceRef.current as Grid & { refreshLayout?: () => void } | null)?.refreshLayout?.();
+    });
+
+    return () => window.cancelAnimationFrame(rafId);
+  }, [activeTab]);
 
   return (
     <div className={`space-y-4 ${style.demoGridPlayground}`}>
@@ -324,13 +339,13 @@ const DemoGridTablePage = () => {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="toast-ui" className="space-y-3">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-3">
         <TabsList>
           <TabsTrigger value="toast-ui">Toast UI</TabsTrigger>
           <TabsTrigger value="ag-grid">AG Grid</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="toast-ui" className="space-y-4">
+        <TabsContent value="toast-ui" forceMount className={cn("space-y-4", activeTab !== "toast-ui" && "hidden")}>
           <Card>
             <CardContent className="pt-6 space-y-4">
               <div className="flex flex-wrap items-center gap-4">
@@ -378,7 +393,7 @@ const DemoGridTablePage = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="ag-grid" className="space-y-4">
+        <TabsContent value="ag-grid" forceMount className={cn("space-y-4", activeTab !== "ag-grid" && "hidden")}>
           <Card>
             <CardContent className="pt-6">
               <div className="ag-theme-quartz h-[520px] w-full">
