@@ -10,7 +10,7 @@ import style from "@/styles/demoGridTable.module.css";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-type Props = {
+interface IDemoAgGridTableProps {
   rows: IDemoGridTableRow[];
   isLoading: boolean;
   isFetching: boolean;
@@ -23,7 +23,7 @@ type Props = {
   pageSize: number;
   onPageSizeChange: (size: number) => void;
   onPageChange: (page: number) => void;
-};
+}
 
 const columnDefs: ColDef<IDemoGridTableRow>[] = [
     { field: "id", headerName: "상품 ID", width: 110, checkboxSelection: true, headerCheckboxSelection: true, pinned: "left" },
@@ -55,7 +55,7 @@ const DemoAgGridTable = ({
     pageSize,
     onPageSizeChange,
     onPageChange,
-}: Props) => {
+}: IDemoAgGridTableProps) => {
     const [quickFilter, setQuickFilter] = useState("");
     const [selectedCount, setSelectedCount] = useState(0);
 
