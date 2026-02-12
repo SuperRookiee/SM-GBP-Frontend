@@ -55,7 +55,7 @@ const AppSidebar = () => {
                                     ) : (
                                         // 서브가 없으면: 링크 이동
                                         <SidebarMenuButton asChild tooltip={item.title} isActive={item.isActive}>
-                                            <Link to={item.url} onClick={handleMenuClick}>
+                                            <Link to={item.URL} onClick={handleMenuClick}>
                                                 {item.icon}
                                                 <span>{item.title}</span>
                                             </Link>
@@ -74,7 +74,7 @@ const AppSidebar = () => {
                                                     {item.items.map(subItem =>
                                                         <SidebarMenuSubItem key={subItem.title}>
                                                             <SidebarMenuSubButton asChild>
-                                                                <Link to={subItem.url} onClick={handleMenuClick}>
+                                                                <Link to={subItem.URL} onClick={handleMenuClick}>
                                                                     <span>{subItem.title}</span>
                                                                 </Link>
                                                             </SidebarMenuSubButton>
@@ -95,7 +95,7 @@ const AppSidebar = () => {
                             {MENU.navSecondary.map(item =>
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild size="sm">
-                                        <Link to={item.url} onClick={handleMenuClick}>
+                                        <Link to={item.URL} onClick={handleMenuClick}>
                                             {item.icon}
                                             <span>{item.title}</span>
                                         </Link>

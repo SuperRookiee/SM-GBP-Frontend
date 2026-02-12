@@ -150,20 +150,20 @@ const hasMessage = (data: unknown): data is { message?: string } => {
 };
 
 // #. 공통 HTTP 함수
-export const Get = <T>(url: string, params?: unknown, config?: AxiosRequestConfig) =>
-    apiClient.get<T>(url, { ...config, params }).then((r) => r.data);
+export const Get = <T>(URL: string, params?: unknown, config?: AxiosRequestConfig) =>
+    apiClient.get<T>(URL, { ...config, params }).then((r) => r.data);
 
-export const Post = <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-    apiClient.post<T>(url, data, config).then((r) => r.data);
+export const Post = <T>(URL: string, data?: unknown, config?: AxiosRequestConfig) =>
+    apiClient.post<T>(URL, data, config).then((r) => r.data);
 
-export const Put = <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-    apiClient.put<T>(url, data, config).then((r) => r.data);
+export const Put = <T>(URL: string, data?: unknown, config?: AxiosRequestConfig) =>
+    apiClient.put<T>(URL, data, config).then((r) => r.data);
 
-export const Patch = <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-    apiClient.patch<T>(url, data, config).then((r) => r.data);
+export const Patch = <T>(URL: string, data?: unknown, config?: AxiosRequestConfig) =>
+    apiClient.patch<T>(URL, data, config).then((r) => r.data);
 
-export const Delete = <T>(url: string, config?: AxiosRequestConfig) =>
-    apiClient.delete<T>(url, config).then((r) => r.data);
+export const Delete = <T>(URL: string, config?: AxiosRequestConfig) =>
+    apiClient.delete<T>(URL, config).then((r) => r.data);
 
 // #. 공통 에러 메시지
 const normalizeError = (error: unknown): Error => {
