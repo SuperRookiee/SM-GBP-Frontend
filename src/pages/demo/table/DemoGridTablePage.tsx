@@ -1,20 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AllCommunityModule, ModuleRegistry, type ColDef } from "ag-grid-community";
-import { AgGridReact } from "ag-grid-react";
+import { useCallback, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CalendarIcon, Search } from "lucide-react";
-import Grid from "tui-grid";
 import { useQuery } from "@tanstack/react-query";
-import "tui-grid/dist/tui-grid.css";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
 import { getDemoGridTableSampleDataApi } from "@/apis/demo/demoGridTable.api.ts";
 import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { useGridTablePageStore } from "@/stores/page/demo/gridTablePage.store.ts";
 import { cn } from "@/utils/utils.ts";
 import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interface/demo/IDemoGridTable.interface.ts";
-import Pagination from "@/components/table/Pagination.tsx";
+import DemoAgGridTable from "@/components/table/demo/DemoAgGridTable.tsx";
+import DemoToastGridTable from "@/components/table/demo/DemoToastGridTable.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
@@ -27,7 +22,6 @@ import style from "@/styles/demoGridTable.module.css";
 
 const STATUS_OPTIONS: DemoGridStatus[] = ["판매중", "품절", "품절임박"];
 const CATEGORY_OPTIONS: DemoGridCategory[] = ["전자기기", "생활용품", "패션", "사무용품"];
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 const defaultColumnVisibility: Record<string, boolean> = {
   id: true,
@@ -112,26 +106,7 @@ const MultiCheckboxField = <T extends string,>({
   </div>
 );
 
-const agColumnDefs: ColDef<IDemoGridTableRow>[] = [
-  { field: "id", headerName: "상품 ID", width: 110 },
-  { field: "product", headerName: "상품명", flex: 1, minWidth: 180 },
-  { field: "category", headerName: "카테고리", width: 140 },
-  {
-    field: "price",
-    headerName: "가격",
-    width: 140,
-    valueFormatter: (params) => `${Number(params.value ?? 0).toLocaleString()}원`,
-  },
-  { field: "stock", headerName: "재고", width: 110 },
-  { field: "launchDate", headerName: "출시일", width: 160 },
-  { field: "status", headerName: "상태", width: 120 },
-  { field: "discontinued", headerName: "단종", width: 100 },
-];
-
 const DemoGridTablePage = () => {
-  const gridWrapperRef = useRef<HTMLDivElement | null>(null);
-  const gridInstanceRef = useRef<Grid | null>(null);
-
   const draft = useGridTablePageStore((state) => state.draft);
   const applied = useGridTablePageStore((state) => state.applied);
   const sorters = useGridTablePageStore((state) => state.sorters);
@@ -175,95 +150,9 @@ const DemoGridTablePage = () => {
     return withRowClassName(resolvedRows.slice(start, start + pageSize));
   }, [currentPage, pageSize, resolvedRows]);
 
-  const applyGridData = useCallback((nextRows: IDemoGridTableRow[]) => {
-    if (!gridInstanceRef.current) return;
-    gridInstanceRef.current.resetData(nextRows);
-  }, []);
-
   const handleToggleColumn = useCallback((columnName: string, visible: boolean) => {
-    const grid = gridInstanceRef.current;
-    if (!grid) return;
-
-    if (visible) grid.showColumn(columnName);
-    else grid.hideColumn(columnName);
-
     setColumnVisible((prev) => ({ ...prev, [columnName]: visible }));
   }, []);
-
-  const handleFrozenToggle = useCallback((enabled: boolean) => {
-    const grid = gridInstanceRef.current;
-    if (!grid) return;
-    grid.setFrozenColumnCount(enabled ? 2 : 0);
-    setFrozenEnabled(enabled);
-  }, []);
-
-  useEffect(() => {
-    let grid: Grid | null = null;
-    let frameId: number;
-
-    const initGrid = () => {
-      const el = gridWrapperRef.current;
-      if (!el) return;
-
-      if (el.clientHeight === 0) {
-        frameId = requestAnimationFrame(initGrid);
-        return;
-      }
-
-      grid = new Grid({
-        el,
-        data: gridRows,
-        columns: [
-          { header: "상품 ID", name: "id", align: "center", width: 100, sortable: true },
-          { header: "상품명", name: "product", minWidth: 180, sortable: true },
-          { header: "카테고리", name: "category", align: "center", width: 140, sortable: true },
-          {
-            header: "가격",
-            name: "price",
-            align: "right",
-            width: 140,
-            sortable: true,
-            formatter: ({ value }: { value: unknown }) => `${Number(value).toLocaleString()}원`,
-          },
-          { header: "재고", name: "stock", align: "right", width: 100, sortable: true },
-          { header: "출시일", name: "launchDate", align: "center", width: 160, sortable: true },
-          { header: "상태", name: "status", align: "center", width: 140, sortable: true },
-          { header: "단종", name: "discontinued", align: "center", width: 100, sortable: true },
-        ],
-        rowHeaders: ["checkbox"],
-        bodyHeight: "fitToParent",
-      });
-
-      grid.setFrozenColumnCount(frozenEnabled ? 2 : 0);
-      grid.on("click", (event) => {
-        const typedEvent = event as { rowKey: number; columnName: string };
-        setEventMessage(`Toast UI 셀 클릭: rowKey=${typedEvent.rowKey}, column=${typedEvent.columnName}`);
-      });
-      gridInstanceRef.current = grid;
-    };
-
-    initGrid();
-
-    return () => {
-      if (frameId) cancelAnimationFrame(frameId);
-      grid?.destroy();
-      gridInstanceRef.current = null;
-    };
-  }, [frozenEnabled]);
-
-  useEffect(() => {
-    applyGridData(gridRows);
-  }, [applyGridData, gridRows]);
-
-  useEffect(() => {
-    if (activeTab !== "toast-ui") return;
-
-    const rafId = window.requestAnimationFrame(() => {
-      (gridInstanceRef.current as Grid & { refreshLayout?: () => void } | null)?.refreshLayout?.();
-    });
-
-    return () => window.cancelAnimationFrame(rafId);
-  }, [activeTab]);
 
   return (
     <div className={`space-y-4 ${style.demoGridPlayground}`}>
@@ -309,15 +198,20 @@ const DemoGridTablePage = () => {
               setSorters([{ key: "price", direction: "asc" }, { key: "stock", direction: "desc" }]);
               setPage(1);
               setEmptyMode(false);
+              setEventMessage("멀티 정렬 실행: price ASC + stock DESC");
               refetch();
             }}>
               멀티 정렬 실행
             </Button>
 
-            <Button variant="outline" onClick={() => setEmptyMode(true)}>Empty 상태</Button>
+            <Button variant="outline" onClick={() => {
+              setEmptyMode(true);
+              setEventMessage("Empty data 상태 확인 완료");
+            }}>
+              Empty 상태
+            </Button>
 
             <Button variant="secondary" onClick={() => {
-              const grid = gridInstanceRef.current;
               resetFilters();
               setPage(1);
               setPageSize(DEFAULT_TABLE.pageSize);
@@ -325,7 +219,7 @@ const DemoGridTablePage = () => {
               setSorters([]);
               setEmptyMode(false);
               setColumnVisible(defaultColumnVisibility);
-              Object.keys(defaultColumnVisibility).forEach((column) => grid?.showColumn(column));
+              setEventMessage("필터/정렬/상태 초기화 완료");
               refetch();
             }}>
               초기화
@@ -346,81 +240,47 @@ const DemoGridTablePage = () => {
         </TabsList>
 
         <TabsContent value="toast-ui" forceMount className={cn("space-y-4", activeTab !== "toast-ui" && "hidden")}>
-          <Card>
-            <CardContent className="pt-6 space-y-4">
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="inline-flex items-center gap-2">
-                  <Checkbox id="frozenColumn" checked={frozenEnabled} onCheckedChange={(checked) => handleFrozenToggle(checked === true)} />
-                  <Label htmlFor="frozenColumn">Frozen Column(앞 2개)</Label>
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-2 text-sm font-medium">컬럼 표시/숨김</p>
-                <div className="flex flex-wrap gap-4">
-                  {Object.keys(columnVisible).map((column) => (
-                    <div key={column} className="inline-flex items-center gap-2">
-                      <Checkbox id={`column-${column}`} checked={columnVisible[column]} onCheckedChange={(checked) => handleToggleColumn(column, checked === true)} />
-                      <Label htmlFor={`column-${column}`}>{column}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="h-100">
-                <div className="text-sm text-muted-foreground">
-                  이벤트 로그: {eventMessage}
-                  {(isLoading || isFetching) && " · 데이터 로딩 중"}
-                  {isError && " · 데이터 조회 실패"}
-                </div>
-                <div ref={gridWrapperRef} className="h-full" />
-              </div>
-            </CardContent>
-
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              pageNumbers={pageNumbers}
-              previousPage={previousPage}
-              nextPage={nextPage}
-              totalCount={total}
-              isLoading={isLoading || isFetching}
-              pageSize={pageSize}
-              onPageSizeChange={setPageSize}
-              onPageChange={setPage}
-              caption={`총 ${total} 건`}
-            />
-          </Card>
+          <DemoToastGridTable
+            rows={gridRows}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            isError={isError}
+            eventMessage={eventMessage}
+            setEventMessage={setEventMessage}
+            columnVisible={columnVisible}
+            onToggleColumn={handleToggleColumn}
+            frozenEnabled={frozenEnabled}
+            onToggleFrozen={setFrozenEnabled}
+            visible={activeTab === "toast-ui"}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageNumbers={pageNumbers}
+            previousPage={previousPage}
+            nextPage={nextPage}
+            totalCount={total}
+            pageSize={pageSize}
+            onPageSizeChange={setPageSize}
+            onPageChange={setPage}
+            categoryOptions={CATEGORY_OPTIONS}
+            statusOptions={STATUS_OPTIONS}
+          />
         </TabsContent>
 
         <TabsContent value="ag-grid" forceMount className={cn("space-y-4", activeTab !== "ag-grid" && "hidden")}>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="ag-theme-quartz h-[520px] w-full">
-                <AgGridReact
-                  rowData={gridRows}
-                  columnDefs={agColumnDefs}
-                  pagination
-                  paginationPageSize={pageSize}
-                  suppressPaginationPanel
-                  animateRows
-                />
-              </div>
-            </CardContent>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              pageNumbers={pageNumbers}
-              previousPage={previousPage}
-              nextPage={nextPage}
-              totalCount={total}
-              isLoading={isLoading || isFetching}
-              pageSize={pageSize}
-              onPageSizeChange={setPageSize}
-              onPageChange={setPage}
-              caption={`총 ${total} 건`}
-            />
-          </Card>
+          <DemoAgGridTable
+            rows={gridRows}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageNumbers={pageNumbers}
+            previousPage={previousPage}
+            nextPage={nextPage}
+            totalCount={total}
+            pageSize={pageSize}
+            onPageSizeChange={setPageSize}
+            onPageChange={setPage}
+          />
         </TabsContent>
       </Tabs>
     </div>
