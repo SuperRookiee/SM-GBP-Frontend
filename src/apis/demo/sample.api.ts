@@ -9,7 +9,7 @@ export interface ISampleApiItem {
 
 export interface ISampleListRequest {
     page: number;
-    pageSize: number;
+    size: number;
     query?: string;
     filterKey?: string;
     sortKey?: string;

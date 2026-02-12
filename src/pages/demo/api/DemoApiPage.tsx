@@ -24,11 +24,11 @@ const DemoApiPage = () => {
     }, [page, setPage]);
 
     const { data, isLoading, isFetching, isError, error } = useQuery({
-        queryKey: ["sample", "list", { page, pageSize, search, filterKey, sortKey, sortDirection }],
+        queryKey: ["sample", "list", { page, size: pageSize, search, filterKey, sortKey, sortDirection }],
         queryFn: ({ queryKey }) => {
             const [, , params] = queryKey as [string, string, {
                 page: number;
-                pageSize: number;
+                size: number;
                 search: string;
                 filterKey: string;
                 sortKey: string | null;
