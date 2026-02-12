@@ -1,7 +1,6 @@
-import { Activity, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
-import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 type TablePaginationProps = {
   currentPage: number;
@@ -44,18 +43,12 @@ const Pagination = ({
     };
 
     return (
-        <div className="flex flex-col gap-4 border-t border-border px-6 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 border-t border-border px-6 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between" aria-busy={isLoading}>
             <div className="flex flex-wrap items-center gap-3">
                 <span>
           Page {currentPage} of {totalPages}
                 </span>
-                <Activity mode={isLoading ? "visible" : "hidden"}>
-                    <div className="flex items-center gap-2">
-                        <Skeleton className="h-4 w-6" />
-                        <Skeleton className="h-4 w-6" />
-                    </div>
-                </Activity>
-                <Activity mode={isLoading ? "hidden" : "visible"}>{resolvedCaption}</Activity>
+                <span className="inline-block min-w-[7.5rem] text-right tabular-nums">{resolvedCaption}</span>
 
                 {onPageSizeChange && pageSize !== undefined && (
                     <div className="flex items-center gap-2">

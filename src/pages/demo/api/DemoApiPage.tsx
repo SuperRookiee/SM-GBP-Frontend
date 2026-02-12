@@ -23,7 +23,7 @@ const DemoApiPage = () => {
         if (page < 1) setPage(1);
     }, [page, setPage]);
 
-    const { data, isLoading, isFetching, isError, error } = useQuery({
+    const { data, isLoading, isError, error } = useQuery({
         queryKey: ["sample", "list", { page, size, search, filterKey, sortKey, sortDirection }],
         queryFn: ({ queryKey }) => {
             const [, , params] = queryKey as [string, string, {
@@ -92,7 +92,7 @@ const DemoApiPage = () => {
                         rows={rows}
                         total={total}
                         pageSize={size}
-                        isLoading={isLoading || isFetching}
+                        isLoading={isLoading}
                         filterOptions={SAMPLE_TABLE_FILTER}
                         columns={SAMPLE_TABLE_COLUMNS}
                         query={search}
