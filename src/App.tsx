@@ -8,6 +8,7 @@ import DemoDialogPage from "@/pages/demo/dialog/DemoDialogPage.tsx";
 import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
 import DemoDataTablePage from "@/pages/demo/table/DemoDataTablePage.tsx";
 import DemoGridTablePage from "@/pages/demo/table/DemoGridTablePage.tsx";
+import DemoTypography from "@/pages/demo/typography/DemoTypography.tsx";
 import LoginPage from "@/pages/login/LoginPage.tsx";
 import UserDetailPage from "@/pages/user/detail/UserDetailPage.tsx";
 import UserPage from "@/pages/user/UserPage.tsx";
@@ -33,6 +34,7 @@ const App = () => {
                         <Route path="form" element={<DemoFormPage/>}/>
                         <Route path="dialog" element={<DemoDialogPage/>}/>
                         <Route path="api" element={<DemoApiPage/>}/>
+                        <Route path="typography" element={<DemoTypography/>}/>
                     </Route>
 
                     <Route path="/user">

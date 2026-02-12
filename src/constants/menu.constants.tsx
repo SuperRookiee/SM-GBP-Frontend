@@ -15,6 +15,7 @@ export const MENU = {
                 { title: "Form", url: "/demo/form" },
                 { title: "Dialog", url: "/demo/dialog" },
                 { title: "API", url: "/demo/api" },
+                { title: "Typography", url: "/demo/typography" },
                 { title: "404", url: "/demo/not_found" },
             ],
         },
