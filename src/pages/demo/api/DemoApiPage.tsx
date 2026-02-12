@@ -4,6 +4,7 @@ import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import DataTable from "@/components/table/DataTable";
+import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/api-result.enum.ts";
 
 const DemoApiPage = () => {
     const search = useSamplePageStore((s) => s.search);
@@ -22,7 +23,7 @@ const DemoApiPage = () => {
         if (page < 1) setPage(1);
     }, [page, setPage]);
 
-    const { data, isLoading, isFetching, isError } = useQuery({
+    const { data, isLoading, isFetching, isError, error } = useQuery({
         queryKey: ["sample", "list", { page, pageSize, search, filterKey, sortKey, sortDirection }],
         queryFn: ({ queryKey }) => {
             const [, , params] = queryKey as [string, string, {
@@ -39,7 +40,12 @@ const DemoApiPage = () => {
         gcTime: 5 * 60_000,
     });
 
-    const allRows = data?.data ?? [];
+    const hasSuccessfulResponse = data?.result === ApiResultEnum.SUCCESS && data.code === SuccessResultCodeEnum.OK;
+    const allRows = hasSuccessfulResponse ? (data.data ?? []) : [];
+
+    const apiError = data?.result === ApiResultEnum.FAIL ? data.error : null;
+    const apiErrorCode = data?.result === ApiResultEnum.FAIL ? data.code : null;
+    const queryErrorMessage = error instanceof Error ? error.message : null;
     const trimmedQuery = search.trim().toLowerCase();
 
     const filteredRows = allRows.filter((row) => {
@@ -79,11 +85,20 @@ const DemoApiPage = () => {
                     </p>
                 </header>
 
-                {isError ? (
-                    <div className="flex h-64 items-center justify-center rounded-md border border-destructive/30 bg-destructive/5">
-                        <p className="text-sm text-destructive">
-                            데이터를 불러오지 못했습니다.
+                {isError || data?.result === ApiResultEnum.FAIL ? (
+                    <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-6 text-center">
+                        <p className="text-sm font-medium text-destructive">
+                            {`[${apiErrorCode ?? ErrorResultCodeEnum.INTERNAL_ERROR}] ${apiError?.detail ?? queryErrorMessage ?? "데이터를 불러오지 못했습니다."}`}
                         </p>
+                        {apiError?.fieldErrors?.length ? (
+                            <ul className="space-y-1 text-xs text-destructive/80">
+                                {apiError.fieldErrors.map((fieldError) => (
+                                    <li key={`${fieldError.field}-${fieldError.reason}`}>
+                                        {fieldError.field}: {fieldError.reason}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : null}
                     </div>
                 ) : (
                     <DataTable
