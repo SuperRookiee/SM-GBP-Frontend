@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
+import { GetSampleListApi, type ISampleApiItem } from "@/apis/demo/sample.api.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import DataTable from "@/components/table/DataTable";
@@ -41,36 +41,21 @@ const DemoApiPage = () => {
     });
 
     const hasSuccessfulResponse = data?.result === ApiResultEnum.SUCCESS && data.code === SuccessResultCodeEnum.OK;
-    const allRows = hasSuccessfulResponse ? (data.data ?? []) : [];
+    const pageData = hasSuccessfulResponse ? data.data : null;
 
     const apiError = data?.result === ApiResultEnum.FAIL ? data.error : null;
     const apiErrorCode = data?.result === ApiResultEnum.FAIL ? data.code : null;
     const queryErrorMessage = error instanceof Error ? error.message : null;
-    const trimmedQuery = search.trim().toLowerCase();
 
-    const filteredRows = allRows.filter((row) => {
-        if (!trimmedQuery) return true;
+    const rows: ISampleApiItem[] = pageData?.content ?? [];
+    const total = pageData?.totalElements ?? 0;
+    const totalPages = pageData?.totalPages;
 
-        const fields = filterKey === "all"
-            ? Object.values(row)
-            : [row[filterKey]];
-
-        return fields.some((value) => String(value).toLowerCase().includes(trimmedQuery));
-    });
-
-    const sortedRows = [...filteredRows].sort((a, b) => {
-        if (!sortKey) return 0;
-
-        const aValue = String(a[sortKey]);
-        const bValue = String(b[sortKey]);
-        const compared = aValue.localeCompare(bValue, "ko", { numeric: true });
-
-        return sortDirection === "asc" ? compared : -compared;
-    });
-
-    const total = sortedRows.length;
-    const startIndex = (page - 1) * size;
-    const rows = sortedRows.slice(startIndex, startIndex + size);
+    useEffect(() => {
+        if (!hasSuccessfulResponse || totalPages === undefined) return;
+        const safeTotalPages = Math.max(totalPages, 1);
+        if (page > safeTotalPages) setPage(safeTotalPages);
+    }, [hasSuccessfulResponse, page, setPage, totalPages]);
 
     return (
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
