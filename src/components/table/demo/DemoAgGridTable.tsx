@@ -4,7 +4,9 @@ import { AgGridReact } from "ag-grid-react";
 import type { IDemoGridTableRow } from "@/interface/demo/IDemoGridTable.interface.ts";
 import { myTheme } from "@/components/table/demo/demoAgGridTheme.ts";
 import Pagination from "@/components/table/Pagination.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import style from "@/styles/demoGridTable.module.css";
 
@@ -58,6 +60,7 @@ const DemoAgGridTable = ({
 }: IDemoAgGridTableProps) => {
     const [quickFilter, setQuickFilter] = useState("");
     const [selectedCount, setSelectedCount] = useState(0);
+    const [selectedRows, setSelectedRows] = useState<IDemoGridTableRow[]>([]);
 
     const filteredRows = useMemo(() => {
         const keyword = quickFilter.trim().toLowerCase();
@@ -77,9 +80,32 @@ const DemoAgGridTable = ({
                         <p className="text-sm font-medium">AG Grid Quick Filter</p>
                         <Input value={quickFilter} onChange={(event) => setQuickFilter(event.target.value)} placeholder="상품명/카테고리/상태 검색" />
                     </div>
-                    <div className="space-y-1 text-right text-sm text-muted-foreground">
+                    <div className="space-y-2 text-right text-sm text-muted-foreground">
                         <p>선택된 행: {selectedCount}개</p>
                         <p>컬럼 헤더 메뉴에서 Pin Column으로 고정 위치를 바꿀 수 있습니다.</p>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button size="sm" variant="outline">Row Handler</Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-xl">
+                                <DialogHeader>
+                                    <DialogTitle>선택한 row 정보</DialogTitle>
+                                    <DialogDescription>현재 AG Grid에서 선택된 row 데이터를 표시합니다.</DialogDescription>
+                                </DialogHeader>
+
+                                {selectedRows.length === 0 ? (
+                                    <p className="text-sm text-muted-foreground">선택된 row 데이터가 없습니다.</p>
+                                ) : (
+                                    <div className="max-h-80 space-y-2 overflow-y-auto rounded-md border p-3 text-left">
+                                        {selectedRows.map((row) => (
+                                            <pre key={row.id} className="whitespace-pre-wrap text-xs">
+                                                {JSON.stringify(row, null, 2)}
+                                            </pre>
+                                        ))}
+                                    </div>
+                                )}
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
 
@@ -93,7 +119,9 @@ const DemoAgGridTable = ({
                         animateRows
                         sideBar
                         onSelectionChanged={(event: SelectionChangedEvent<IDemoGridTableRow>) => {
-                            setSelectedCount(event.api.getSelectedRows().length);
+                            const nextSelectedRows = event.api.getSelectedRows();
+                            setSelectedCount(nextSelectedRows.length);
+                            setSelectedRows(nextSelectedRows);
                         }}
                     />
                 </div>
