@@ -20,14 +20,14 @@ export type BarChartCardProps = {
 };
 
 const BarChartCard = ({
-                          title,
-                          description,
-                          footerTitle,
-                          footerSubtitle,
-                          data,
-                          config,
-                          seriesKeys,
-                      }: BarChartCardProps) => {
+    title,
+    description,
+    footerTitle,
+    footerSubtitle,
+    data,
+    config,
+    seriesKeys,
+}: BarChartCardProps) => {
     return (
         <Card className="w-full">
             <CardHeader>

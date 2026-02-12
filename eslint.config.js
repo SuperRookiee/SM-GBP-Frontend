@@ -28,6 +28,14 @@ export default defineConfig([
         },
         rules: {
             'react-hooks/exhaustive-deps': 'off',
+            indent: ['error', 4, {
+                SwitchCase: 1,
+                ignoredNodes: [
+                    'TSTypeParameterInstantiation',
+                    'TSUnionType',
+                    'TSIntersectionType',
+                ],
+            }],
             'import/order': ['error', {
                 groups: [
                     ['builtin', 'external'],

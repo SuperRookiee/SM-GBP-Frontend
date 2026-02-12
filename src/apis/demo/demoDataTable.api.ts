@@ -13,12 +13,12 @@ import { DEMO_DATA_TABLE_SAMPLE_DATA } from "@/tests/data/demoDataTableSampleDat
  * @returns 샘플 데이터와 전체 건수
  */
 export const getDemoDataTableSampleDataApi = async ({
-   page,
-   pageSize,
-   query,
-   filterKey = "all",
-   sortKey,
-   sortDirection = "asc",
+    page,
+    pageSize,
+    query,
+    filterKey = "all",
+    sortKey,
+    sortDirection = "asc",
 }: IDemoDataTableSampleDataParams): Promise<DemoDataTableResponse> => {
     const trimmedQuery = query?.trim().toLowerCase() ?? "";
     const filteredRows = DEMO_DATA_TABLE_SAMPLE_DATA.filter((row) => {

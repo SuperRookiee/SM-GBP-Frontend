@@ -166,7 +166,7 @@ const DemoFormPage = () => {
                     <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-mono text-slate-400">TypeScript Validated</span>
                 </div>
                 <pre className="text-sm leading-relaxed font-mono text-emerald-400 overflow-auto max-h-150">
-                  {JSON.stringify(state, null, 2)}
+                    {JSON.stringify(state, null, 2)}
                 </pre>
             </Card>
         </div>

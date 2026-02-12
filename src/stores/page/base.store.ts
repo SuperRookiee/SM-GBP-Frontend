@@ -43,7 +43,7 @@ const defaultState = {
 };
 
 export const createTablePageStore = <T extends object>({
-   persistKey, initialState, resetStorePartial, pageResetValue
+    persistKey, initialState, resetStorePartial, pageResetValue
 }: CreateTablePageStoreOptions<T>) => {
     const resolvedInitialState = { ...defaultState, ...(initialState ?? {}) } as BasePageState<T>;
 

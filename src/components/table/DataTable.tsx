@@ -59,21 +59,21 @@ const getColumnWidthStyle = (width?: string | number) => {
 };
 
 const DataTable = <T, >({
-                            rows, total, pageSize, title, description, columns, filterOptions,
-                            query, filterKey, sortKey, sortDirection, page,
-                            onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
-                            isLoading = false,
-                            searchLabel = "검색",
-                            searchPlaceholder = "검색어를 입력하세요",
-                            filterLabel = "검색 조건",
-                            getRowId = (row) => (row as { id: string | number }).id,
-                            captionRenderer = (count) => `총 ${count} 건`,
-                            enableSelect = false,
-                            selectedRowIds = [],
-                            onSelectedRowIdsChange,
-                            tableHeightClassName = "h-105",
-                            pageSizeOptions = [5, 10, 25, 50, 100],
-                        }: IGridTableClientProps<T>) => {
+    rows, total, pageSize, title, description, columns, filterOptions,
+    query, filterKey, sortKey, sortDirection, page,
+    onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
+    isLoading = false,
+    searchLabel = "검색",
+    searchPlaceholder = "검색어를 입력하세요",
+    filterLabel = "검색 조건",
+    getRowId = (row) => (row as { id: string | number }).id,
+    captionRenderer = (count) => `총 ${count} 건`,
+    enableSelect = false,
+    selectedRowIds = [],
+    onSelectedRowIdsChange,
+    tableHeightClassName = "h-105",
+    pageSizeOptions = [5, 10, 25, 50, 100],
+}: IGridTableClientProps<T>) => {
     const [draftQuery, setDraftQuery] = useState(query);
     const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
     const [columnFilterSearch, setColumnFilterSearch] = useState<Partial<Record<keyof T, string>>>({});
@@ -148,8 +148,8 @@ const DataTable = <T, >({
     const pageWindowStart = Math.floor((currentPage - 1) / DEFAULT_TABLE.pageWindow) * DEFAULT_TABLE.pageWindow + 1;
     const pageWindowEnd = Math.min(totalPages, pageWindowStart + DEFAULT_TABLE.pageWindow - 1);
     const pageNumbers = useMemo(() =>
-            Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
-        [pageWindowEnd, pageWindowStart]);
+        Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
+    [pageWindowEnd, pageWindowStart]);
 
     const sortIndicator = (key: keyof T) => {
         if (sortKey !== key) return null;
@@ -238,7 +238,7 @@ const DataTable = <T, >({
                     <div className="w-full sm:w-40">
                         <label className="text-xs font-medium text-muted-foreground">{filterLabel}</label>
                         <Select value={String(draftFilterKey)}
-                                onValueChange={(value) => setDraftFilterKey(value as "all" | keyof T)}>
+                            onValueChange={(value) => setDraftFilterKey(value as "all" | keyof T)}>
                             <SelectTrigger className="mt-2">
                                 <SelectValue placeholder="검색 조건 선택"/>
                             </SelectTrigger>
@@ -304,8 +304,8 @@ const DataTable = <T, >({
 
                                         return (
                                             <TableHead key={String(column.key)}
-                                                       style={getColumnWidthStyle(column.width)}
-                                                       className={`bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
+                                                style={getColumnWidthStyle(column.width)}
+                                                className={`bg-card ${column.headerClassName ?? ""} ${index === columns.length - 1 ? "" : "border-r border-border/40"}`}>
                                                 <div className="flex min-w-0 items-center gap-1 pr-2">
                                                     {isSortable ? (
                                                         <Button
@@ -338,7 +338,7 @@ const DataTable = <T, >({
                                                                 </Button>
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent className="w-56 p-2 overflow-x-auto"
-                                                                                 align="start">
+                                                                align="start">
                                                                 <DropdownMenuLabel
                                                                     className="px-1 py-1 text-xs text-muted-foreground">
                                                                     {column.label} 필터
@@ -436,21 +436,21 @@ const DataTable = <T, >({
                                                     </TableCell>
                                                 )}
                                                 {columns.map((column) =>
-                                                        <TableCell
-                                                            key={`${rowId}-${String(column.key)}`}
-                                                            style={getColumnWidthStyle(column.width)}
-                                                            className={`
+                                                    <TableCell
+                                                        key={`${rowId}-${String(column.key)}`}
+                                                        style={getColumnWidthStyle(column.width)}
+                                                        className={`
                                                             ${column.cellClassName ?? ""}
                                                             overflow-hidden
                                                             text-ellipsis
                                                             whitespace-nowrap
                                                             ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"}
                                                         `}
-                                                        >
-                                                            <div className="truncate">
-                                                                {column.render ? column.render(row) : String(row[column.key as keyof T])}
-                                                            </div>
-                                                        </TableCell>
+                                                    >
+                                                        <div className="truncate">
+                                                            {column.render ? column.render(row) : String(row[column.key as keyof T])}
+                                                        </div>
+                                                    </TableCell>
                                                     ,
                                                 )}
                                             </TableRow>

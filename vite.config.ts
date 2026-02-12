@@ -7,22 +7,22 @@ import { defineConfig as defineTestConfig } from "vitest/config";
 
 // https://vite.dev/config/
 const viteConfig = defineConfig({
-  plugins: [react(), tailwindcss(), svgr()],
-  envPrefix: ["VITE_", "MIRACLE_"],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+    plugins: [react(), tailwindcss(), svgr()],
+    envPrefix: ["VITE_", "MIRACLE_"],
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "./src"),
+        },
     },
-  },
 })
 
 const vitestConfig = defineTestConfig({
-  test: {
-    include: ["src/tests/**/*.{test,spec}.{ts,tsx}"],
-    exclude: ["src/tests/data/**"],
-    environment: "jsdom",
-    setupFiles: "./src/tests/setup.ts",
-  },
+    test: {
+        include: ["src/tests/**/*.{test,spec}.{ts,tsx}"],
+        exclude: ["src/tests/data/**"],
+        environment: "jsdom",
+        setupFiles: "./src/tests/setup.ts",
+    },
 });
 
 export default mergeConfig(viteConfig, vitestConfig);

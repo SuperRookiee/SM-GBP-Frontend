@@ -27,27 +27,27 @@ type GridTablePageState = {
 };
 
 const initialFilterState: GridTableFilterState = {
-  keyword: "",
-  dateFrom: "",
-  dateTo: "",
-  includeDiscontinued: true,
-  categories: [],
-  statuses: [],
+    keyword: "",
+    dateFrom: "",
+    dateTo: "",
+    includeDiscontinued: true,
+    categories: [],
+    statuses: [],
 };
 
 export const useGridTablePageStore = create<GridTablePageState>()(
-  devtool((set, get) => ({
-    draft: { ...initialFilterState },
-    applied: { ...initialFilterState },
-    sorters: [],
-    setDraftKeyword: (keyword) => set((state) => ({ draft: { ...state.draft, keyword } })),
-    setDraftDateFrom: (dateFrom) => set((state) => ({ draft: { ...state.draft, dateFrom } })),
-    setDraftDateTo: (dateTo) => set((state) => ({ draft: { ...state.draft, dateTo } })),
-    setDraftIncludeDiscontinued: (includeDiscontinued) => set((state) => ({ draft: { ...state.draft, includeDiscontinued } })),
-    setDraftCategories: (categories) => set((state) => ({ draft: { ...state.draft, categories } })),
-    setDraftStatuses: (statuses) => set((state) => ({ draft: { ...state.draft, statuses } })),
-    setSorters: (sorters) => set({ sorters }),
-    applyFilters: () => set({ applied: { ...get().draft } }),
-    resetFilters: () => set({ draft: { ...initialFilterState }, applied: { ...initialFilterState }, sorters: [] }),
-  })),
+    devtool((set, get) => ({
+        draft: { ...initialFilterState },
+        applied: { ...initialFilterState },
+        sorters: [],
+        setDraftKeyword: (keyword) => set((state) => ({ draft: { ...state.draft, keyword } })),
+        setDraftDateFrom: (dateFrom) => set((state) => ({ draft: { ...state.draft, dateFrom } })),
+        setDraftDateTo: (dateTo) => set((state) => ({ draft: { ...state.draft, dateTo } })),
+        setDraftIncludeDiscontinued: (includeDiscontinued) => set((state) => ({ draft: { ...state.draft, includeDiscontinued } })),
+        setDraftCategories: (categories) => set((state) => ({ draft: { ...state.draft, categories } })),
+        setDraftStatuses: (statuses) => set((state) => ({ draft: { ...state.draft, statuses } })),
+        setSorters: (sorters) => set({ sorters }),
+        applyFilters: () => set({ applied: { ...get().draft } }),
+        resetFilters: () => set({ draft: { ...initialFilterState }, applied: { ...initialFilterState }, sorters: [] }),
+    })),
 );

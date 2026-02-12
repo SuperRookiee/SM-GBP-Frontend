@@ -20,57 +20,57 @@ export type LineChartCardProps = {
 };
 
 const LineChartCard = ({
-  title,
-  description,
-  footerTitle,
-  footerSubtitle,
-  data,
-  config,
-  seriesKeys,
+    title,
+    description,
+    footerTitle,
+    footerSubtitle,
+    data,
+    config,
+    seriesKeys,
 }: LineChartCardProps) => {
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ChartContainer config={config}>
-          <LineChart accessibilityLayer data={data} margin={{ left: 12, right: 12 }}>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => String(value).slice(0, 3)}
-            />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            {seriesKeys.map((key) => (
-              <Line
-                key={key}
-                dataKey={key}
-                type="monotone"
-                stroke={`var(--color-${key})`}
-                strokeWidth={2}
-                dot={false}
-              />
-            ))}
-          </LineChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter>
-        <div className="grid gap-2">
-          <div className="flex items-center gap-2 leading-none font-medium">
-            {footerTitle} <TrendingUpIcon className="size-4" />
-          </div>
-          <div className="text-muted-foreground flex items-center gap-2 leading-none">
-            {footerSubtitle}
-          </div>
-        </div>
-      </CardFooter>
-    </Card>
-  );
+    return (
+        <Card className="w-full">
+            <CardHeader>
+                <CardTitle>{title}</CardTitle>
+                <CardDescription>{description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ChartContainer config={config}>
+                    <LineChart accessibilityLayer data={data} margin={{ left: 12, right: 12 }}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                            dataKey="month"
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                            tickFormatter={(value) => String(value).slice(0, 3)}
+                        />
+                        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                        {seriesKeys.map((key) => (
+                            <Line
+                                key={key}
+                                dataKey={key}
+                                type="monotone"
+                                stroke={`var(--color-${key})`}
+                                strokeWidth={2}
+                                dot={false}
+                            />
+                        ))}
+                    </LineChart>
+                </ChartContainer>
+            </CardContent>
+            <CardFooter>
+                <div className="grid gap-2">
+                    <div className="flex items-center gap-2 leading-none font-medium">
+                        {footerTitle} <TrendingUpIcon className="size-4" />
+                    </div>
+                    <div className="text-muted-foreground flex items-center gap-2 leading-none">
+                        {footerSubtitle}
+                    </div>
+                </div>
+            </CardFooter>
+        </Card>
+    );
 };
 
 export default LineChartCard;
