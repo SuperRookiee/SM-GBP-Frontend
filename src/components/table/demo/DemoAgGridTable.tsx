@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { AllCommunityModule, type ColDef, ModuleRegistry, type SelectionChangedEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import type { IDemoGridTableRow } from "@/interface/demo/IDemoGridTable.interface.ts";
+import DialogGridRowHandler from "@/components/dialog/demo/DialogGridRowHandler.tsx";
 import { myTheme } from "@/components/table/demo/demoAgGridTheme.ts";
 import Pagination from "@/components/table/Pagination.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
@@ -58,6 +59,7 @@ const DemoAgGridTable = ({
 }: IDemoAgGridTableProps) => {
     const [quickFilter, setQuickFilter] = useState("");
     const [selectedCount, setSelectedCount] = useState(0);
+    const [selectedRows, setSelectedRows] = useState<IDemoGridTableRow[]>([]);
 
     const filteredRows = useMemo(() => {
         const keyword = quickFilter.trim().toLowerCase();
@@ -77,9 +79,10 @@ const DemoAgGridTable = ({
                         <p className="text-sm font-medium">AG Grid Quick Filter</p>
                         <Input value={quickFilter} onChange={(event) => setQuickFilter(event.target.value)} placeholder="상품명/카테고리/상태 검색" />
                     </div>
-                    <div className="space-y-1 text-right text-sm text-muted-foreground">
+                    <div className="space-y-2 text-right text-sm text-muted-foreground">
                         <p>선택된 행: {selectedCount}개</p>
                         <p>컬럼 헤더 메뉴에서 Pin Column으로 고정 위치를 바꿀 수 있습니다.</p>
+                        <DialogGridRowHandler selectedRows={selectedRows}/>
                     </div>
                 </div>
 
@@ -93,7 +96,9 @@ const DemoAgGridTable = ({
                         animateRows
                         sideBar
                         onSelectionChanged={(event: SelectionChangedEvent<IDemoGridTableRow>) => {
-                            setSelectedCount(event.api.getSelectedRows().length);
+                            const nextSelectedRows = event.api.getSelectedRows();
+                            setSelectedCount(nextSelectedRows.length);
+                            setSelectedRows(nextSelectedRows);
                         }}
                     />
                 </div>
