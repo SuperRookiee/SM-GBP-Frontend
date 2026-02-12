@@ -7,6 +7,14 @@ export interface ISampleApiItem {
     description: string;
 }
 
+export interface ISampleListResponse {
+    content: ISampleApiItem[];
+    page: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+}
+
 export interface ISampleListRequest {
     page: number;
     size: number;
@@ -17,5 +25,5 @@ export interface ISampleListRequest {
 }
 
 export const GetSampleListApi = (params: ISampleListRequest) => {
-    return Get<IApiResponse<ISampleApiItem[]>>("/sample/list", params);
+    return Get<IApiResponse<ISampleListResponse>>("/sample/list", params);
 };
