@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 
 /**
- * 404 Not Found
+ * Not Found
  */
 const NotFound = () => {
     const navigate = useNavigate()
@@ -14,7 +14,7 @@ const NotFound = () => {
                 <div className="flex flex-col items-center gap-3">
                     <CircleSlash className="size-10 text-muted-foreground" />
 
-                    <h1 className="text-3xl font-semibold tracking-tight">404</h1>
+                    <h1 className="text-3xl font-semibold tracking-tight">Page Not Found</h1>
 
                     <p className="text-sm text-muted-foreground">
                         페이지를 찾을 수 없습니다
