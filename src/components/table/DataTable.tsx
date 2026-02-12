@@ -10,7 +10,6 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface IGridTableClientProps<T> {
@@ -156,7 +155,6 @@ const DataTable = <T, >({
         return <span className="ml-1 text-xs text-muted-foreground">{sortDirection === "asc" ? "▲" : "▼"}</span>;
     };
 
-    const skeletonRows = Array.from({ length: 6 }, (_, index) => `skeleton-${index}`);
 
     // #. 상단 검색 버튼 클릭 시 검색 조건과 검색어를 부모로 전달
     const onClickSearch = () => {
@@ -393,70 +391,50 @@ const DataTable = <T, >({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {isLoading
-                                    ? skeletonRows.map((key) =>
-                                        <TableRow key={key}>
+                                {filteredRows.map((row) => {
+                                    const rowId = getRowId(row);
+                                    return (
+                                        <TableRow key={rowId}>
                                             {enableSelect && (
-                                                <TableCell className="w-2 border-r border-border/40">
-                                                    <Skeleton className="h-4 w-4"/>
+                                                <TableCell
+                                                    className="border-r border-border/40 p-0"
+                                                    style={{
+                                                        width: `${SELECT_COL_SIZE}px`,
+                                                        minWidth: `${SELECT_COL_SIZE}px`,
+                                                        maxWidth: `${SELECT_COL_SIZE}px`,
+                                                    }}
+                                                >
+                                                    <div className="flex h-full w-full items-center justify-center p-1">
+                                                        <Checkbox
+                                                            checked={selectedRowIdSet.has(rowId)}
+                                                            onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
+                                                            aria-label={`행 선택 ${String(rowId)}`}
+                                                        />
+                                                    </div>
                                                 </TableCell>
                                             )}
-                                            {columns.map((column, columnIndex) =>
+                                            {columns.map((column) =>
                                                 <TableCell
-                                                    key={`${key}-${String(column.key)}`}
+                                                    key={`${rowId}-${String(column.key)}`}
                                                     style={getColumnWidthStyle(column.width)}
-                                                    className={`${columnIndex === columns.length - 1 ? "" : "border-r border-border/40"}`.trim()}
+                                                    className={`
+                                                        ${column.cellClassName ?? ""}
+                                                        overflow-hidden
+                                                        text-ellipsis
+                                                        whitespace-nowrap
+                                                        ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"}
+                                                    `}
                                                 >
-                                                    <Skeleton className="h-4 w-24"/>
-                                                </TableCell>,
+                                                    <div className="truncate">
+                                                        {column.render ? column.render(row) : String(row[column.key as keyof T])}
+                                                    </div>
+                                                </TableCell>
+                                                ,
                                             )}
-                                        </TableRow>,
-                                    )
-                                    : filteredRows.map((row) => {
-                                        const rowId = getRowId(row);
-                                        return (
-                                            <TableRow key={rowId}>
-                                                {enableSelect && (
-                                                    <TableCell
-                                                        className="border-r border-border/40 p-0"
-                                                        style={{
-                                                            width: `${SELECT_COL_SIZE}px`,
-                                                            minWidth: `${SELECT_COL_SIZE}px`,
-                                                            maxWidth: `${SELECT_COL_SIZE}px`,
-                                                        }}
-                                                    >
-                                                        <div
-                                                            className="flex h-full w-full items-center justify-center p-1">
-                                                            <Checkbox
-                                                                checked={selectedRowIdSet.has(rowId)}
-                                                                onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
-                                                                aria-label={`행 선택 ${String(rowId)}`}
-                                                            />
-                                                        </div>
-                                                    </TableCell>
-                                                )}
-                                                {columns.map((column) =>
-                                                    <TableCell
-                                                        key={`${rowId}-${String(column.key)}`}
-                                                        style={getColumnWidthStyle(column.width)}
-                                                        className={`
-                                                            ${column.cellClassName ?? ""}
-                                                            overflow-hidden
-                                                            text-ellipsis
-                                                            whitespace-nowrap
-                                                            ${columns[columns.length - 1]?.key === column.key ? "" : "border-r border-border/40"}
-                                                        `}
-                                                    >
-                                                        <div className="truncate">
-                                                            {column.render ? column.render(row) : String(row[column.key as keyof T])}
-                                                        </div>
-                                                    </TableCell>
-                                                    ,
-                                                )}
-                                            </TableRow>
-                                        );
-                                    })}
-                                {!isLoading && filteredRows.length === 0 && (
+                                        </TableRow>
+                                    );
+                                })}
+                                {filteredRows.length === 0 && (
                                     <TableRow>
                                         <TableCell
                                             colSpan={columns.length + (enableSelect ? 1 : 0)}
