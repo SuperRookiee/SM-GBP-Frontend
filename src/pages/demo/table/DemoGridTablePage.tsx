@@ -50,13 +50,18 @@ const formatDate = (value?: string) => {
     return format(new Date(value), "yyyy-MM-dd", { locale: ko });
 };
 
-const DatePickerField = ({ label, value, onChange }: { label: string; value?: string; onChange: (value?: string) => void }) => (
+const DatePickerField = ({ label, value, onChange }: {
+    label: string;
+    value?: string;
+    onChange: (value?: string) => void
+}) => (
     <div className="flex flex-col gap-2">
         <Label>{label}</Label>
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant="outline" className={cn("justify-start text-left font-normal", !value && "text-muted-foreground")}>
-                    <CalendarIcon className="mr-2 size-4" />
+                <Button variant="outline"
+                        className={cn("justify-start text-left font-normal", !value && "text-muted-foreground")}>
+                    <CalendarIcon className="mr-2 size-4"/>
                     {formatDate(value)}
                 </Button>
             </PopoverTrigger>
@@ -72,40 +77,40 @@ const DatePickerField = ({ label, value, onChange }: { label: string; value?: st
     </div>
 );
 
-const MultiCheckboxField = <T extends string,>({
-    label,
-    options,
-    selected,
-    onToggle,
-}: {
-  label: string;
-  options: T[];
-  selected: T[];
-  onToggle: (next: T[]) => void;
+const MultiCheckboxField = <T extends string, >({
+                                                    label,
+                                                    options,
+                                                    selected,
+                                                    onToggle,
+                                                }: {
+    label: string;
+    options: T[];
+    selected: T[];
+    onToggle: (next: T[]) => void;
 }) => (
-        <div className="flex flex-col gap-2">
-            <Label>{label}</Label>
-            <div className="flex flex-wrap gap-3 rounded-md border p-2">
-                {options.map((option) => {
-                    const checked = selected.includes(option);
+    <div className="flex flex-col gap-2">
+        <Label>{label}</Label>
+        <div className="flex flex-wrap gap-3 rounded-md border p-2">
+            {options.map((option) => {
+                const checked = selected.includes(option);
 
-                    return (
-                        <div key={option} className="inline-flex items-center gap-2">
-                            <Checkbox
-                                id={`${label}-${option}`}
-                                checked={checked}
-                                onCheckedChange={(state) => {
-                                    if (state === true) onToggle([...selected, option]);
-                                    else onToggle(selected.filter((item) => item !== option));
-                                }}
-                            />
-                            <Label htmlFor={`${label}-${option}`} className="font-normal">{option}</Label>
-                        </div>
-                    );
-                })}
-            </div>
+                return (
+                    <div key={option} className="inline-flex items-center gap-2">
+                        <Checkbox
+                            id={`${label}-${option}`}
+                            checked={checked}
+                            onCheckedChange={(state) => {
+                                if (state === true) onToggle([...selected, option]);
+                                else onToggle(selected.filter((item) => item !== option));
+                            }}
+                        />
+                        <Label htmlFor={`${label}-${option}`} className="font-normal">{option}</Label>
+                    </div>
+                );
+            })}
         </div>
-    );
+    </div>
+);
 
 const DemoGridTablePage = () => {
     const draft = useGridTablePageStore((state) => state.draft);
@@ -168,7 +173,8 @@ const DemoGridTablePage = () => {
                             </div>
                             <CollapsibleTrigger asChild>
                                 <Button variant="outline" size="sm">
-                                    <ChevronDown className={cn("size-4 transition-transform", isFilterPanelOpen && "rotate-180")} />
+                                    <ChevronDown
+                                        className={cn("size-4 transition-transform", isFilterPanelOpen && "rotate-180")}/>
                                 </Button>
                             </CollapsibleTrigger>
                         </div>
@@ -178,11 +184,13 @@ const DemoGridTablePage = () => {
                             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
                                 <div className="flex flex-col gap-2">
                                     <Label htmlFor="grid-search">전체 검색</Label>
-                                    <Input id="grid-search" value={draft.keyword} onChange={(event) => setDraftKeyword(event.target.value)} placeholder="상품명/카테고리/상태 검색" />
+                                    <Input id="grid-search" value={draft.keyword}
+                                           onChange={(event) => setDraftKeyword(event.target.value)}
+                                           placeholder="상품명/카테고리/상태 검색"/>
                                 </div>
 
-                                <DatePickerField label="출시일 시작" value={draft.dateFrom} onChange={setDraftDateFrom} />
-                                <DatePickerField label="출시일 종료" value={draft.dateTo} onChange={setDraftDateTo} />
+                                <DatePickerField label="출시일 시작" value={draft.dateFrom} onChange={setDraftDateFrom}/>
+                                <DatePickerField label="출시일 종료" value={draft.dateTo} onChange={setDraftDateTo}/>
 
                                 <div className="flex items-end gap-2">
                                     <Button type="button" onClick={() => {
@@ -191,37 +199,43 @@ const DemoGridTablePage = () => {
                                         setEmptyMode(false);
                                         setEventMessage("검색 조건 반영 완료");
                                     }}>
-                                        <Search className="size-4" />검색
+                                        <Search className="size-4"/>검색
                                     </Button>
                                 </div>
                             </div>
 
                             <div className="grid gap-3 md:grid-cols-2">
-                                <MultiCheckboxField label="카테고리" options={CATEGORY_OPTIONS} selected={draft.categories} onToggle={setDraftCategories} />
-                                <MultiCheckboxField label="상태" options={STATUS_OPTIONS} selected={draft.statuses} onToggle={setDraftStatuses} />
+                                <MultiCheckboxField label="카테고리" options={CATEGORY_OPTIONS} selected={draft.categories}
+                                                    onToggle={setDraftCategories}/>
+                                <MultiCheckboxField label="상태" options={STATUS_OPTIONS} selected={draft.statuses}
+                                                    onToggle={setDraftStatuses}/>
                             </div>
 
                             <div className="flex flex-wrap items-center gap-4 border-t pt-4">
                                 <div className="inline-flex items-center gap-2">
-                                    <Checkbox id="includeDiscontinued" checked={draft.includeDiscontinued} onCheckedChange={(checked) => setDraftIncludeDiscontinued(checked === true)} />
+                                    <Checkbox id="includeDiscontinued" checked={draft.includeDiscontinued}
+                                              onCheckedChange={(checked) => setDraftIncludeDiscontinued(checked === true)}/>
                                     <Label htmlFor="includeDiscontinued">단종 포함</Label>
                                 </div>
 
                                 <Button variant="outline" onClick={() => {
-                                    setSorters([{ key: "price", direction: "asc" }, { key: "stock", direction: "desc" }]);
+                                    setSorters([{ key: "price", direction: "asc" }, {
+                                        key: "stock",
+                                        direction: "desc"
+                                    }]);
                                     setPage(1);
                                     setEmptyMode(false);
                                     setEventMessage("멀티 정렬 실행: price ASC + stock DESC");
                                     refetch();
                                 }}>
-              멀티 정렬 실행
+                                    멀티 정렬 실행
                                 </Button>
 
                                 <Button variant="outline" onClick={() => {
                                     setEmptyMode(true);
                                     setEventMessage("Empty data 상태 확인 완료");
                                 }}>
-              Empty 상태
+                                    Empty 상태
                                 </Button>
 
                                 <Button variant="secondary" onClick={() => {
@@ -235,13 +249,14 @@ const DemoGridTablePage = () => {
                                     setEventMessage("필터/정렬/상태 초기화 완료");
                                     refetch();
                                 }}>
-              초기화
+                                    초기화
                                 </Button>
                             </div>
 
                             <p className="text-xs text-muted-foreground">
-              적용된 조건: 검색어({applied.keyword || "-"}) / 기간({applied.dateFrom || "-"} ~ {applied.dateTo || "-"}) /
-              카테고리({applied.categories.join(", ") || "전체"}) / 상태({applied.statuses.join(", ") || "전체"})
+                                적용된 조건: 검색어({applied.keyword || "-"}) /
+                                기간({applied.dateFrom || "-"} ~ {applied.dateTo || "-"}) /
+                                카테고리({applied.categories.join(", ") || "전체"}) / 상태({applied.statuses.join(", ") || "전체"})
                             </p>
                         </CardContent>
                     </CollapsibleContent>
@@ -254,7 +269,8 @@ const DemoGridTablePage = () => {
                     <TabsTrigger value="ag-grid">AG Grid</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="toast-ui" forceMount className={cn("space-y-4", activeTab !== "toast-ui" && "hidden")}>
+                <TabsContent value="toast-ui" forceMount
+                             className={cn("space-y-4", activeTab !== "toast-ui" && "hidden")}>
                     <DemoToastGridTable
                         rows={gridRows}
                         isLoading={isLoading}
