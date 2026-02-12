@@ -46,9 +46,9 @@ const Pagination = ({
         <div className="flex flex-col gap-4 border-t border-border px-6 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between" aria-busy={isLoading}>
             <div className="flex flex-wrap items-center gap-3">
                 <span>
-          Page {currentPage} of {totalPages}
+                    Page {currentPage} of {totalPages}
                 </span>
-                <span className="inline-block min-w-[7.5rem] text-right tabular-nums">{resolvedCaption}</span>
+                <span className="inline-block min-w-10 text-right tabular-nums">{resolvedCaption}</span>
 
                 {onPageSizeChange && pageSize !== undefined && (
                     <div className="flex items-center gap-2">
