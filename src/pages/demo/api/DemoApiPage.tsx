@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { GetSampleListApi, type ISampleApiItem } from "@/apis/demo/sample.api.ts";
+import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
+import type { ISampleApiItem } from "@/interface/demo/ISample.interface.ts";
 import DataTable from "@/components/table/DataTable";
 import { Button } from "@/components/ui/button";
 import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";

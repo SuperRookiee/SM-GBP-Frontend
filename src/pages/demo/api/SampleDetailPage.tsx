@@ -1,15 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-    CreateSampleApi,
-    DeleteSampleApi,
-    GetSampleDetailApi,
-    UpdateSampleApi,
-    type ISampleApiItem,
-    type ISampleUpsertPayload,
-} from "@/apis/demo/sample.api.ts";
-import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CreateSampleApi, DeleteSampleApi, GetSampleDetailApi, UpdateSampleApi } from "@/apis/demo/sample.api.ts";
+import type { ISampleApiItem, ISampleUpsertPayload } from "@/interface/demo/ISample.interface.ts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -23,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
 
 type FormState = {
     name: string;
@@ -59,6 +53,7 @@ const EMPTY_FORM: FormState = {
     memo: "",
 };
 
+// API 상세 데이터를 폼 상태로 변환합니다.
 const toFormState = (item: ISampleApiItem): FormState => ({
     name: item.name,
     description: item.description,
@@ -73,6 +68,7 @@ const toFormState = (item: ISampleApiItem): FormState => ({
     memo: item.memo ?? "",
 });
 
+// 폼 상태를 API 요청 payload로 변환합니다.
 const toPayload = (form: FormState): ISampleUpsertPayload => ({
     name: form.name,
     description: form.description,
@@ -104,10 +100,12 @@ const SampleDetailPage = () => {
         nextPath: null,
     });
 
+    // 안내 다이얼로그를 엽니다.
     const openNoticeDialog = (title: string, description: string, nextPath: string | null = null) => {
         setNoticeDialog({ open: true, title, description, nextPath });
     };
 
+    // 안내 다이얼로그를 닫고 필요 시 페이지 이동합니다.
     const closeNoticeDialog = () => {
         const nextPath = noticeDialog.nextPath;
         setNoticeDialog((prev) => ({ ...prev, open: false, nextPath: null }));
@@ -129,12 +127,9 @@ const SampleDetailPage = () => {
     }, [data, error, isError]);
 
     const detailItem = hasSuccess ? data.data : null;
+    const formValue = (!isCreateMode && !isFormDirty && detailItem) ? toFormState(detailItem) : form;
 
-    useEffect(() => {
-        if (!detailItem || isFormDirty) return;
-        setForm(toFormState(detailItem));
-    }, [detailItem, isFormDirty]);
-
+    // 등록/수정 요청을 처리합니다.
     const upsertMutation = useMutation({
         mutationFn: async () => {
             const payload = toPayload(form);
@@ -160,6 +155,7 @@ const SampleDetailPage = () => {
         },
     });
 
+    // 삭제 요청을 처리합니다.
     const deleteMutation = useMutation({
         mutationFn: () => DeleteSampleApi(sampleId),
         onSuccess: (response) => {
@@ -173,6 +169,7 @@ const SampleDetailPage = () => {
         },
     });
 
+    // 폼 입력값을 갱신합니다.
     const onChange = <K extends keyof FormState>(key: K, value: FormState[K]) => {
         setIsFormDirty(true);
         setForm((prev) => ({ ...prev, [key]: value }));
@@ -210,48 +207,48 @@ const SampleDetailPage = () => {
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="name">이름</Label>
-                                    <Input id="name" value={form.name} onChange={(event) => onChange("name", event.target.value)} />
+                                    <Input id="name" value={formValue.name} onChange={(event) => onChange("name", event.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="category">카테고리</Label>
-                                    <Input id="category" value={form.category} onChange={(event) => onChange("category", event.target.value)} />
+                                    <Input id="category" value={formValue.category} onChange={(event) => onChange("category", event.target.value)} />
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
                                     <Label htmlFor="description">설명</Label>
-                                    <Input id="description" value={form.description} onChange={(event) => onChange("description", event.target.value)} />
+                                    <Input id="description" value={formValue.description} onChange={(event) => onChange("description", event.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="status">상태</Label>
-                                    <Input id="status" value={form.status} onChange={(event) => onChange("status", event.target.value)} />
+                                    <Input id="status" value={formValue.status} onChange={(event) => onChange("status", event.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="dueDate">마감일</Label>
-                                    <Input id="dueDate" type="date" value={form.dueDate} onChange={(event) => onChange("dueDate", event.target.value)} />
+                                    <Input id="dueDate" type="date" value={formValue.dueDate} onChange={(event) => onChange("dueDate", event.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="priority">우선순위</Label>
-                                    <Input id="priority" type="number" value={form.priority} onChange={(event) => onChange("priority", event.target.value)} />
+                                    <Input id="priority" type="number" value={formValue.priority} onChange={(event) => onChange("priority", event.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="quantity">수량</Label>
-                                    <Input id="quantity" type="number" value={form.quantity} onChange={(event) => onChange("quantity", event.target.value)} />
+                                    <Input id="quantity" type="number" value={formValue.quantity} onChange={(event) => onChange("quantity", event.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="price">가격</Label>
-                                    <Input id="price" type="number" value={form.price} onChange={(event) => onChange("price", event.target.value)} />
+                                    <Input id="price" type="number" value={formValue.price} onChange={(event) => onChange("price", event.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="rate">비율</Label>
-                                    <Input id="rate" type="number" step="0.01" value={form.rate} onChange={(event) => onChange("rate", event.target.value)} />
+                                    <Input id="rate" type="number" step="0.01" value={formValue.rate} onChange={(event) => onChange("rate", event.target.value)} />
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
                                     <Label htmlFor="memo">메모</Label>
-                                    <Textarea id="memo" value={form.memo} onChange={(event) => onChange("memo", event.target.value)} />
+                                    <Textarea id="memo" value={formValue.memo} onChange={(event) => onChange("memo", event.target.value)} />
                                 </div>
                                 <label className="flex items-center gap-2 text-sm font-medium md:col-span-2">
                                     <input
                                         type="checkbox"
-                                        checked={form.active}
+                                        checked={formValue.active}
                                         onChange={(event) => onChange("active", event.target.checked)}
                                     />
                                     활성 여부
