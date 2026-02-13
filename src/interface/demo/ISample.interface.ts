@@ -6,7 +6,7 @@ export interface ISampleRow {
     status: string;
     priority: number;
     quantity: number;
-    price: number;
+    price: number | string;
     rate: number;
     active: boolean;
     dueDate: string | null;

@@ -1,13 +1,16 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { GetSampleListApi, type ISampleApiItem } from "@/apis/demo/sample.api.ts";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import DataTable from "@/components/table/DataTable";
+import { Button } from "@/components/ui/button";
 import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
 
 const DemoApiPage = () => {
+    const navigate = useNavigate();
     const search = useSamplePageStore((s) => s.search);
     const filterKey = useSamplePageStore((s) => s.filterKey);
     const sortKey = useSamplePageStore((s) => s.sortKey);
@@ -68,8 +71,13 @@ const DemoApiPage = () => {
                         Sample API DataTable
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        /sample/list 응답 데이터를 공통 DataTable 컴포넌트로 조회합니다.
+                        /sample/list 응답 데이터를 공통 DataTable 컴포넌트로 조회합니다. 행을 클릭하면 상세 페이지로 이동합니다.
                     </p>
+                    <div>
+                        <Button type="button" variant="outline" onClick={() => navigate("/demo/api/new")}>
+                            신규 등록
+                        </Button>
+                    </div>
                 </header>
 
                 {isError || data?.result === ApiResultEnum.FAIL ? (
@@ -109,6 +117,7 @@ const DemoApiPage = () => {
                         onSortChange={setSort}
                         onPageChange={setPage}
                         onPageSizeChange={setSize}
+                        onRowClick={(row) => navigate(`/demo/api/${row.id}`)}
                     />
                 )}
             </div>

@@ -51,6 +51,7 @@ interface IGridTableClientProps<T> {
     // 렌더링 및 유틸리티
     getRowId?: (row: T) => string | number;    // 각 행의 고유 ID를 가져오는 함수
     captionRenderer?: (total: number) => ReactNode; // 총 건수 표시 렌더러
+    onRowClick?: (row: T) => void;          // 행 클릭 핸들러
 }
 
 const getColumnWidthStyle = (width?: string | number) => {
@@ -75,6 +76,7 @@ const DataTable = <T, >({
     onSelectedRowIdsChange,
     tableHeightClassName = "h-105",
     pageSizeOptions = [5, 10, 25, 50, 100],
+    onRowClick,
 }: IGridTableClientProps<T>) => {
     const [draftQuery, setDraftQuery] = useState(query);
     const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
@@ -408,7 +410,11 @@ const DataTable = <T, >({
                                     {filteredRows.map((row) => {
                                     const rowId = getRowId(row);
                                     return (
-                                        <TableRow key={rowId}>
+                                        <TableRow
+                                            key={rowId}
+                                            onClick={onRowClick ? () => onRowClick(row) : undefined}
+                                            className={onRowClick ? "cursor-pointer" : undefined}
+                                        >
                                             {enableSelect && (
                                                 <TableCell
                                                     className="border-r border-border/40 p-0"
@@ -418,7 +424,7 @@ const DataTable = <T, >({
                                                         maxWidth: `${SELECT_COL_SIZE}px`,
                                                     }}
                                                 >
-                                                    <div className="flex h-full w-full items-center justify-center p-1">
+                                                    <div className="flex h-full w-full items-center justify-center p-1" onClick={(event) => event.stopPropagation()}>
                                                         <Checkbox
                                                             checked={selectedRowIdSet.has(rowId)}
                                                             onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}

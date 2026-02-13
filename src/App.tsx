@@ -3,6 +3,7 @@ import MainLayout from "@/layouts/Main.layout.tsx";
 import NotFound from "@/components/errors/NotFound.tsx";
 import DashboardPage from "@/pages/dashboard/DashboardPage.tsx";
 import DemoApiPage from "@/pages/demo/api/DemoApiPage.tsx";
+import SampleDetailPage from "@/pages/demo/api/SampleDetailPage.tsx";
 import DemoChartPage from "@/pages/demo/chart/DemoChartPage.tsx";
 import DemoDialogPage from "@/pages/demo/dialog/DemoDialogPage.tsx";
 import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
@@ -34,6 +35,8 @@ const App = () => {
                         <Route path="form" element={<DemoFormPage/>}/>
                         <Route path="dialog" element={<DemoDialogPage/>}/>
                         <Route path="api" element={<DemoApiPage/>}/>
+                        <Route path="api/new" element={<SampleDetailPage/>}/>
+                        <Route path="api/:id" element={<SampleDetailPage/>}/>
                         <Route path="typography" element={<DemoTypography/>}/>
                     </Route>
 
