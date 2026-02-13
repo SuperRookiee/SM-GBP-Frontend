@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getDemoDataTableSampleDataApi } from "@/apis/demo/demoDataTable.api.ts";
+import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { DEMO_DATA_TABLE_COLUMNS, DEMO_DATA_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";
 import type { DemoDataTableResponse } from "@/types/demo/demoDataTable.types.ts";
@@ -27,11 +28,11 @@ const DemoDataTablePage = () => {
     const { data, isLoading, isFetching, isError } = useQuery<DemoDataTableResponse>({
         queryKey: ["demoGridTable", "rows", { page, size, search, filterKey, sortKey, sortDirection}],
         queryFn: async () =>  await getDemoDataTableSampleDataApi({ page, pageSize: size, query: search, filterKey, sortKey, sortDirection}), // 서버에서 rows는 pageSize만큼, total은 전체 count(*) 내려줘야 함
-        staleTime: 30_000,
-        gcTime: 5 * 60_000,
+        placeholderData: keepPreviousData,
+        staleTime: STALE_TIME,
+        gcTime: GC_TIME,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        placeholderData: prev => prev, // 이전 페이지 데이터를 잠깐 유지해서 깜빡임 줄이기
     });
 
     const rows = data?.rows ?? [];

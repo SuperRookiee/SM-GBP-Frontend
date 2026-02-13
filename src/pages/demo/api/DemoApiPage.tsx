@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { GetSampleListApi, type ISampleApiItem } from "@/apis/demo/sample.api.ts";
+import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import DataTable from "@/components/table/DataTable";
@@ -36,11 +37,9 @@ const DemoApiPage = () => {
             }];
             return GetSampleListApi({ ...params, query: params.search, sortKey: params.sortKey ?? undefined });
         },
-        staleTime: 30_000,
-        gcTime: 5 * 60_000,
-        // React Query v5 권장 패턴:
-        // queryKey 변경 시 이전 성공 데이터를 유지해 rows/total이 잠깐 비는 현상을 제거합니다.
         placeholderData: keepPreviousData,
+        staleTime: STALE_TIME,
+        gcTime: GC_TIME,
     });
 
     const hasSuccessfulResponse = data?.result === ApiResultEnum.SUCCESS && data.code === SuccessResultCodeEnum.OK;
@@ -74,7 +73,8 @@ const DemoApiPage = () => {
                 </header>
 
                 {isError || data?.result === ApiResultEnum.FAIL ? (
-                    <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-6 text-center">
+                    <div
+                        className="flex h-64 flex-col items-center justify-center gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-6 text-center">
                         <p className="text-sm font-medium text-destructive">
                             {`[${apiErrorCode ?? ErrorResultCodeEnum.INTERNAL_ERROR}] ${apiError?.detail ?? queryErrorMessage ?? "데이터를 불러오지 못했습니다."}`}
                         </p>

@@ -2,8 +2,9 @@ import { useCallback, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CalendarIcon, ChevronDown, Search } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getDemoGridTableSampleDataApi } from "@/apis/demo/demoGridTable.api.ts";
+import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { useGridTablePageStore } from "@/stores/page/demo/gridTablePage.store.ts";
 import { cn } from "@/utils/utils.ts";
@@ -138,7 +139,9 @@ const DemoGridTablePage = () => {
     const { data, isLoading, isFetching, isError, refetch } = useQuery({
         queryKey: ["demoGridTable", { applied, sorters }],
         queryFn: () => getDemoGridTableSampleDataApi({ ...applied, sorters }),
-        staleTime: 20_000,
+        placeholderData: keepPreviousData,
+        staleTime: STALE_TIME,
+        gcTime: GC_TIME,
         refetchOnWindowFocus: false,
     });
 

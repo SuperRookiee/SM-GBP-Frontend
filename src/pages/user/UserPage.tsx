@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
+import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { USER_TABLE_COLUMNS, USER_TABLE_FILTER } from "@/constants/table.constants.tsx";
 import { useUserPageStore } from "@/stores/page/userPage.store.ts";
 import DataTable from "@/components/table/DataTable";
@@ -22,8 +23,9 @@ const UserPage = () => {
     const { data, isLoading, isFetching, isError } = useQuery({
         queryKey: ["users", { page, size, search, filterKey, sortKey, sortDirection }],
         queryFn: async () => getUserSampleDataApi({ page, pageSize: size, query: search, filterKey, sortKey, sortDirection }),
-        staleTime: 30_000,
-        gcTime: 5 * 60_000,
+        placeholderData: keepPreviousData,
+        staleTime: STALE_TIME,
+        gcTime: GC_TIME,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         placeholderData: (prev) => prev,
