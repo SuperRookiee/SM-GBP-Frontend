@@ -150,11 +150,11 @@ const SampleDetailPage = () => {
             }
 
             void queryClient.invalidateQueries({ queryKey: ["sample", "list"] });
-            const nextId = response.data?.id;
+            const nextPath = isCreateMode ? "/demo/api" : (typeof response.data?.id === "number" ? `/demo/api/${response.data.id}` : null);
             openNoticeDialog(
                 "저장 완료",
-                isCreateMode ? "등록되었습니다." : "수정되었습니다.",
-                typeof nextId === "number" ? `/demo/api/${nextId}` : null,
+                isCreateMode ? "등록되었습니다. 목록으로 이동합니다." : "수정되었습니다.",
+                nextPath,
             );
             setIsFormDirty(false);
         },
