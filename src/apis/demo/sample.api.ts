@@ -25,5 +25,5 @@ export interface ISampleListRequest {
 }
 
 export const GetSampleListApi = (params: ISampleListRequest) => {
-    return Get<IApiResponse<ISampleListResponse>>("/sample/list", params);
+    return Get<IApiResponse<ISampleListResponse>>("/sample/orm/list", params);
 };
