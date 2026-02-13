@@ -92,12 +92,26 @@ export const SAMPLE_TABLE_FILTER: DemoDataTableFilterOption<ISampleRow>[] = [
     { value: "id", label: "ID" },
     { value: "name", label: "이름" },
     { value: "description", label: "설명" },
+    { value: "category", label: "카테고리" },
+    { value: "status", label: "상태" },
+    { value: "memo", label: "메모" },
 ];
 
 export const SAMPLE_TABLE_COLUMNS: DemoDataTableColumn<ISampleRow>[] = [
-    { key: "id", label: "ID", width: 100, cellClassName: "font-medium", filterable: true },
-    { key: "name", label: "이름", width: 180, filterable: true },
-    { key: "description", label: "설명", width: 420, filterable: true },
+    { key: "id", label: "ID", width: 80, cellClassName: "font-medium", filterable: true },
+    { key: "name", label: "이름", width: 140, filterable: true },
+    { key: "description", label: "설명", width: 200, filterable: true },
+    { key: "category", label: "카테고리", width: 120, filterable: true },
+    { key: "status", label: "상태", width: 110, filterable: true },
+    { key: "priority", label: "우선순위", width: 90, filterable: true },
+    { key: "quantity", label: "수량", width: 90, filterable: true },
+    { key: "price", label: "가격", width: 120, filterable: true },
+    { key: "rate", label: "비율", width: 90, filterable: true },
+    { key: "active", label: "활성", width: 80, filterable: true },
+    { key: "dueDate", label: "마감일", width: 130, filterable: true },
+    { key: "memo", label: "메모", width: 200, filterable: true },
+    { key: "createdAt", label: "생성일시", width: 180, filterable: true },
+    { key: "updatedAt", label: "수정일시", width: 180, filterable: true },
 ];
 
 /** User **/
