@@ -12,6 +12,14 @@ import {
 import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +36,13 @@ type FormState = {
     active: boolean;
     dueDate: string;
     memo: string;
+};
+
+type NoticeDialogState = {
+    open: boolean;
+    title: string;
+    description: string;
+    nextPath: string | null;
 };
 
 const EMPTY_FORM: FormState = {
@@ -81,6 +96,23 @@ const SampleDetailPage = () => {
 
     const [form, setForm] = useState<FormState>(EMPTY_FORM);
     const [isFormDirty, setIsFormDirty] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [noticeDialog, setNoticeDialog] = useState<NoticeDialogState>({
+        open: false,
+        title: "",
+        description: "",
+        nextPath: null,
+    });
+
+    const openNoticeDialog = (title: string, description: string, nextPath: string | null = null) => {
+        setNoticeDialog({ open: true, title, description, nextPath });
+    };
+
+    const closeNoticeDialog = () => {
+        const nextPath = noticeDialog.nextPath;
+        setNoticeDialog((prev) => ({ ...prev, open: false, nextPath: null }));
+        if (nextPath) navigate(nextPath);
+    };
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["sample", "detail", sampleId],
@@ -113,16 +145,17 @@ const SampleDetailPage = () => {
         },
         onSuccess: (response) => {
             if (!(response.result === ApiResultEnum.SUCCESS && response.code === SuccessResultCodeEnum.OK)) {
-                alert(response.error?.detail ?? "저장에 실패했습니다.");
+                openNoticeDialog("저장 실패", response.error?.detail ?? "저장에 실패했습니다.");
                 return;
             }
 
             void queryClient.invalidateQueries({ queryKey: ["sample", "list"] });
-            alert(isCreateMode ? "등록되었습니다." : "수정되었습니다.");
             const nextId = response.data?.id;
-            if (typeof nextId === "number") {
-                navigate(`/demo/api/${nextId}`);
-            }
+            openNoticeDialog(
+                "저장 완료",
+                isCreateMode ? "등록되었습니다." : "수정되었습니다.",
+                typeof nextId === "number" ? `/demo/api/${nextId}` : null,
+            );
             setIsFormDirty(false);
         },
     });
@@ -131,13 +164,12 @@ const SampleDetailPage = () => {
         mutationFn: () => DeleteSampleApi(sampleId),
         onSuccess: (response) => {
             if (!(response.result === ApiResultEnum.SUCCESS && response.code === SuccessResultCodeEnum.OK)) {
-                alert(response.error?.detail ?? "삭제에 실패했습니다.");
+                openNoticeDialog("삭제 실패", response.error?.detail ?? "삭제에 실패했습니다.");
                 return;
             }
 
             void queryClient.invalidateQueries({ queryKey: ["sample", "list"] });
-            alert("삭제되었습니다.");
-            navigate("/demo/api");
+            openNoticeDialog("삭제 완료", "삭제되었습니다.", "/demo/api");
         },
     });
 
@@ -235,10 +267,7 @@ const SampleDetailPage = () => {
                             {!isCreateMode ? (
                                 <Button
                                     variant="destructive"
-                                    onClick={() => {
-                                        if (!confirm("정말 삭제하시겠습니까?")) return;
-                                        deleteMutation.mutate();
-                                    }}
+                                    onClick={() => setIsDeleteDialogOpen(true)}
                                     disabled={deleteMutation.isPending}
                                 >
                                     삭제
@@ -248,6 +277,42 @@ const SampleDetailPage = () => {
                     </CardContent>
                 </Card>
             </div>
+
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>삭제 확인</DialogTitle>
+                        <DialogDescription>정말 삭제하시겠습니까?</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>취소</Button>
+                        <Button
+                            variant="destructive"
+                            onClick={() => {
+                                setIsDeleteDialogOpen(false);
+                                deleteMutation.mutate();
+                            }}
+                            disabled={deleteMutation.isPending}
+                        >
+                            삭제
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={noticeDialog.open} onOpenChange={(open) => {
+                if (!open) closeNoticeDialog();
+            }}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{noticeDialog.title}</DialogTitle>
+                        <DialogDescription>{noticeDialog.description}</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={closeNoticeDialog}>확인</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
