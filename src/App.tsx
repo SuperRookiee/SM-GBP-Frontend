@@ -10,7 +10,6 @@ import DemoDataTablePage from "@/pages/demo/table/DemoDataTablePage.tsx";
 import DemoGridTablePage from "@/pages/demo/table/DemoGridTablePage.tsx";
 import DemoTypography from "@/pages/demo/typography/DemoTypography.tsx";
 import LoginPage from "@/pages/login/LoginPage.tsx";
-import SampleCrudPage from "@/pages/sample/SampleCrudPage";
 import UserDetailPage from "@/pages/user/detail/UserDetailPage.tsx";
 import UserPage from "@/pages/user/UserPage.tsx";
 import AuthRouter from "@/routes/AuthRouter.tsx";
@@ -42,8 +41,6 @@ const App = () => {
                         <Route index element={<UserPage />} />
                         <Route path=":id" element={<UserDetailPage />} />
                     </Route>
-
-                    <Route path="/sample" element={<SampleCrudPage/>} />
 
                     {/* Error */}
                     <Route path="*" element={<NotFound/>}/>

@@ -1,117 +1,212 @@
-import { useEffect } from "react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { GetSampleListApi, type ISampleApiItem } from "@/apis/demo/sample.api.ts";
-import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
-import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
-import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
-import DataTable from "@/components/table/DataTable";
-import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
+import { useMemo, useState } from "react";
+import { ApiRequestError, NetworkRequestError } from "@/apis/apiClient";
+import {
+    useCreateSample,
+    useDeleteSample,
+    useSampleList,
+    useUpdateSample,
+    useSearchSample,
+} from "@/hooks/useSample";
+import type { FieldError, SampleItem, SampleSearchParams } from "@/types/sample.types";
+import SampleDeleteConfirmDialog from "@/components/sample/SampleDeleteConfirmDialog";
+import SampleFormModal from "@/components/sample/SampleFormModal";
+import SampleSearchFilters, { type SampleFilterValues } from "@/components/sample/SampleSearchFilters";
+import SampleTable from "@/components/sample/SampleTable";
+import { Button } from "@/components/ui/button";
+
+const defaultFilter: SampleFilterValues = {
+    name: "",
+    category: "",
+    status: "",
+    active: "all",
+};
+
+const defaultPage = { page: 1, size: 10 };
+
+const toSearchParams = (filter: SampleFilterValues, page: number, size: number): SampleSearchParams => ({
+    page,
+    size,
+    ...(filter.name ? { name: filter.name } : {}),
+    ...(filter.category ? { category: filter.category } : {}),
+    ...(filter.status ? { status: filter.status } : {}),
+    ...(filter.active !== "all" ? { active: filter.active === "true" } : {}),
+});
+
+const extractError = (error: unknown) => {
+    if (error instanceof ApiRequestError) {
+        return {
+            detail: error.detail?.detail ?? error.message,
+            fieldErrors: (error.detail?.fieldErrors ?? []) as FieldError[],
+        };
+    }
+
+    if (error instanceof NetworkRequestError) {
+        return { detail: error.message, fieldErrors: [] as FieldError[] };
+    }
+
+    if (error instanceof Error) {
+        return { detail: error.message, fieldErrors: [] as FieldError[] };
+    }
+
+    return { detail: "Unknown error", fieldErrors: [] as FieldError[] };
+};
 
 const DemoApiPage = () => {
-    const search = useSamplePageStore((s) => s.search);
-    const filterKey = useSamplePageStore((s) => s.filterKey);
-    const sortKey = useSamplePageStore((s) => s.sortKey);
-    const sortDirection = useSamplePageStore((s) => s.sortDirection);
-    const page = useSamplePageStore((s) => s.page);
-    const setPage = useSamplePageStore((s) => s.setPage);
-    const setSearch = useSamplePageStore((s) => s.setSearch);
-    const setFilterKey = useSamplePageStore((s) => s.setFilterKey);
-    const setSort = useSamplePageStore((s) => s.setSort);
-    const size = useSamplePageStore((s) => s.size);
-    const setSize = useSamplePageStore((s) => s.setSize);
+    const [page, setPage] = useState(defaultPage.page);
+    const [size, setSize] = useState(defaultPage.size);
+    const [draftFilter, setDraftFilter] = useState<SampleFilterValues>(defaultFilter);
+    const [appliedFilter, setAppliedFilter] = useState<SampleFilterValues>(defaultFilter);
+    const [createOpen, setCreateOpen] = useState(false);
+    const [editTarget, setEditTarget] = useState<SampleItem | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<SampleItem | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<FieldError[]>([]);
 
-    useEffect(() => {
-        if (page < 1) setPage(1);
-    }, [page, setPage]);
+    const hasFilter = useMemo(
+        () => Object.entries(appliedFilter).some(([key, value]) => key === "active" ? value !== "all" : Boolean(value)),
+        [appliedFilter],
+    );
 
-    const { data, isLoading, isFetching, isError, error } = useQuery({
-        queryKey: ["sample", "list", { page, size, search, filterKey, sortKey, sortDirection }],
-        queryFn: ({ queryKey }) => {
-            const [, , params] = queryKey as [string, string, {
-                page: number;
-                size: number;
-                search: string;
-                filterKey: string;
-                sortKey: string | null;
-                sortDirection: "asc" | "desc";
-            }];
-            return GetSampleListApi({ ...params, query: params.search, sortKey: params.sortKey ?? undefined });
-        },
-        placeholderData: keepPreviousData,
-        staleTime: STALE_TIME,
-        gcTime: GC_TIME,
-    });
+    const params = useMemo(() => toSearchParams(appliedFilter, page, size), [appliedFilter, page, size]);
 
-    const hasSuccessfulResponse = data?.result === ApiResultEnum.SUCCESS && data.code === SuccessResultCodeEnum.OK;
-    const pageData = hasSuccessfulResponse ? data.data : null;
+    const listQuery = useSampleList(params);
+    const searchQuery = useSearchSample(params, hasFilter);
+    const activeQuery = hasFilter ? searchQuery : listQuery;
 
-    const apiError = data?.result === ApiResultEnum.FAIL ? data.error : null;
-    const apiErrorCode = data?.result === ApiResultEnum.FAIL ? data.code : null;
-    const queryErrorMessage = error instanceof Error ? error.message : null;
+    const createMutation = useCreateSample();
+    const updateMutation = useUpdateSample();
+    const deleteMutation = useDeleteSample();
 
-    const rows: ISampleApiItem[] = pageData?.content ?? [];
-    const total = pageData?.totalElements ?? 0;
-    const totalPages = pageData?.totalPages;
+    const pageData = activeQuery.data;
+    const totalPages = Math.max(pageData?.totalPages ?? 1, 1);
 
-    useEffect(() => {
-        if (!hasSuccessfulResponse || totalPages === undefined) return;
-        const safeTotalPages = Math.max(totalPages, 1);
-        if (page > safeTotalPages) setPage(safeTotalPages);
-    }, [hasSuccessfulResponse, page, setPage, totalPages]);
+    const handleQueryError = (error: unknown) => {
+        const extracted = extractError(error);
+        alert(extracted.detail);
+        setFieldErrors(extracted.fieldErrors);
+    };
 
     return (
-        <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
-            <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 overflow-hidden">
-                <header className="space-y-2">
-                    <p className="text-sm font-semibold text-muted-foreground">Demo API</p>
-                    <h1 className="text-3xl font-semibold tracking-tight">
-                        Sample API DataTable
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                        /sample/list 응답 데이터를 공통 DataTable 컴포넌트로 조회합니다.
-                    </p>
-                </header>
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4">
+            <header className="space-y-2">
+                <p className="text-sm font-semibold text-muted-foreground">Demo API</p>
+                <h1 className="text-3xl font-semibold tracking-tight">Sample CRUD</h1>
+                <p className="text-sm text-muted-foreground">/demo/api 에서 Sample CRUD를 제공합니다.</p>
+            </header>
 
-                {isError || data?.result === ApiResultEnum.FAIL ? (
-                    <div
-                        className="flex h-64 flex-col items-center justify-center gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-6 text-center">
-                        <p className="text-sm font-medium text-destructive">
-                            {`[${apiErrorCode ?? ErrorResultCodeEnum.INTERNAL_ERROR}] ${apiError?.detail ?? queryErrorMessage ?? "데이터를 불러오지 못했습니다."}`}
-                        </p>
-                        {apiError?.fieldErrors?.length ? (
-                            <ul className="space-y-1 text-xs text-destructive/80">
-                                {apiError.fieldErrors.map((fieldError) => (
-                                    <li key={`${fieldError.field}-${fieldError.reason}`}>
-                                        {fieldError.field}: {fieldError.reason}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : null}
-                    </div>
-                ) : (
-                    <DataTable
-                        title="샘플 목록"
-                        description="검색 조건은 상태 스토어에 저장되어 새로고침 후에도 유지됩니다."
-                        rows={rows}
-                        total={total}
-                        pageSize={size}
-                        isLoading={isLoading}
-                        isFetching={isFetching}
-                        filterOptions={SAMPLE_TABLE_FILTER}
-                        columns={SAMPLE_TABLE_COLUMNS}
-                        query={search}
-                        filterKey={filterKey}
-                        sortKey={sortKey}
-                        sortDirection={sortDirection}
-                        page={page}
-                        onQueryChange={setSearch}
-                        onFilterChange={setFilterKey}
-                        onSortChange={setSort}
-                        onPageChange={setPage}
-                        onPageSizeChange={setSize}
-                    />
-                )}
+            <div className="flex justify-end">
+                <Button onClick={() => { setFieldErrors([]); setCreateOpen(true); }}>Create</Button>
             </div>
+
+            <SampleSearchFilters
+                value={draftFilter}
+                onChange={setDraftFilter}
+                onSearch={() => {
+                    setPage(1);
+                    setAppliedFilter(draftFilter);
+                }}
+                onReset={() => {
+                    setPage(1);
+                    setDraftFilter(defaultFilter);
+                    setAppliedFilter(defaultFilter);
+                }}
+            />
+
+            {activeQuery.isError && (
+                <p className="rounded-lg border border-destructive bg-destructive/10 p-3 text-sm text-destructive">
+                    {extractError(activeQuery.error).detail}
+                </p>
+            )}
+
+            <SampleTable
+                rows={pageData?.content ?? []}
+                loading={activeQuery.isPending || activeQuery.isFetching}
+                onEdit={(item) => {
+                    setFieldErrors([]);
+                    setEditTarget(item);
+                }}
+                onDelete={setDeleteTarget}
+            />
+
+            <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                    Page {page} / {totalPages} · Total {pageData?.totalElements ?? 0}
+                </p>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page <= 1}>Prev</Button>
+                    <Button variant="outline" onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} disabled={page >= totalPages}>Next</Button>
+                    <select
+                        className="h-9 rounded-md border bg-background px-2 text-sm"
+                        value={size}
+                        onChange={(event) => {
+                            setPage(1);
+                            setSize(Number(event.target.value));
+                        }}
+                    >
+                        {[10, 20, 50].map((pageSize) => (
+                            <option value={pageSize} key={pageSize}>{pageSize} / page</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            <SampleFormModal
+                mode="create"
+                open={createOpen}
+                loading={createMutation.isPending}
+                fieldErrors={fieldErrors}
+                onClose={() => setCreateOpen(false)}
+                onSubmit={(value) => {
+                    setFieldErrors([]);
+                    createMutation.mutate(value, {
+                        onSuccess: () => {
+                            setCreateOpen(false);
+                            alert("Created successfully");
+                        },
+                        onError: handleQueryError,
+                    });
+                }}
+            />
+
+            <SampleFormModal
+                mode="edit"
+                open={Boolean(editTarget)}
+                initialValue={editTarget ?? undefined}
+                loading={updateMutation.isPending}
+                fieldErrors={fieldErrors}
+                onClose={() => setEditTarget(null)}
+                onSubmit={(value) => {
+                    if (!editTarget) return;
+                    setFieldErrors([]);
+                    updateMutation.mutate(
+                        { id: editTarget.id, payload: value },
+                        {
+                            onSuccess: () => {
+                                setEditTarget(null);
+                                alert("Updated successfully");
+                            },
+                            onError: handleQueryError,
+                        },
+                    );
+                }}
+            />
+
+            <SampleDeleteConfirmDialog
+                open={Boolean(deleteTarget)}
+                loading={deleteMutation.isPending}
+                name={deleteTarget?.name}
+                onClose={() => setDeleteTarget(null)}
+                onConfirm={() => {
+                    if (!deleteTarget) return;
+
+                    deleteMutation.mutate(deleteTarget.id, {
+                        onSuccess: () => {
+                            setDeleteTarget(null);
+                            alert("Deleted successfully");
+                        },
+                        onError: handleQueryError,
+                    });
+                }}
+            />
         </div>
     );
 };
