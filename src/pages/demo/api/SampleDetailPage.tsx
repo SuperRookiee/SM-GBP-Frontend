@@ -150,6 +150,9 @@ const SampleDetailPage = () => {
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
             <div className="mx-auto flex w-full min-w-0 max-w-5xl flex-col gap-6 overflow-hidden">
                 <header className="space-y-2">
+                    <div className="flex items-center justify-start">
+                        <Button variant="outline" onClick={() => navigate("/demo/api")}>목록으로</Button>
+                    </div>
                     <p className="text-sm font-semibold text-muted-foreground">Demo API</p>
                     <h1 className="text-3xl font-semibold tracking-tight">
                         {isCreateMode ? "Sample 신규 등록" : `Sample 상세 (${sampleId})`}
