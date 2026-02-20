@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { $isListItemNode } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $findMatchingParent } from "@lexical/utils";
-import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_LOW, INDENT_CONTENT_COMMAND, KEY_TAB_COMMAND, OUTDENT_CONTENT_COMMAND } from "lexical";
+import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, INDENT_CONTENT_COMMAND, KEY_TAB_COMMAND, OUTDENT_CONTENT_COMMAND } from "lexical";
 
 const ListTabIndentationPlugin = () => {
     const [editor] = useLexicalComposerContext();
@@ -26,6 +26,15 @@ const ListTabIndentationPlugin = () => {
 
                 event.preventDefault();
 
+                if (!event.shiftKey) {
+                    const previousSibling = listItemNode.getPreviousSibling();
+
+                    // Match common editor behavior: first item in a list level cannot indent.
+                    if (!$isListItemNode(previousSibling)) {
+                        return true;
+                    }
+                }
+
                 if (event.shiftKey) {
                     editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
                     return true;
@@ -34,7 +43,7 @@ const ListTabIndentationPlugin = () => {
                 editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
                 return true;
             },
-            COMMAND_PRIORITY_LOW,
+            COMMAND_PRIORITY_EDITOR,
         );
     }, [editor]);
 

@@ -9,6 +9,12 @@
     outline: none;
     font-size: 0.95rem;
     line-height: 1.6;
+    color: var(--color-foreground);
+    caret-color: var(--color-foreground);
+}
+
+.editor-input:focus-visible {
+    box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--color-primary) 50%, transparent);
 }
 
 .editor-placeholder {
@@ -21,6 +27,72 @@
 
 .editor-paragraph {
     margin-bottom: 0.5rem;
+}
+
+.editor-heading-h1 {
+    margin: 0.75rem 0 0.5rem;
+    font-size: 1.75rem;
+    line-height: 1.25;
+    font-weight: 700;
+}
+
+.editor-heading-h2 {
+    margin: 0.65rem 0 0.45rem;
+    font-size: 1.35rem;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+.editor-list-ul,
+.editor-list-ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.editor-list-ul {
+    list-style-type: disc;
+}
+
+.editor-list-ol {
+    list-style-type: decimal;
+}
+
+.editor-list-ul-depth-1 {
+    list-style-type: disc;
+}
+
+.editor-list-ul-depth-2 {
+    list-style-type: circle;
+}
+
+.editor-list-ul-depth-3 {
+    list-style-type: square;
+}
+
+.editor-list-ol-depth-1 {
+    list-style-type: decimal;
+}
+
+.editor-list-ol-depth-2 {
+    list-style-type: lower-alpha;
+}
+
+.editor-list-ol-depth-3 {
+    list-style-type: lower-roman;
+}
+
+.editor-nested-list {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.editor-list-item {
+    margin: 0.25rem 0;
+}
+
+/* Hide marker for structural wrapper items that only contain a nested list (optionally with a <br>). */
+.editor-list-item:has(> .editor-list-ul, > .editor-list-ol, > ul, > ol):not(:has(> :not(.editor-list-ul):not(.editor-list-ol):not(ul):not(ol):not(br))) {
+    list-style-type: none;
 }
 
 .editor-quote {

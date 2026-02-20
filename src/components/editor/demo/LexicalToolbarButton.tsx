@@ -14,6 +14,7 @@ const LexicalToolbarButton = ({ isActive = false, onClick, label }: LexicalToolb
             variant="outline"
             size="sm"
             className={cn("min-w-10", isActive && "bg-primary text-primary-foreground")}
+            onMouseDown={(event) => event.preventDefault()}
             onClick={onClick}
         >
             {label}
