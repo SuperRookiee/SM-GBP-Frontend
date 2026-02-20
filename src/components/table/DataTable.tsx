@@ -271,7 +271,7 @@ const DataTable = <T, >({
                 </div>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className="min-w-0">
                 {isLoading ? (
                     // 초기 로딩 시에만 스켈레톤을 노출합니다.
                     // refetch 단계에서는 이전 데이터(placeholderData)를 유지하여 깜빡임을 방지합니다.
@@ -283,9 +283,9 @@ const DataTable = <T, >({
                         </div>
                     </div>
                 ) : (
-                    <div className="relative w-full min-w-0 rounded-md border">
-                        <ScrollArea className={`w-full ${tableHeightClassName}`}>
-                            <Table className="min-w-full w-max table-fixed">
+                    <div className="relative w-full min-w-0 overflow-hidden rounded-md border">
+                        <ScrollArea className={`w-full max-w-full ${tableHeightClassName}`}>
+                            <Table className="w-full min-w-max table-fixed">
                             <TableHeader className="sticky top-0 z-20 bg-card">
                                 <TableRow className="bg-card hover:bg-card">
                                     {enableSelect &&
