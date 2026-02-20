@@ -6,49 +6,32 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { sampleDetailFormSchema } from "@/pages/demo/form/sampleDetailPage.schema.ts";
+import type { SampleDetailFieldName, SampleDetailFormState, SampleDetailFormValues } from "@/type/demo/sampleDetailPage.type.ts";
 
-const roleEnum = z.enum(["designer", "developer", "manager"]);
-
-const formSchema = z.object({
-    name: z.string().trim().min(2, "이름을 2자 이상 입력해주세요."),
-    email: z.string().trim().email("올바른 이메일 주소를 입력해주세요."),
-    age: z.coerce.number().int().min(18, "18세 이상만 가능").max(120),
-    role: z
-        .preprocess((v) => (v === "" ? undefined : v), roleEnum.optional())
-        .refine((v) => v !== undefined, {
-            message: "역할을 선택해주세요.",
-        }),
-    message: z.string().trim().min(10, "10자 이상").max(200).optional().or(z.literal("")),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-type FormState = {
-    status: "idle" | "error" | "success";
-    message: string;
-    errors?: Record<string, string[]>;
-    values: Partial<FormValues>;
+const initialSampleDetailFormState: SampleDetailFormState = {
+    status: "idle",
+    message: "",
+    values: {},
 };
 
-type FieldName = Extract<keyof FormValues, string>;
-
-function ErrorMsg({ field, errors }: { field: FieldName; errors?: Record<string, string[]> }) {
+function ErrorMsg({ field, errors }: { field: SampleDetailFieldName; errors?: Record<string, string[]> }) {
     const error = errors?.[field];
     return error ? <p className="text-xs font-medium text-destructive mt-1">{error[0]}</p> : null;
 }
 
 const DemoFormPage = () => {
     const [state, formAction] = useActionState(
-        async (_prevState: FormState, formData: FormData): Promise<FormState> => {
+        async (_prevState: SampleDetailFormState, formData: FormData): Promise<SampleDetailFormState> => {
             const rawValues = Object.fromEntries(formData);
-            const result = formSchema.safeParse(rawValues);
+            const result = sampleDetailFormSchema.safeParse(rawValues);
 
             if (!result.success) {
                 return {
                     status: "error",
                     message: "입력값을 다시 확인해주세요.",
                     errors: z.flattenError(result.error).fieldErrors,
-                    values: rawValues as Partial<FormValues>,
+                    values: rawValues as Partial<SampleDetailFormValues>,
                 };
             }
 
@@ -59,7 +42,7 @@ const DemoFormPage = () => {
                 values: result.data,
             };
         },
-        { status: "idle", message: "", values: {} }
+        initialSampleDetailFormState
     );
 
     return (
