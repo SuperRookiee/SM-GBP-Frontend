@@ -184,7 +184,7 @@ const DemoToastGridTable = ({
 
                 <div className="h-90">
                     <div className="text-sm text-muted-foreground">
-            이벤트 로그: {eventMessage}
+                        이벤트 로그: {eventMessage}
                         {(isLoading || isFetching) && " · 데이터 로딩 중"}
                         {isError && " · 데이터 조회 실패"}
                     </div>
