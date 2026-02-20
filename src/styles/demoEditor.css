@@ -31,16 +31,16 @@
 
 .editor-list-ul,
 .editor-list-ol {
-    margin: 0.5rem 0 0.5rem 1.25rem;
-    padding-left: 1rem;
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
 }
 
 .editor-list-ul {
-    list-style: disc;
+    list-style-type: disc;
 }
 
 .editor-list-ol {
-    list-style: decimal;
+    list-style-type: decimal;
 }
 
 .editor-list-item {

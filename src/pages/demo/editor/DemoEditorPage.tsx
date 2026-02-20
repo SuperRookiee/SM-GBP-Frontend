@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, ListItemNode, ListNode, REMOVE_LIST_COMMAND } from "@lexical/list";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
@@ -14,24 +14,11 @@ import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { mergeRegister } from "@lexical/utils";
-import {
-    $getSelection,
-    $isRangeSelection,
-    CAN_REDO_COMMAND,
-    CAN_UNDO_COMMAND,
-    COMMAND_PRIORITY_LOW,
-    FORMAT_ELEMENT_COMMAND,
-    FORMAT_TEXT_COMMAND,
-    REDO_COMMAND,
-    SELECTION_CHANGE_COMMAND,
-    UNDO_COMMAND,
-} from "lexical";
 import type { EditorState, ElementFormatType, Klass, LexicalEditor, LexicalNode } from "lexical";
+import { $getSelection, $isRangeSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_LOW, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND, } from "lexical";
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Redo2, Undo2 } from "lucide-react";
-import { cn } from "@/utils/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
 import "@/styles/demoEditor.css";
 
 type TextFormat = "bold" | "italic" | "underline";
@@ -74,10 +61,10 @@ const ToolbarButton = ({ isActive = false, onClick, icon, label, disabled = fals
     return (
         <Button
             type="button"
-            variant="outline"
             size="sm"
             disabled={disabled}
-            className={cn("min-w-10", isActive && "bg-primary text-primary-foreground")}
+            variant={isActive ? "default" : "outline"}
+            className="min-w-10"
             onMouseDown={(e) => e.preventDefault()}
             onClick={onClick}
         >
@@ -148,17 +135,24 @@ const EditorToolbar = () => {
 
     return (
         <div className="flex flex-wrap gap-2 border-b px-4 py-3">
-            <ToolbarButton label="뒤로" icon={<Undo2 size={14}/>} disabled={!canUndo} onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}/>
-            <ToolbarButton label="앞으로" icon={<Redo2 size={14}/>} disabled={!canRedo} onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}/>
-            <ToolbarButton label="B" isActive={formats.bold} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}/>
-            <ToolbarButton label="I" isActive={formats.italic} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}/>
-            <ToolbarButton label="U" isActive={formats.underline} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}/>
+            <ToolbarButton label="뒤로" icon={<Undo2 size={14}/>} disabled={!canUndo}
+                           onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}/>
+            <ToolbarButton label="앞으로" icon={<Redo2 size={14}/>} disabled={!canRedo}
+                           onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}/>
+            <ToolbarButton label="B" isActive={formats.bold}
+                           onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}/>
+            <ToolbarButton label="I" isActive={formats.italic}
+                           onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}/>
+            <ToolbarButton label="U" isActive={formats.underline}
+                           onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}/>
             <ToolbarButton label="왼쪽" icon={<AlignLeft size={14}/>} onClick={() => applyAlign("left")}/>
             <ToolbarButton label="가운데" icon={<AlignCenter size={14}/>} onClick={() => applyAlign("center")}/>
             <ToolbarButton label="오른쪽" icon={<AlignRight size={14}/>} onClick={() => applyAlign("right")}/>
             <ToolbarButton label="양쪽" icon={<AlignJustify size={14}/>} onClick={() => applyAlign("justify")}/>
-            <ToolbarButton label="• List" onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}/>
-            <ToolbarButton label="1. List" onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}/>
+            <ToolbarButton label="• List"
+                           onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}/>
+            <ToolbarButton label="1. List"
+                           onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}/>
             <ToolbarButton label="Clear List" onClick={() => editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined)}/>
         </div>
     );
