@@ -18,9 +18,10 @@ const LoginPage = () => {
         // FIXME: 실제 로그인 로직으로 교체 필요
         if (id === "1" && password === "1") {
             setUser({
-                id: "1",
+                id: 1,
                 name: "관리자",
-                role: "ADMIN",
+                role: "admin",
+                user_id: "admin",
             });
 
             navigate(from, { replace: true });
