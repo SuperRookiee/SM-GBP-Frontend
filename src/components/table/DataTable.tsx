@@ -285,7 +285,7 @@ const DataTable = <T, >({
                 ) : (
                     <div className="relative w-full min-w-0 overflow-hidden rounded-md border">
                         <ScrollArea className={`w-full max-w-full ${tableHeightClassName}`}>
-                            <Table className="w-full min-w-max table-fixed">
+                            <Table className="min-w-full w-max table-fixed">
                             <TableHeader className="sticky top-0 z-20 bg-card">
                                 <TableRow className="bg-card hover:bg-card">
                                     {enableSelect &&
