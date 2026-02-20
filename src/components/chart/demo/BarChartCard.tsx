@@ -9,7 +9,7 @@ export type BarChartDatum = {
     [key: string]: number | string;
 };
 
-export type BarChartCardProps = {
+interface IBarChartCardProps {
     title: string;
     description: string;
     footerTitle: ReactNode;
@@ -27,7 +27,7 @@ const BarChartCard = ({
     data,
     config,
     seriesKeys,
-}: BarChartCardProps) => {
+}: IBarChartCardProps) => {
     return (
         <Card className="w-full">
             <CardHeader>

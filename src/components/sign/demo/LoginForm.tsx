@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button.tsx"
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator, } from "@/components/ui/field.tsx"
 import { Input } from "@/components/ui/input.tsx"
 
-type LoginFormProps = React.ComponentProps<"div"> & {
+interface ILoginFormProps extends React.ComponentProps<"div"> {
     id: string
     password: string
     onIdChange: (v: string) => void
@@ -13,7 +13,7 @@ type LoginFormProps = React.ComponentProps<"div"> & {
     onSubmit: (e: React.FormEvent) => void
 }
 
-const LoginForm = ({ id, password, onIdChange, onPasswordChange, onSubmit, className, ...props }: LoginFormProps) => {
+const LoginForm = ({ id, password, onIdChange, onPasswordChange, onSubmit, className, ...props }: ILoginFormProps) => {
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <form onSubmit={onSubmit}>

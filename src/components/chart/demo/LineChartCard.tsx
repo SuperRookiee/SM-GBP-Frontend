@@ -9,7 +9,7 @@ export type LineChartDatum = {
   [key: string]: number | string;
 };
 
-export type LineChartCardProps = {
+interface ILineChartCardProps {
   title: string;
   description: string;
   footerTitle: ReactNode;
@@ -27,7 +27,7 @@ const LineChartCard = ({
     data,
     config,
     seriesKeys,
-}: LineChartCardProps) => {
+}: ILineChartCardProps) => {
     return (
         <Card className="w-full">
             <CardHeader>

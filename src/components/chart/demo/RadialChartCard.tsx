@@ -6,7 +6,7 @@ import { type ChartConfig, ChartContainer } from "@/components/ui/chart.tsx";
 
 export type RadialChartDatum = Record<string, number | string>;
 
-export type RadialChartCardProps = {
+interface IRadialChartCardProps {
     title: string;
     description: string;
     footerTitle: ReactNode;
@@ -18,7 +18,7 @@ export type RadialChartCardProps = {
     centerLabel: string;
 };
 
-const RadialChartCard = (props: RadialChartCardProps) => {
+const RadialChartCard = (props: IRadialChartCardProps) => {
     const firstData = props.data[0] ?? {};
     const centerValue = Number(firstData[props.dataKey] ?? 0);
 

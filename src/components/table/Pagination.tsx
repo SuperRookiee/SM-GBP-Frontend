@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 
-type TablePaginationProps = {
+interface ITablePaginationProps {
   currentPage: number;
   totalPages: number;
   pageNumbers: number[];
@@ -30,7 +30,7 @@ const Pagination = ({
     pageSizeOptions = [5, 10, 25, 50, 100],
     onPageChange,
     onPageSizeChange,
-}: TablePaginationProps) => {
+}: ITablePaginationProps) => {
     const resolvedCaption = caption ?? `총 ${totalCount} 건`;
 
     const onChangePageSize = (value: string) => {

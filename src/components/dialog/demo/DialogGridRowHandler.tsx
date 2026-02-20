@@ -2,11 +2,11 @@ import type { IDemoGridTableRow } from "@/interface/demo/IDemoGridTable.interfac
 import { Button } from "@/components/ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog.tsx";
 
-interface DialogGridRowHandlerProps {
+interface IDialogGridRowHandlerProps {
     selectedRows: IDemoGridTableRow[];
 }
 
-const DialogGridRowHandler = ({ selectedRows }: DialogGridRowHandlerProps) => {
+const DialogGridRowHandler = ({ selectedRows }: IDialogGridRowHandlerProps) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
