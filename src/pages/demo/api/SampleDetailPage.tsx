@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreateSampleApi, DeleteSampleApi, GetSampleDetailApi, UpdateSampleApi } from "@/apis/demo/sample.api.ts";
@@ -46,7 +46,7 @@ const EMPTY_FORM: FormState = {
     memo: "",
 };
 
-// API 상세 데이터를 폼 상태로 변환합니다.
+// #. API 상세 데이터를 폼 상태로 변환합니다.
 const toFormState = (item: ISampleApiItem): FormState => ({
     name: item.name,
     description: item.description,
@@ -61,7 +61,7 @@ const toFormState = (item: ISampleApiItem): FormState => ({
     memo: item.memo ?? "",
 });
 
-// 폼 상태를 API 요청 payload로 변환합니다.
+// #. 폼 상태를 API 요청 payload로 변환합니다.
 const toPayload = (form: FormState): ISampleUpsertPayload => ({
     name: form.name,
     description: form.description,
@@ -112,6 +112,10 @@ const SampleDetailPage = () => {
     });
 
     const hasSuccess = data?.result === ApiResultEnum.SUCCESS && data.code === SuccessResultCodeEnum.OK;
+    const detailItem = hasSuccess ? data.data : null;
+
+    // 핵심 로직: 수정을 시작하기 전(!isFormDirty)에는 API 데이터를 보여주고, 시작하면 form state를 보여줍니다.
+    const formValue = (!isCreateMode && !isFormDirty && detailItem) ? toFormState(detailItem) : form;
 
     const resolvedError = useMemo(() => {
         if (isError) return error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.";
@@ -119,36 +123,24 @@ const SampleDetailPage = () => {
         return null;
     }, [data, error, isError]);
 
-    const detailItem = hasSuccess ? data.data : null;
-    const formValue = (!isCreateMode && !isFormDirty && detailItem) ? toFormState(detailItem) : form;
-
-    // 등록/수정 요청을 처리합니다.
     const upsertMutation = useMutation({
         mutationFn: async () => {
-            const payload = toPayload(form);
-            if (isCreateMode) {
-                return CreateSampleApi(payload);
-            }
-            return UpdateSampleApi(sampleId, payload);
+            // 현재 화면에 보이는 값을 payload로 변환하여 전송
+            const payload = toPayload(formValue);
+            return isCreateMode ? CreateSampleApi(payload) : UpdateSampleApi(sampleId, payload);
         },
         onSuccess: (response) => {
             if (!(response.result === ApiResultEnum.SUCCESS && response.code === SuccessResultCodeEnum.OK)) {
                 openNoticeDialog("저장 실패", response.error?.detail ?? "저장에 실패했습니다.");
                 return;
             }
-
             void queryClient.invalidateQueries({ queryKey: ["sample", "list"] });
-            const nextPath = isCreateMode ? "/demo/api" : (typeof response.data?.id === "number" ? `/demo/api/${response.data.id}` : null);
-            openNoticeDialog(
-                "저장 완료",
-                isCreateMode ? "등록되었습니다. 목록으로 이동합니다." : "수정되었습니다.",
-                nextPath,
-            );
-            setIsFormDirty(false);
-        },
+            void queryClient.invalidateQueries({ queryKey: ["sample", "detail", sampleId] });
+            openNoticeDialog("저장 완료", "수정되었습니다.");
+            setIsFormDirty(false); // 저장 완료 후 다시 API 데이터를 바라보도록 초기화
+        }
     });
 
-    // 삭제 요청을 처리합니다.
     const deleteMutation = useMutation({
         mutationFn: () => DeleteSampleApi(sampleId),
         onSuccess: (response) => {
@@ -156,28 +148,22 @@ const SampleDetailPage = () => {
                 openNoticeDialog("삭제 실패", response.error?.detail ?? "삭제에 실패했습니다.");
                 return;
             }
-
             void queryClient.invalidateQueries({ queryKey: ["sample", "list"] });
             openNoticeDialog("삭제 완료", "삭제되었습니다.", "/demo/api");
         },
     });
 
-    // 폼 입력값을 갱신합니다.
+    // 폼 입력 시 호출
     const onChange = <K extends keyof FormState>(key: K, value: FormState[K]) => {
-        setIsFormDirty(true);
-        setForm((prev) => ({ ...prev, [key]: value }));
+        if (!isFormDirty) {
+            // 첫 수정 시: 현재 화면에 보이던 데이터(API or EMPTY)를 기반으로 새로운 상태 생성
+            setForm({ ...formValue, [key]: value });
+            setIsFormDirty(true);
+        } else {
+            // 이후 수정 시: 기존 폼 상태만 업데이트
+            setForm((prev) => ({ ...prev, [key]: value }));
+        }
     };
-
-    useEffect(() => {
-        if (!detailItem) return;
-
-        const nextForm = toFormState(detailItem);
-        // 현재 상태와 새로 만들 상태가 다를 때만 업데이트
-        setForm(prev => {
-            if (JSON.stringify(prev) === JSON.stringify(nextForm)) return prev;
-            return nextForm;
-        });
-    }, [detailItem]);
 
     return (
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
@@ -211,49 +197,59 @@ const SampleDetailPage = () => {
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="name">이름</Label>
-                                    <Input id="name" value={formValue.name} onChange={(event) => onChange("name", event.target.value)} />
+                                    <Input id="name" value={formValue.name}
+                                           onChange={(e) => onChange("name", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="category">카테고리</Label>
-                                    <Input id="category" value={formValue.category} onChange={(event) => onChange("category", event.target.value)} />
+                                    <Input id="category" value={formValue.category}
+                                           onChange={(e) => onChange("category", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
                                     <Label htmlFor="description">설명</Label>
-                                    <Input id="description" value={formValue.description} onChange={(event) => onChange("description", event.target.value)} />
+                                    <Input id="description" value={formValue.description}
+                                           onChange={(e) => onChange("description", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="status">상태</Label>
-                                    <Input id="status" value={formValue.status} onChange={(event) => onChange("status", event.target.value)} />
+                                    <Input id="status" value={formValue.status}
+                                           onChange={(e) => onChange("status", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="dueDate">마감일</Label>
-                                    <Input id="dueDate" type="date" value={formValue.dueDate} onChange={(event) => onChange("dueDate", event.target.value)} />
+                                    <Input id="dueDate" type="date" value={formValue.dueDate}
+                                           onChange={(e) => onChange("dueDate", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="priority">우선순위</Label>
-                                    <Input id="priority" type="number" value={formValue.priority} onChange={(event) => onChange("priority", event.target.value)} />
+                                    <Input id="priority" type="number" value={formValue.priority}
+                                           onChange={(e) => onChange("priority", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="quantity">수량</Label>
-                                    <Input id="quantity" type="number" value={formValue.quantity} onChange={(event) => onChange("quantity", event.target.value)} />
+                                    <Input id="quantity" type="number" value={formValue.quantity}
+                                           onChange={(e) => onChange("quantity", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="price">가격</Label>
-                                    <Input id="price" type="number" value={formValue.price} onChange={(event) => onChange("price", event.target.value)} />
+                                    <Input id="price" type="number" value={formValue.price}
+                                           onChange={(e) => onChange("price", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="rate">비율</Label>
-                                    <Input id="rate" type="number" step="0.01" value={formValue.rate} onChange={(event) => onChange("rate", event.target.value)} />
+                                    <Input id="rate" type="number" step="0.01" value={formValue.rate}
+                                           onChange={(e) => onChange("rate", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
                                     <Label htmlFor="memo">메모</Label>
-                                    <Textarea id="memo" value={formValue.memo} onChange={(event) => onChange("memo", event.target.value)} />
+                                    <Textarea id="memo" value={formValue.memo}
+                                              onChange={(e) => onChange("memo", e.target.value)}/>
                                 </div>
                                 <label className="flex items-center gap-2 text-sm font-medium md:col-span-2">
                                     <input
                                         type="checkbox"
                                         checked={formValue.active}
-                                        onChange={(event) => onChange("active", event.target.checked)}
+                                        onChange={(e) => onChange("active", e.target.checked)}
                                     />
                                     활성 여부
                                 </label>
@@ -262,7 +258,8 @@ const SampleDetailPage = () => {
 
                         <div className="flex flex-wrap gap-2">
                             <Button variant="outline" onClick={() => navigate("/demo/api")}>목록으로</Button>
-                            <Button onClick={() => upsertMutation.mutate()} disabled={upsertMutation.isPending || isLoading}>
+                            <Button onClick={() => upsertMutation.mutate()}
+                                    disabled={upsertMutation.isPending || (isLoading && !isCreateMode)}>
                                 {isCreateMode ? "등록" : "수정"}
                             </Button>
                             {!isCreateMode ? (
@@ -279,6 +276,7 @@ const SampleDetailPage = () => {
                 </Card>
             </div>
 
+            {/* 삭제 확인 Dialog */}
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
@@ -301,9 +299,8 @@ const SampleDetailPage = () => {
                 </DialogContent>
             </Dialog>
 
-            <Dialog open={noticeDialog.open} onOpenChange={(open) => {
-                if (!open) closeNoticeDialog();
-            }}>
+            {/* 알림 Dialog */}
+            <Dialog open={noticeDialog.open} onOpenChange={(open) => !open && closeNoticeDialog()}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{noticeDialog.title}</DialogTitle>
