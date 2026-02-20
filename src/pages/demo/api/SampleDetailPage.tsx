@@ -170,7 +170,13 @@ const SampleDetailPage = () => {
 
     useEffect(() => {
         if (!detailItem) return;
-        setForm(toFormState(detailItem));
+
+        const nextForm = toFormState(detailItem);
+        // 현재 상태와 새로 만들 상태가 다를 때만 업데이트
+        setForm(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(nextForm)) return prev;
+            return nextForm;
+        });
     }, [detailItem]);
 
     return (
