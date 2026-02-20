@@ -1,0 +1,44 @@
+.editor-shell {
+    position: relative;
+    min-height: 360px;
+}
+
+.editor-input {
+    min-height: 360px;
+    padding: 1rem;
+    outline: none;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.editor-placeholder {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    color: var(--color-muted-foreground);
+    pointer-events: none;
+}
+
+.editor-paragraph {
+    margin-bottom: 0.5rem;
+}
+
+.editor-quote {
+    border-left: 3px solid var(--color-border);
+    margin: 0.75rem 0;
+    padding-left: 0.75rem;
+    color: var(--color-muted-foreground);
+    font-style: italic;
+}
+
+.editor-text-bold {
+    font-weight: 700;
+}
+
+.editor-text-italic {
+    font-style: italic;
+}
+
+.editor-text-underline {
+    text-decoration: underline;
+}
