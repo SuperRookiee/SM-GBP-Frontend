@@ -1,18 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreateSampleApi, DeleteSampleApi, GetSampleDetailApi, UpdateSampleApi } from "@/apis/demo/sample.api.ts";
 import type { ISampleApiItem, ISampleUpsertPayload } from "@/interface/demo/ISample.interface.ts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -174,6 +167,11 @@ const SampleDetailPage = () => {
         setIsFormDirty(true);
         setForm((prev) => ({ ...prev, [key]: value }));
     };
+
+    useEffect(() => {
+        if (!detailItem) return;
+        setForm(toFormState(detailItem));
+    }, [detailItem]);
 
     return (
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
