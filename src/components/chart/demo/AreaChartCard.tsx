@@ -9,7 +9,7 @@ export type AreaChartDatum = {
   [key: string]: number | string;
 };
 
-export type AreaChartCardProps = {
+interface IAreaChartCardProps {
   title: string;
   description: string;
   footerTitle: ReactNode;
@@ -27,7 +27,7 @@ const AreaChartCard = ({
     data,
     config,
     dataKey,
-}: AreaChartCardProps) => {
+}: IAreaChartCardProps) => {
     return (
         <Card className="w-full">
             <CardHeader>

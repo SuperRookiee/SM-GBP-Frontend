@@ -9,7 +9,7 @@ export type RadarChartDatum = {
   [key: string]: number | string;
 };
 
-export type RadarChartCardProps = {
+interface IRadarChartCardProps {
   title: string;
   description: string;
   footerTitle: ReactNode;
@@ -27,7 +27,7 @@ const RadarChartCard = ({
     data,
     config,
     seriesKeys,
-}: RadarChartCardProps) => {
+}: IRadarChartCardProps) => {
     return (
         <Card className="w-full">
             <CardHeader className="items-center pb-4">

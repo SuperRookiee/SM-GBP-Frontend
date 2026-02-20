@@ -6,7 +6,7 @@ import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } f
 
 export type PieChartDatum = Record<string, number | string>;
 
-export type PieChartCardProps = {
+interface IPieChartCardProps {
   title: string;
   description: string;
   footerTitle: ReactNode;
@@ -28,7 +28,7 @@ const PieChartCard = ({
     dataKey,
     nameKey,
     centerLabel,
-}: PieChartCardProps) => {
+}: IPieChartCardProps) => {
     const totalValue = useMemo(() => {
         return data.reduce((acc, curr) => acc + Number(curr[dataKey] ?? 0), 0);
     }, [data, dataKey]);
