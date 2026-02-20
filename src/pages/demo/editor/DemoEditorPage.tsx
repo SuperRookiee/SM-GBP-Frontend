@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { AutoLinkNode, LinkNode } from "@lexical/link";
-import {
-    INSERT_ORDERED_LIST_COMMAND,
-    INSERT_UNORDERED_LIST_COMMAND,
-    ListItemNode,
-    ListNode,
-    REMOVE_LIST_COMMAND,
-} from "@lexical/list";
+import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND, } from "@lexical/list";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -18,64 +11,19 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { $createHeadingNode, HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { $createHeadingNode } from "@lexical/rich-text";
 import { $setBlocksType } from "@lexical/selection";
 import { mergeRegister } from "@lexical/utils";
-import type { EditorState, ElementFormatType, Klass, LexicalEditor, LexicalNode } from "lexical";
-import {
-    $createParagraphNode,
-    $getSelection,
-    $isRangeSelection,
-    CAN_REDO_COMMAND,
-    CAN_UNDO_COMMAND,
-    COMMAND_PRIORITY_LOW,
-    FORMAT_ELEMENT_COMMAND,
-    FORMAT_TEXT_COMMAND,
-    REDO_COMMAND,
-    SELECTION_CHANGE_COMMAND,
-    UNDO_COMMAND,
-} from "lexical";
+import type { EditorState, ElementFormatType, LexicalEditor } from "lexical";
+import { $createParagraphNode, $getSelection, $isRangeSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_LOW, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from "lexical";
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Redo2, Undo2 } from "lucide-react";
+import { editorConfig } from "@/components/editor/demo/demoEditorConfig";
 import ToolbarButton from "@/components/editor/ToolbarButton";
 import { Card } from "@/components/ui/card";
 import "@/styles/demoEditor.css";
 
 type TextFormat = "bold" | "italic" | "underline";
 
-const theme = {
-    paragraph: "editor-paragraph",
-    quote: "editor-quote",
-    heading: {
-        h1: "editor-heading-h1",
-        h2: "editor-heading-h2",
-    },
-    list: {
-        ul: "editor-list-ul",
-        ulDepth: ["editor-list-ul-depth-1", "editor-list-ul-depth-2", "editor-list-ul-depth-3"],
-        ol: "editor-list-ol",
-        olDepth: ["editor-list-ol-depth-1", "editor-list-ol-depth-2", "editor-list-ol-depth-3"],
-        listitem: "editor-list-item",
-        nested: {
-            list: "editor-nested-list",
-        },
-    },
-    text: {
-        bold: "editor-text-bold",
-        italic: "editor-text-italic",
-        underline: "editor-text-underline",
-    },
-};
-
-const nodes: Array<Klass<LexicalNode>> = [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode, AutoLinkNode];
-
-const editorConfig = {
-    namespace: "DemoEditor",
-    theme,
-    nodes,
-    onError: (error: Error) => {
-        throw error;
-    },
-};
 
 const EditorToolbar = () => {
     const [editor] = useLexicalComposerContext();
