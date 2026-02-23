@@ -33,8 +33,8 @@ const MainLayout = () => {
             <header className="flex items-center justify-between border-b px-4 py-2">
                 <Link to="/" className="text-2xl font-black">SAMSUNG</Link>
                 <div className="flex items-center gap-2">
-                    <LanguageToggle/>
                     <ThemeToggle/>
+                    <LanguageToggle/>
                     <Button size="xs" onClick={logout}>{t("common.logout")}</Button>
                 </div>
             </header>
