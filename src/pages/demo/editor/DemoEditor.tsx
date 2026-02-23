@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
-import {
-    $isListItemNode,
-    INSERT_ORDERED_LIST_COMMAND,
-    INSERT_UNORDERED_LIST_COMMAND,
-    ListItemNode,
-    ListNode,
-    REMOVE_LIST_COMMAND,
-} from "@lexical/list";
+import { $isListItemNode, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, ListItemNode, ListNode, REMOVE_LIST_COMMAND, } from "@lexical/list";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -22,26 +15,12 @@ import { $createHeadingNode, HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { $setBlocksType } from "@lexical/selection";
 import { mergeRegister } from "@lexical/utils";
 import type { EditorState, ElementFormatType, Klass, LexicalEditor, LexicalNode } from "lexical";
-import {
-    $createParagraphNode,
-    $getSelection,
-    $isRangeSelection,
-    CAN_REDO_COMMAND,
-    CAN_UNDO_COMMAND,
-    COMMAND_PRIORITY_LOW,
-    FORMAT_ELEMENT_COMMAND,
-    FORMAT_TEXT_COMMAND,
-    INDENT_CONTENT_COMMAND,
-    KEY_TAB_COMMAND,
-    OUTDENT_CONTENT_COMMAND,
-    REDO_COMMAND,
-    SELECTION_CHANGE_COMMAND,
-    UNDO_COMMAND,
-} from "lexical";
+import { $createParagraphNode, $getSelection, $isRangeSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_LOW, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, KEY_TAB_COMMAND, OUTDENT_CONTENT_COMMAND, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND, } from "lexical";
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Redo2, Undo2 } from "lucide-react";
 import ToolbarButton from "@/components/editor/ToolbarButton";
 import { Card } from "@/components/ui/card";
 import "@/styles/demoEditor.css";
+import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 
 type TextFormat = "bold" | "italic" | "underline";
 
@@ -242,7 +221,9 @@ const DemoEditor = () => {
 
             <Card className="p-4">
                 <h2 className="mb-3 font-semibold">Lexical JSON Output</h2>
-                <pre className="bg-muted h-[360px] overflow-auto rounded-md p-3 text-xs">{value || "{ }"}</pre>
+                <ScrollArea className="h-120">
+                    <pre className="bg-muted overflow-auto rounded-md p-3 text-xs">{value || "{ }"}</pre>
+                </ScrollArea>
             </Card>
         </div>
     );

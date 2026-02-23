@@ -2,7 +2,6 @@ import { ChevronRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { MENU } from "@/constants/menu.constants.tsx";
-import LanguageToggle from "@/components/common/LanguageToggle";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@/components/ui/collapsible'
@@ -29,7 +28,6 @@ const AppSidebar = () => {
                                     <ItemContent>
                                         <ItemTitle className="text-sm">Miracle</ItemTitle>
                                         <ItemDescription>v1.0.0</ItemDescription>
-                                        <LanguageToggle />
                                     </ItemContent>
                                 </Item>
                             </Link>

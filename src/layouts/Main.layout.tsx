@@ -4,6 +4,7 @@ import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import { useUserPageStore } from "@/stores/page/userPage.store.ts";
 import useLogout from "@/hooks/useLogout.tsx";
+import LanguageToggle from "@/components/common/LanguageToggle.tsx";
 import { useResetStore } from "@/hooks/useResetStore";
 import ThemeToggle from "@/components/common/ThemeToggle.tsx";
 import RuntimeError from "@/components/errors/RuntimeError.tsx";
@@ -32,6 +33,7 @@ const MainLayout = () => {
                 <header className="flex h-12 shrink-0 items-center gap-2 px-4 justify-between">
                     <SidebarTrigger className="-ml-1"/>
                     <div className="flex items-center gap-2">
+                        <LanguageToggle/>
                         <ThemeToggle/>
                         <Button size="xs" onClick={logout}>Logout</Button>
                     </div>
