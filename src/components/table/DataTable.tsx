@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { DEFAULT_TABLE, SELECT_COL_SIZE } from "@/constants/table.constants.tsx";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demo/demoDataTable.types.ts";
 import Pagination from "@/components/table/Pagination.tsx";
@@ -66,11 +67,11 @@ const DataTable = <T, >({
     onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
     isLoading = false,
     isFetching = false,
-    searchLabel = "검색",
-    searchPlaceholder = "검색어를 입력하세요",
-    filterLabel = "검색 조건",
+    searchLabel,
+    searchPlaceholder,
+    filterLabel,
     getRowId = (row) => (row as { id: string | number }).id,
-    captionRenderer = (count) => `총 ${count} 건`,
+    captionRenderer,
     enableSelect = false,
     selectedRowIds = [],
     onSelectedRowIdsChange,
@@ -78,6 +79,12 @@ const DataTable = <T, >({
     pageSizeOptions = [5, 10, 25, 50, 100],
     onRowClick,
 }: IGridTableClientProps<T>) => {
+    const { t } = useTranslation();
+    const resolvedSearchLabel = searchLabel ?? t("common.search");
+    const resolvedSearchPlaceholder = searchPlaceholder ?? t("common.searchPlaceholder");
+    const resolvedFilterLabel = filterLabel ?? t("common.searchCondition");
+    const resolvedCaptionRenderer = captionRenderer ?? ((count: number) => t("common.totalCount", { count }));
+
     const [draftQuery, setDraftQuery] = useState(query);
     const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
     const [columnFilterSearch, setColumnFilterSearch] = useState<Partial<Record<keyof T, string>>>({});
@@ -237,7 +244,7 @@ const DataTable = <T, >({
                 </div>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
                     <div className="w-full sm:w-40">
-                        <label className="text-xs font-medium text-muted-foreground">{filterLabel}</label>
+                        <label className="text-xs font-medium text-muted-foreground">{resolvedFilterLabel}</label>
                         <Select value={String(draftFilterKey)}
                             onValueChange={(value) => setDraftFilterKey(value as "all" | keyof T)}>
                             <SelectTrigger className="mt-2">
@@ -254,10 +261,10 @@ const DataTable = <T, >({
                     </div>
 
                     <div className="w-full sm:w-72">
-                        <label className="text-xs font-medium text-muted-foreground">{searchLabel}</label>
+                        <label className="text-xs font-medium text-muted-foreground">{resolvedSearchLabel}</label>
                         <div className="mt-2 flex items-center gap-2">
                             <Input
-                                placeholder={searchPlaceholder}
+                                placeholder={resolvedSearchPlaceholder}
                                 value={draftQuery}
                                 onChange={(event) => setDraftQuery(event.target.value)}
                             />
@@ -299,7 +306,7 @@ const DataTable = <T, >({
                                                 <Checkbox
                                                     checked={isAllRowsSelected ? true : isSomeRowsSelected ? "indeterminate" : false}
                                                     onCheckedChange={onToggleSelectAll}
-                                                    aria-label="전체 선택"
+                                                    aria-label={t("common.selectAll")}
                                                 />
                                             </div>
                                         </TableHead>
@@ -342,7 +349,7 @@ const DataTable = <T, >({
                                                                     variant="ghost"
                                                                     size="icon"
                                                                     className={`relative h-7 w-7 ${isFilterActive ? "text-primary hover:text-primary" : "text-muted-foreground hover:text-foreground"}`}
-                                                                    aria-label={`${column.label} 필터 열기`}
+                                                                    aria-label={t("common.openFilter", { label: column.label })}
                                                                 >
                                                                     <Filter className="h-3.5 w-3.5"/>
                                                                     {isFilterActive && <span
@@ -353,7 +360,7 @@ const DataTable = <T, >({
                                                                 align="start">
                                                                 <DropdownMenuLabel
                                                                     className="px-1 py-1 text-xs text-muted-foreground">
-                                                                    {column.label} 필터
+                                                                    {t("common.filter", { label: column.label })}
                                                                 </DropdownMenuLabel>
                                                                 <Input
                                                                     value={columnFilterSearch[columnKey] ?? ""}
@@ -426,7 +433,7 @@ const DataTable = <T, >({
                                                         <Checkbox
                                                             checked={selectedRowIdSet.has(rowId)}
                                                             onCheckedChange={(checked) => onToggleSelectRow(rowId, checked)}
-                                                            aria-label={`행 선택 ${String(rowId)}`}
+                                                            aria-label={t("common.selectRow", { id: String(rowId) })}
                                                         />
                                                     </div>
                                                 </TableCell>
@@ -458,7 +465,7 @@ const DataTable = <T, >({
                                                 colSpan={columns.length + (enableSelect ? 1 : 0)}
                                                 className="py-8 text-center text-sm text-muted-foreground"
                                             >
-                                                조건에 맞는 데이터가 없습니다.
+                                                {t("common.noData")}
                                             </TableCell>
                                         </TableRow>
                                     )}
@@ -476,7 +483,7 @@ const DataTable = <T, >({
                 previousPage={previousPage}
                 nextPage={nextPage}
                 totalCount={total}
-                caption={captionRenderer(total)}
+                caption={resolvedCaptionRenderer(total)}
                 isLoading={isLoading || isFetching}
                 pageSize={pageSize}
                 pageSizeOptions={pageSizeOptions}

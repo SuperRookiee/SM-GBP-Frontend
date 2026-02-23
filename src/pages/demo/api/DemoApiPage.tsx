@@ -1,9 +1,10 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
-import { SAMPLE_TABLE_COLUMNS, SAMPLE_TABLE_FILTER } from "@/constants/table.constants.tsx";
+import { getSampleTableColumns, getSampleTableFilter } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import type { ISampleApiItem } from "@/interface/demo/ISample.interface.ts";
 import DataTable from "@/components/table/DataTable";
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
 
 const DemoApiPage = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const search = useSamplePageStore((s) => s.search);
     const filterKey = useSamplePageStore((s) => s.filterKey);
@@ -69,14 +71,14 @@ const DemoApiPage = () => {
                 <header className="space-y-2">
                     <p className="text-sm font-semibold text-muted-foreground">Demo API</p>
                     <h1 className="text-3xl font-semibold tracking-tight">
-                        Sample API DataTable
+                        {t("demo.apiTitle")}
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        /sample/list 응답 데이터를 공통 DataTable 컴포넌트로 조회합니다. 행을 클릭하면 상세 페이지로 이동합니다.
+                        {t("demo.apiDescription")}
                     </p>
                     <div>
                         <Button type="button" variant="outline" onClick={() => navigate("/demo/api/new")}>
-                            신규 등록
+                            {t("demo.create")}
                         </Button>
                     </div>
                 </header>
@@ -85,7 +87,7 @@ const DemoApiPage = () => {
                     <div
                         className="flex h-64 flex-col items-center justify-center gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-6 text-center">
                         <p className="text-sm font-medium text-destructive">
-                            {`[${apiErrorCode ?? ErrorResultCodeEnum.INTERNAL_ERROR}] ${apiError?.detail ?? queryErrorMessage ?? "데이터를 불러오지 못했습니다."}`}
+                            {`[${apiErrorCode ?? ErrorResultCodeEnum.INTERNAL_ERROR}] ${apiError?.detail ?? queryErrorMessage ?? t("demo.loadError")}`}
                         </p>
                         {apiError?.fieldErrors?.length ? (
                             <ul className="space-y-1 text-xs text-destructive/80">
@@ -99,15 +101,15 @@ const DemoApiPage = () => {
                     </div>
                 ) : (
                     <DataTable
-                        title="샘플 목록"
-                        description="검색 조건은 상태 스토어에 저장되어 새로고침 후에도 유지됩니다."
+                        title={t("demo.sampleList")}
+                        description={t("demo.sampleListDesc")}
                         rows={rows}
                         total={total}
                         pageSize={size}
                         isLoading={isLoading}
                         isFetching={isFetching}
-                        filterOptions={SAMPLE_TABLE_FILTER}
-                        columns={SAMPLE_TABLE_COLUMNS}
+                        filterOptions={getSampleTableFilter(t)}
+                        columns={getSampleTableColumns(t)}
                         query={search}
                         filterKey={filterKey}
                         sortKey={sortKey}

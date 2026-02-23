@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 
@@ -31,7 +32,8 @@ const Pagination = ({
     onPageChange,
     onPageSizeChange,
 }: ITablePaginationProps) => {
-    const resolvedCaption = caption ?? `총 ${totalCount} 건`;
+    const { t } = useTranslation();
+    const resolvedCaption = caption ?? t("common.totalCount", { count: totalCount });
 
     const onChangePageSize = (value: string) => {
         if (!onPageSizeChange) return;
@@ -46,13 +48,13 @@ const Pagination = ({
         <div className="flex flex-col gap-4 border-t border-border px-6 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between" aria-busy={isLoading}>
             <div className="flex flex-wrap items-center gap-3">
                 <span>
-                    Page {currentPage} of {totalPages}
+                    {t("common.pageInfo", { currentPage, totalPages })}
                 </span>
                 <span className="inline-block min-w-10 text-right tabular-nums">{resolvedCaption}</span>
 
                 {onPageSizeChange && pageSize !== undefined && (
                     <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">Rows</span>
+                        <span className="text-xs text-muted-foreground">{t("common.rowsPerPage")}</span>
                         <Select value={String(pageSize)} onValueChange={onChangePageSize}>
                             <SelectTrigger className="h-8 w-20">
                                 <SelectValue />
@@ -70,8 +72,8 @@ const Pagination = ({
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-                <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}>처음</Button>
-                <Button type="button" variant="outline" size="sm" onClick={() => previousPage && onPageChange(previousPage)} disabled={!previousPage}>이전</Button>
+                <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}>{t("common.first")}</Button>
+                <Button type="button" variant="outline" size="sm" onClick={() => previousPage && onPageChange(previousPage)} disabled={!previousPage}>{t("common.previous")}</Button>
                 {pageNumbers.map((pageNumber) => (
                     <Button
                         key={pageNumber}
@@ -84,8 +86,8 @@ const Pagination = ({
                         {pageNumber}
                     </Button>
                 ))}
-                <Button type="button" variant="outline" size="sm" onClick={() => nextPage && onPageChange(nextPage)} disabled={!nextPage}>다음</Button>
-                <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}>마지막</Button>
+                <Button type="button" variant="outline" size="sm" onClick={() => nextPage && onPageChange(nextPage)} disabled={!nextPage}>{t("common.next")}</Button>
+                <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}>{t("common.last")}</Button>
             </div>
         </div>
     );

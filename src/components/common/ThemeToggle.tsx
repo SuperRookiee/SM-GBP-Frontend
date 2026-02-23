@@ -1,4 +1,5 @@
 import { useEffect, useEffectEvent, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import ThemeToggleIcon from "@/assets/icons/theme-toggle-icon.svg?react"
 
@@ -8,6 +9,7 @@ const initDark = () => {
 }
 
 const ThemeToggle = () => {
+    const { t } = useTranslation();
     const [dark, setDark] = useState(initDark)
 
     const syncTheme = useEffectEvent((next: boolean) => {
@@ -20,7 +22,7 @@ const ThemeToggle = () => {
     }, [dark])
 
     return (
-        <Button variant="ghost" size="icon-xs" onClick={() => setDark(dark => !dark)} aria-label="Toggle theme">
+        <Button variant="ghost" size="icon-xs" onClick={() => setDark(dark => !dark)} aria-label={t("sidebar.toggle")}>
             <ThemeToggleIcon className="size-4.5 text-foreground" />
         </Button>
     )

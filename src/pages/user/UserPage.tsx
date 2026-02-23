@@ -1,11 +1,13 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
-import { USER_TABLE_COLUMNS, USER_TABLE_FILTER } from "@/constants/table.constants.tsx";
+import { getUserTableColumns, getUserTableFilter } from "@/constants/table.constants.tsx";
 import { useUserPageStore } from "@/stores/page/userPage.store.ts";
 import DataTable from "@/components/table/DataTable";
 
 const UserPage = () => {
+    const { t } = useTranslation();
     const {
         search,
         filterKey,
@@ -36,7 +38,7 @@ const UserPage = () => {
     if (isError) {
         return (
             <div className="p-6">
-                <p className="text-sm text-destructive">데이터를 불러오지 못했습니다.</p>
+                <p className="text-sm text-destructive">{t("user.loadError")}</p>
             </div>
         );
     }
@@ -46,20 +48,20 @@ const UserPage = () => {
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
                 <header className="space-y-2">
                     <p className="text-sm font-semibold text-muted-foreground">User Management</p>
-                    <h1 className="text-3xl font-semibold tracking-tight">User Page</h1>
+                    <h1 className="text-3xl font-semibold tracking-tight">{t("user.title")}</h1>
                     <p className="text-sm text-muted-foreground">
-                        사용자 ID와 권한 정보를 한 번에 확인할 수 있는 목록입니다.
+                        {t("user.description")}
                     </p>
                 </header>
                 <DataTable
-                    title="사용자 목록"
-                    description="검색 및 정렬 결과는 페이지 이동 시 유지됩니다."
+                    title={t("user.tableTitle")}
+                    description={t("user.tableDescription")}
                     rows={rows}
                     total={total}
                     pageSize={size}
                     isLoading={isLoading || isFetching}
-                    filterOptions={USER_TABLE_FILTER}
-                    columns={USER_TABLE_COLUMNS}
+                    filterOptions={getUserTableFilter(t)}
+                    columns={getUserTableColumns(t)}
                     query={search}
                     filterKey={filterKey}
                     sortKey={sortKey}
@@ -71,7 +73,7 @@ const UserPage = () => {
                     onPageChange={setPage}
                     onPageSizeChange={setSize}
                     enableSelect
-                    searchPlaceholder="이름, 권한, User ID로 검색"
+                    searchPlaceholder={t("user.searchPlaceholder")}
                 />
             </div>
         </div>

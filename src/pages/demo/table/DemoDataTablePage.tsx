@@ -1,13 +1,15 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getDemoDataTableSampleDataApi } from "@/apis/demo/demoDataTable.api.ts";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
-import { DEMO_DATA_TABLE_COLUMNS, DEMO_DATA_TABLE_FILTER } from "@/constants/table.constants.tsx";
+import { getDemoDataTableColumns, getDemoDataTableFilter } from "@/constants/table.constants.tsx";
 import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";
 import type { DemoDataTableResponse } from "@/types/demo/demoDataTable.types.ts";
 import DataTable from "@/components/table/DataTable";
 
 const DemoDataTablePage = () => {
+    const { t } = useTranslation();
     const search = useDataTablePageStore((s) => s.search);
     const filterKey = useDataTablePageStore((s) => s.filterKey);
     const sortKey = useDataTablePageStore((s) => s.sortKey);
@@ -41,7 +43,7 @@ const DemoDataTablePage = () => {
     if (isError) {
         return (
             <div className="p-6">
-                <p className="text-sm text-destructive">데이터를 불러오지 못했습니다.</p>
+                <p className="text-sm text-destructive">{t("demo.loadError")}</p>
             </div>
         );
     }
@@ -53,18 +55,18 @@ const DemoDataTablePage = () => {
                     <p className="text-sm font-semibold text-muted-foreground">Demo GridTable</p>
                     <h1 className="text-3xl font-semibold tracking-tight">Demo GridTable</h1>
                     <p className="text-sm text-muted-foreground">
-                        서버에서 페이지 단위로 rows를 받고, total은 전체 건수를 받는 예시입니다.
+                        {t("demo.dataTableDescription")}
                     </p>
                 </header>
                 <DataTable
-                    title="거래 내역 목록"
-                    description="검색 조건은 저장되어 새로고침 후에도 유지됩니다."
+                    title={t("demo.dataTableTitle")}
+                    description={t("demo.dataTableDesc")}
                     rows={rows}
                     total={total}
                     pageSize={size}
                     isLoading={isLoading || isFetching}
-                    filterOptions={DEMO_DATA_TABLE_FILTER}
-                    columns={DEMO_DATA_TABLE_COLUMNS}
+                    filterOptions={getDemoDataTableFilter(t)}
+                    columns={getDemoDataTableColumns(t)}
                     query={search}
                     filterKey={filterKey}
                     sortKey={sortKey}

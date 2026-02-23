@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store.ts";
 import LoginForm from "@/components/sign/demo/LoginForm.tsx";
 
 const LoginPage = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const setUser = useAuthStore((s) => s.setUser);
@@ -15,31 +17,18 @@ const LoginPage = () => {
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // FIXME: 실제 로그인 로직으로 교체 필요
         if (id === "1" && password === "1") {
-            setUser({
-                id: 1,
-                name: "관리자",
-                role: "admin",
-                user_id: "admin",
-            });
-
+            setUser({ id: 1, name: t("login.admin"), role: "admin", user_id: "admin" });
             navigate(from, { replace: true });
         } else {
-            alert("아이디 또는 비밀번호가 틀렸습니다.");
+            alert(t("login.failed"));
         }
     };
 
     return (
         <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
             <div className="w-full max-w-sm">
-                <LoginForm
-                    id={id}
-                    password={password}
-                    onIdChange={setId}
-                    onPasswordChange={setPassword}
-                    onSubmit={handleLogin}
-                />
+                <LoginForm id={id} password={password} onIdChange={setId} onPasswordChange={setPassword} onSubmit={handleLogin} />
             </div>
         </div>
     );
