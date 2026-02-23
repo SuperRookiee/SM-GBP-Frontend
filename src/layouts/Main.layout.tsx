@@ -31,7 +31,7 @@ const MainLayout = () => {
         <div className="flex h-svh min-w-0 flex-col overflow-hidden">
             {/* <AppSidebar /> */}
             <header className="flex items-center justify-between border-b px-4 py-2">
-                <Link to="/" className="text-2xl font-black tracking-tight">SAMSUNG</Link>
+                <Link to="/" className="text-2xl font-black">SAMSUNG</Link>
                 <div className="flex items-center gap-2">
                     <LanguageToggle/>
                     <ThemeToggle/>
