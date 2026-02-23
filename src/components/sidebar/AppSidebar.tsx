@@ -1,6 +1,8 @@
 import { ChevronRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { MENU } from "@/constants/menu.constants.tsx";
+import LanguageToggle from "@/components/common/LanguageToggle";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@/components/ui/collapsible'
@@ -10,6 +12,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupConte
 
 const AppSidebar = () => {
     const { isMobile, setOpenMobile } = useSidebar();
+    const { t } = useTranslation();
 
     const handleMenuClick = () => {
         if (isMobile) setOpenMobile(false);
@@ -26,6 +29,7 @@ const AppSidebar = () => {
                                     <ItemContent>
                                         <ItemTitle className="text-sm">Miracle</ItemTitle>
                                         <ItemDescription>v1.0.0</ItemDescription>
+                                        <LanguageToggle />
                                     </ItemContent>
                                 </Item>
                             </Link>
@@ -35,11 +39,11 @@ const AppSidebar = () => {
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Demo</SidebarGroupLabel>
+                    <SidebarGroupLabel>{t("sidebar.group")}</SidebarGroupLabel>
                     <SidebarMenu>
                         {MENU.navMain.map(item =>
                             <Collapsible
-                                key={item.title}
+                                key={item.titleKey}
                                 asChild
                                 defaultOpen={item.isActive}
                             >
@@ -47,17 +51,17 @@ const AppSidebar = () => {
                                     {item.items?.length ? (
                                         // 서브가 있으면: 메뉴 버튼 자체가 토글 트리거
                                         <CollapsibleTrigger asChild>
-                                            <SidebarMenuButton tooltip={item.title} isActive={item.isActive}>
+                                            <SidebarMenuButton tooltip={t(item.titleKey)} isActive={item.isActive}>
                                                 {item.icon}
-                                                <span>{item.title}</span>
+                                                <span>{t(item.titleKey)}</span>
                                             </SidebarMenuButton>
                                         </CollapsibleTrigger>
                                     ) : (
                                         // 서브가 없으면: 링크 이동
-                                        <SidebarMenuButton asChild tooltip={item.title} isActive={item.isActive}>
+                                        <SidebarMenuButton asChild tooltip={t(item.titleKey)} isActive={item.isActive}>
                                             <Link to={item.url} onClick={handleMenuClick}>
                                                 {item.icon}
-                                                <span>{item.title}</span>
+                                                <span>{t(item.titleKey)}</span>
                                             </Link>
                                         </SidebarMenuButton>
                                     )}
@@ -66,16 +70,16 @@ const AppSidebar = () => {
                                             <CollapsibleTrigger asChild>
                                                 <SidebarMenuAction className="data-[state=open]:rotate-90">
                                                     <ChevronRightIcon/>
-                                                    <span className="sr-only">Toggle</span>
+                                                    <span className="sr-only">{t("sidebar.toggle")}</span>
                                                 </SidebarMenuAction>
                                             </CollapsibleTrigger>
                                             <CollapsibleContent>
                                                 <SidebarMenuSub>
                                                     {item.items.map(subItem =>
-                                                        <SidebarMenuSubItem key={subItem.title}>
+                                                        <SidebarMenuSubItem key={subItem.titleKey}>
                                                             <SidebarMenuSubButton asChild>
                                                                 <Link to={subItem.url} onClick={handleMenuClick}>
-                                                                    <span>{subItem.title}</span>
+                                                                    <span>{t(subItem.titleKey)}</span>
                                                                 </Link>
                                                             </SidebarMenuSubButton>
                                                         </SidebarMenuSubItem>
@@ -93,11 +97,11 @@ const AppSidebar = () => {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {MENU.navSecondary.map(item =>
-                                <SidebarMenuItem key={item.title}>
+                                <SidebarMenuItem key={item.titleKey}>
                                     <SidebarMenuButton asChild size="sm">
                                         <Link to={item.url} onClick={handleMenuClick}>
                                             {item.icon}
-                                            <span>{item.title}</span>
+                                            <span>{t(item.titleKey)}</span>
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
@@ -110,23 +114,18 @@ const AppSidebar = () => {
                 <SidebarGroup>
                     <Card size="sm" className="-mx-2">
                         <CardHeader>
-                            <CardTitle className="text-sm">
-                                Lorem ipsum dolor sit amet
-                            </CardTitle>
-                            <CardDescription>
-                                consectetur adipiscing elit. Integer semper, ante at malesuada aliquam, metus ante
-                                condimentum arcu
-                            </CardDescription>
+                            <CardTitle className="text-sm">{t("sidebar.cardTitle")}</CardTitle>
+                            <CardDescription>{t("sidebar.cardDescription")}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <form>
                                 <Field>
-                                    <SidebarInput type="email" placeholder="Email"/>
+                                    <SidebarInput type="email" placeholder={t("sidebar.emailPlaceholder")}/>
                                     <Button
                                         className="bg-sidebar-primary text-sidebar-primary-foreground w-full"
                                         size="sm"
                                     >
-                                        Lorem ipsum
+                                        {t("sidebar.subscribe")}
                                     </Button>
                                 </Field>
                             </form>

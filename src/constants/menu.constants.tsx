@@ -1,48 +1,47 @@
 import { ChartLineIcon, HomeIcon, LifeBuoy, Send, Settings2Icon, ShoppingCartIcon, UserIcon } from "lucide-react";
 
-// Menu structure
 export const MENU = {
     navMain: [
         {
-            title: "Demo",
+            titleKey: "menu.demo",
             url: "#",
             icon: <HomeIcon/>,
             isActive: true,
             items: [
-                { title: "Data Table", url: "/demo/data_table" },
-                { title: "Grid Table", url: "/demo/grid_table" },
-                { title: "Chart", url: "/demo/chart" },
-                { title: "Form", url: "/demo/form" },
-                { title: "Dialog", url: "/demo/dialog" },
-                { title: "API", url: "/demo/api" },
-                { title: "Typography", url: "/demo/typography" },
-                { title: "Editor", url: "/demo/editor" },
-                { title: "404", url: "/demo/not_found" },
+                { titleKey: "menu.dataTable", url: "/demo/data_table" },
+                { titleKey: "menu.gridTable", url: "/demo/grid_table" },
+                { titleKey: "menu.chart", url: "/demo/chart" },
+                { titleKey: "menu.form", url: "/demo/form" },
+                { titleKey: "menu.dialog", url: "/demo/dialog" },
+                { titleKey: "menu.api", url: "/demo/api" },
+                { titleKey: "menu.typography", url: "/demo/typography" },
+                { titleKey: "menu.editor", url: "/demo/editor" },
+                { titleKey: "menu.notFound", url: "/demo/not_found" },
             ],
         },
         {
-            title: "Sample 1",
+            titleKey: "menu.sample1",
             url: "#",
             icon: <ChartLineIcon/>,
             items: [
-                { title: "Sample 1-1", url: "#" },
-                { title: "Sample 1-2", url: "#" },
+                { titleKey: "menu.sample11", url: "#" },
+                { titleKey: "menu.sample12", url: "#" },
             ],
         },
         {
-            title: "Sample 2",
+            titleKey: "menu.sample2",
             url: "#",
             icon: <ShoppingCartIcon/>,
             items: [
-                { title: "Sample 2-1", url: "#" },
-                { title: "Sample 2-2", url: "#" },
+                { titleKey: "menu.sample21", url: "#" },
+                { titleKey: "menu.sample22", url: "#" },
             ],
         },
-        { title: "User", url: "/user", icon: <UserIcon/> },
-        { title: "Settings", url: "#", icon: <Settings2Icon/> },
+        { titleKey: "menu.user", url: "/user", icon: <UserIcon/> },
+        { titleKey: "menu.settings", url: "#", icon: <Settings2Icon/> },
     ],
     navSecondary: [
-        { title: "sample_secondary 1", url: "#", icon: <LifeBuoy/> },
-        { title: "sample_secondary 2", url: "#", icon: <Send/> },
+        { titleKey: "menu.sampleSecondary1", url: "#", icon: <LifeBuoy/> },
+        { titleKey: "menu.sampleSecondary2", url: "#", icon: <Send/> },
     ],
-}
+};
