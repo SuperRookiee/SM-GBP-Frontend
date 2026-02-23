@@ -3,6 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { cn } from "@/utils/utils.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
@@ -10,7 +11,6 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
-import { cn } from "@/utils/utils.ts";
 
 type TermKey = "service" | "privacy" | "overseas" | "marketing";
 
@@ -108,26 +108,26 @@ const SignupPage = () => {
 
         return z.object({
             form: z.object({
-                authority: z.string().trim().min(1, t("signup.errors.authority")),
-                corporation: z.string().trim().min(1, t("signup.errors.corporation")),
+                authority: z.string().trim().min(1, "signup.errors.authority"),
+                corporation: z.string().trim().min(1, "signup.errors.corporation"),
                 country: z.string(),
-                name: z.string().trim().min(1, t("signup.errors.name")),
-                department: z.string().trim().min(1, t("signup.errors.department")),
+                name: z.string().trim().min(1, "signup.errors.name"),
+                department: z.string().trim().min(1, "signup.errors.department"),
                 phoneCountry: z.string(),
                 phone: z.string().trim()
-                    .min(1, t("signup.errors.phone"))
-                    .refine((value) => phoneRegex.test(value), t("signup.errors.phoneInvalid")),
+                    .min(1, "signup.errors.phone")
+                    .refine((value) => phoneRegex.test(value), "signup.errors.phoneInvalid"),
                 email: z.string().trim()
-                    .min(1, t("signup.errors.emailRequired"))
-                    .refine((value) => emailRegex.test(value), t("signup.errors.emailInvalid")),
+                    .min(1, "signup.errors.emailRequired")
+                    .refine((value) => emailRegex.test(value), "signup.errors.emailInvalid"),
                 authCode: z.string().trim()
-                    .min(1, t("signup.errors.authCodeRequired"))
-                    .refine((value) => authCodeRegex.test(value), t("signup.errors.authCodeInvalid")),
+                    .min(1, "signup.errors.authCodeRequired")
+                    .refine((value) => authCodeRegex.test(value), "signup.errors.authCodeInvalid"),
                 password: z.string().trim()
-                    .min(1, t("signup.errors.passwordRequired"))
-                    .refine((value) => passwordRegex.test(value), t("signup.errors.passwordRule")),
-                confirmPassword: z.string().trim().min(1, t("signup.errors.confirmPasswordRequired")),
-                permissionLevel: z.string().trim().min(1, t("signup.errors.permissionLevel")),
+                    .min(1, "signup.errors.passwordRequired")
+                    .refine((value) => passwordRegex.test(value), "signup.errors.passwordRule"),
+                confirmPassword: z.string().trim().min(1, "signup.errors.confirmPasswordRequired"),
+                permissionLevel: z.string().trim().min(1, "signup.errors.permissionLevel"),
             }),
             agreements: z.object({
                 service: z.boolean(),
@@ -140,7 +140,7 @@ const SignupPage = () => {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     path: ["form", "confirmPassword"],
-                    message: t("signup.errors.confirmPassword"),
+                    message: "signup.errors.confirmPassword",
                 });
             }
 
@@ -148,34 +148,35 @@ const SignupPage = () => {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     path: ["agreements", "all"],
-                    message: t("signup.errors.requiredAgreement"),
+                    message: "signup.errors.requiredAgreement",
                 });
             }
             if (!value.agreements.service) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     path: ["agreements", "service"],
-                    message: t("signup.errors.requiredServiceAgreement"),
+                    message: "signup.errors.requiredServiceAgreement",
                 });
             }
             if (!value.agreements.privacy) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     path: ["agreements", "privacy"],
-                    message: t("signup.errors.requiredPrivacyAgreement"),
+                    message: "signup.errors.requiredPrivacyAgreement",
                 });
             }
             if (!value.agreements.overseas) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     path: ["agreements", "overseas"],
-                    message: t("signup.errors.requiredOverseasAgreement"),
+                    message: "signup.errors.requiredOverseasAgreement",
                 });
             }
         });
-    }, [t]);
+    }, []);
 
     const getErrors = (key: string) => (submitted ? (validationErrors[key] || []) : []);
+    const getErrorMessages = (key: string) => getErrors(key).map((errorKey) => t(errorKey));
 
     const onChangeField = <K extends keyof FormValues>(key: K, value: FormValues[K]) => {
         setForm((prev) => ({ ...prev, [key]: value }));
@@ -231,7 +232,7 @@ const SignupPage = () => {
                             <section className="space-y-3">
                                 <SectionTitle title={t("signup.sections.affiliation")} required hint={t("signup.requiredHint")} />
                                 <div className="grid gap-3 md:grid-cols-3">
-                                    <FieldBlock label={t("signup.fields.authority")} required errors={getErrors("form.authority")}>
+                                    <FieldBlock label={t("signup.fields.authority")} required errors={getErrorMessages("form.authority")}>
                                         <Select value={form.authority} onValueChange={(value) => onChangeField("authority", value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t("signup.placeholders.select")} />
@@ -246,7 +247,7 @@ const SignupPage = () => {
                                         </Select>
                                     </FieldBlock>
 
-                                    <FieldBlock label={t("signup.fields.corporation")} required errors={getErrors("form.corporation")}>
+                                    <FieldBlock label={t("signup.fields.corporation")} required errors={getErrorMessages("form.corporation")}>
                                         <Select value={form.corporation} onValueChange={(value) => onChangeField("corporation", value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t("signup.placeholders.select")} />
@@ -279,15 +280,15 @@ const SignupPage = () => {
                                 <SectionTitle title={t("signup.sections.personal")} required hint={t("signup.requiredHint")} />
 
                                 <div className="grid gap-3 md:grid-cols-2">
-                                    <FieldBlock label={t("signup.fields.name")} required errors={getErrors("form.name")}>
+                                    <FieldBlock label={t("signup.fields.name")} required errors={getErrorMessages("form.name")}>
                                         <Input value={form.name} onChange={(e) => onChangeField("name", e.target.value)} />
                                     </FieldBlock>
-                                    <FieldBlock label={t("signup.fields.department")} required errors={getErrors("form.department")}>
+                                    <FieldBlock label={t("signup.fields.department")} required errors={getErrorMessages("form.department")}>
                                         <Input value={form.department} onChange={(e) => onChangeField("department", e.target.value)} />
                                     </FieldBlock>
                                 </div>
 
-                                <FieldBlock label={t("signup.fields.phone")} required errors={getErrors("form.phone")}>
+                                <FieldBlock label={t("signup.fields.phone")} required errors={getErrorMessages("form.phone")}>
                                     <div className="grid gap-2 md:grid-cols-[160px_1fr]">
                                         <Select value={form.phoneCountry} onValueChange={(value) => onChangeField("phoneCountry", value)}>
                                             <SelectTrigger>
@@ -308,7 +309,7 @@ const SignupPage = () => {
                                     </div>
                                 </FieldBlock>
 
-                                <FieldBlock label={t("signup.fields.emailId")} required errors={[...getErrors("form.email"), ...getErrors("form.authCode")]}>
+                                <FieldBlock label={t("signup.fields.emailId")} required errors={[...getErrorMessages("form.email"), ...getErrorMessages("form.authCode")]}>
                                     <div className="space-y-2">
                                         <div className="flex flex-wrap items-center gap-2">
                                             <Input
@@ -332,7 +333,7 @@ const SignupPage = () => {
                                     </div>
                                 </FieldBlock>
 
-                                <FieldBlock label={t("signup.fields.password")} required errors={getErrors("form.password")}>
+                                <FieldBlock label={t("signup.fields.password")} required errors={getErrorMessages("form.password")}>
                                     <PasswordInput
                                         value={form.password}
                                         onChange={(value) => onChangeField("password", value)}
@@ -341,7 +342,7 @@ const SignupPage = () => {
                                     />
                                 </FieldBlock>
 
-                                <FieldBlock label={t("signup.fields.confirmPassword")} required errors={getErrors("form.confirmPassword")}>
+                                <FieldBlock label={t("signup.fields.confirmPassword")} required errors={getErrorMessages("form.confirmPassword")}>
                                     <PasswordInput
                                         value={form.confirmPassword}
                                         onChange={(value) => onChangeField("confirmPassword", value)}
@@ -353,7 +354,7 @@ const SignupPage = () => {
 
                             <section className="space-y-3">
                                 <SectionTitle title={t("signup.sections.permission")} required hint={t("signup.requiredHint")} />
-                                <FieldBlock label={t("signup.fields.permissionLevel")} required errors={getErrors("form.permissionLevel")}>
+                                <FieldBlock label={t("signup.fields.permissionLevel")} required errors={getErrorMessages("form.permissionLevel")}>
                                     <Select value={form.permissionLevel} onValueChange={(value) => onChangeField("permissionLevel", value)}>
                                         <SelectTrigger>
                                             <SelectValue placeholder={t("signup.placeholders.select")} />
@@ -392,17 +393,17 @@ const SignupPage = () => {
                                     </div>
 
                                     <div className="pt-1">
-                                        {getErrors("agreements.all").map((error) => (
-                                            <p key={error} className="text-sm text-destructive">!! {error}</p>
+                                        {getErrorMessages("agreements.all").map((error, index) => (
+                                            <p key={`agreements-all-${index}`} className="text-sm text-destructive">!! {error}</p>
                                         ))}
-                                        {getErrors("agreements.service").map((error) => (
-                                            <p key={error} className="text-sm text-destructive">!! {error}</p>
+                                        {getErrorMessages("agreements.service").map((error, index) => (
+                                            <p key={`agreements-service-${index}`} className="text-sm text-destructive">!! {error}</p>
                                         ))}
-                                        {getErrors("agreements.privacy").map((error) => (
-                                            <p key={error} className="text-sm text-destructive">!! {error}</p>
+                                        {getErrorMessages("agreements.privacy").map((error, index) => (
+                                            <p key={`agreements-privacy-${index}`} className="text-sm text-destructive">!! {error}</p>
                                         ))}
-                                        {getErrors("agreements.overseas").map((error) => (
-                                            <p key={error} className="text-sm text-destructive">!! {error}</p>
+                                        {getErrorMessages("agreements.overseas").map((error, index) => (
+                                            <p key={`agreements-overseas-${index}`} className="text-sm text-destructive">!! {error}</p>
                                         ))}
                                     </div>
                                 </div>
@@ -489,8 +490,8 @@ const FieldBlock = ({ label, required, errors = [], children }: FieldBlockProps)
                 </div>
                 <div className="space-y-1 px-3 py-2">
                     {children}
-                    {errors.map((error) => (
-                        <p key={error} className="text-sm text-destructive">!! {error}</p>
+                    {errors.map((error, index) => (
+                        <p key={`${error}-${index}`} className="text-sm text-destructive">!! {error}</p>
                     ))}
                 </div>
             </div>

@@ -16,23 +16,16 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const setUser = useAuthStore((s) => s.setUser);
-    const [id, setId] = useState("");
+    const savedId = getCookie(REMEMBER_ID_COOKIE_KEY) ?? "";
+    const [id, setId] = useState(savedId);
     const [password, setPassword] = useState("");
-    const [rememberId, setRememberId] = useState(false);
+    const [rememberId, setRememberId] = useState(Boolean(savedId));
     const [showPassword, setShowPassword] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
     const from = location.state?.from?.pathname || "/";
     const showIdError = submitted && id !== "1";
     const showPasswordError = submitted && password !== "1";
-
-    useEffect(() => {
-        const savedId = getCookie(REMEMBER_ID_COOKIE_KEY);
-        if (!savedId) return;
-
-        setId(savedId);
-        setRememberId(true);
-    }, []);
 
     useEffect(() => {
         if (!rememberId) {
