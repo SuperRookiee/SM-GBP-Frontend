@@ -40,3 +40,8 @@ export const getUserSampleDataApi = async ({
     };
 };
 
+export const getUserDetailSampleDataApi = async (id: number): Promise<IUser | null> => {
+    await new Promise((res) => setTimeout(res, 500));
+    return USER_SAMPLE_DATA.find((user) => user.id === id) ?? null;
+};
+
