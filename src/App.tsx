@@ -11,7 +11,9 @@ import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
 import DemoDataTablePage from "@/pages/demo/table/DemoDataTablePage.tsx";
 import DemoGridTablePage from "@/pages/demo/table/DemoGridTablePage.tsx";
 import DemoTypography from "@/pages/demo/typography/DemoTypography.tsx";
+import ForgotPasswordPage from "@/pages/login/ForgotPasswordPage.tsx";
 import LoginPage from "@/pages/login/LoginPage.tsx";
+import SignupPage from "@/pages/login/SignupPage.tsx";
 import UserDetailPage from "@/pages/user/detail/UserDetailPage.tsx";
 import UserPage from "@/pages/user/UserPage.tsx";
 import AuthRouter from "@/routes/AuthRouter.tsx";
@@ -21,6 +23,8 @@ const App = () => {
         <Routes>
             {/* 공개 Route */}
             <Route path="/login" element={<LoginPage/>}/>
+            <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
+            <Route path="/signup" element={<SignupPage/>}/>
 
             {/* 보호 Route */}
             <Route element={<AuthRouter/>}>
