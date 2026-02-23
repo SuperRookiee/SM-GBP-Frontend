@@ -33,7 +33,6 @@ const MainLayout = () => {
         new: "sampleDetail.create",
     };
 
-    // #. Breadcrumb 생성
     const breadcrumbs = pathSegments.map((segment, index) => {
         const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
         const isIdUnderApi = pathSegments[index - 1] === "api" && segment !== "new";
