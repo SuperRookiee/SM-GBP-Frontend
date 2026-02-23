@@ -23,10 +23,12 @@ const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
+    // 인증이 필요한 페이지에서 넘어왔다면 원래 경로로 복귀한다.
     const from = location.state?.from?.pathname || "/";
     const showIdError = submitted && id !== "1";
     const showPasswordError = submitted && password !== "1";
 
+    // 아이디 저장 체크 상태에 따라 쿠키를 동기화한다.
     useEffect(() => {
         if (!rememberId) {
             removeCookie(REMEMBER_ID_COOKIE_KEY);
@@ -36,6 +38,7 @@ const LoginPage = () => {
         if (id.trim()) setCookie(REMEMBER_ID_COOKIE_KEY, id.trim(), REMEMBER_ID_COOKIE_MAX_AGE);
     }, [id, rememberId]);
 
+    // 데모 계정(1/1) 인증 성공 시 사용자 정보를 저장하고 이동한다.
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitted(true);

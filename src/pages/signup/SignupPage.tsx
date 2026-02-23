@@ -68,6 +68,7 @@ const SignupPage = () => {
     const [openCompleteDialog, setOpenCompleteDialog] = useState(false);
     const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
 
+    // 약관 타입별 라벨/본문을 한곳에서 관리한다.
     const termMeta = useMemo<Record<TermKey, TermMeta>>(
         () => ({
             service: {
@@ -100,6 +101,7 @@ const SignupPage = () => {
 
     const allAgreed = useMemo(() => Object.values(agreements).every(Boolean), [agreements]);
 
+    // 제출 시 재사용할 유효성 검사 스키마를 메모이징한다.
     const signupSchema = useMemo(() => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^\d+$/;
@@ -182,6 +184,7 @@ const SignupPage = () => {
         setForm((prev) => ({ ...prev, [key]: value }));
     };
 
+    // 전체 동의 체크 시 개별 약관 상태를 일괄 반영한다.
     const onToggleAll = (checked: boolean) => {
         setAgreements({
             service: checked,
@@ -195,6 +198,7 @@ const SignupPage = () => {
         setAgreements((prev) => ({ ...prev, [key]: checked }));
     };
 
+    // 제출 시 스키마 검증 후 에러를 매핑하거나 완료 다이얼로그를 연다.
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitted(true);
