@@ -9,10 +9,9 @@ import { useResetStore } from "@/hooks/useResetStore";
 import LanguageToggle from "@/components/common/LanguageToggle.tsx";
 import ThemeToggle from "@/components/common/ThemeToggle.tsx";
 import RuntimeError from "@/components/errors/RuntimeError.tsx";
-import AppSidebar from "@/components/sidebar/AppSidebar.tsx";
+import AppGnb from "@/components/sidebar/AppGnb.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 
 // 공통 레이아웃
 const MainLayout = () => {
@@ -29,26 +28,22 @@ const MainLayout = () => {
     useResetStore("/user", resetUserPageStore);
 
     return (
-        <SidebarProvider>
-            <AppSidebar/>
-            <SidebarInset className="flex h-svh min-w-0 flex-col overflow-hidden">
-                <header className="flex h-12 shrink-0 items-center gap-2 px-4 justify-between">
-                    <SidebarTrigger className="-ml-1"/>
-                    <div className="flex items-center gap-2">
-                        <LanguageToggle/>
-                        <ThemeToggle/>
-                        <Button size="xs" onClick={logout}>{t("common.logout")}</Button>
-                    </div>
-                </header>
-                <ScrollArea className="flex-1">
-                    <main className="min-w-0 px-4 py-2">
-                        <ErrorBoundary resetKeys={[location.pathname]} FallbackComponent={RuntimeError}>
-                            <Outlet/>
-                        </ErrorBoundary>
-                    </main>
-                </ScrollArea>
-            </SidebarInset>
-        </SidebarProvider>
+        <div className="flex h-svh min-w-0 flex-col overflow-hidden">
+            {/* <AppSidebar /> */}
+            <header className="flex items-center justify-end gap-2 border-b px-4 py-2">
+                <LanguageToggle/>
+                <ThemeToggle/>
+                <Button size="xs" onClick={logout}>{t("common.logout")}</Button>
+            </header>
+            <AppGnb/>
+            <ScrollArea className="flex-1">
+                <main className="min-w-0 px-4 py-2">
+                    <ErrorBoundary resetKeys={[location.pathname]} FallbackComponent={RuntimeError}>
+                        <Outlet/>
+                    </ErrorBoundary>
+                </main>
+            </ScrollArea>
+        </div>
     );
 };
 
