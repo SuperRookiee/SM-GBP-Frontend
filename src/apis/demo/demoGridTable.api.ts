@@ -1,5 +1,5 @@
-import type { IDemoGridSortOption, IDemoGridTableRow, IDemoGridTableSampleDataParams } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 import { DEMO_GRID_TABLE_SAMPLE_DATA } from "@/tests/data/demoGridTableSampleData.test.ts";
+import type { IDemoGridSortOption, IDemoGridTableRow, IDemoGridTableSampleDataParams } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
 const compareByDirection = (a: string | number, b: string | number, direction: "asc" | "desc") => {
     const comparison = typeof a === "number" && typeof b === "number"

@@ -2,14 +2,13 @@
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CalendarIcon, ChevronDown, Search } from "lucide-react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getDemoGridTableSampleDataApi } from "@/apis/demo/demoGridTable.api.ts";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { useGridTablePageStore } from "@/stores/page/demo/gridTablePage.store.ts";
 import { cn } from "@/utils/utils.ts";
-import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 import DemoAgGridTable from "@/components/table/demo/DemoAgGridTable.tsx";
 import DemoToastGridTable from "@/components/table/demo/DemoToastGridTable.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -22,6 +21,7 @@ import { Label } from "@/components/ui/label.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
 import style from "@/styles/demoGridTable.module.css";
+import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
 const STATUS_OPTIONS: DemoGridStatus[] = ["판매중", "품절", "품절임박"];
 const CATEGORY_OPTIONS: DemoGridCategory[] = ["전자기기", "생활용품", "패션", "사무용품"];

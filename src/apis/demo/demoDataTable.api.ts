@@ -1,6 +1,6 @@
-﻿import type { IDemoDataTableSampleDataParams } from "@/interfaces/demo/IDemoDataTable.interface.ts";
-import type { DemoDataTableResponse } from "@/types/demo/demoDataTable.types.ts";
+﻿import type { DemoDataTableResponse } from "@/types/demo/demoDataTable.types.ts";
 import { DEMO_DATA_TABLE_SAMPLE_DATA } from "@/tests/data/demoDataTableSampleData.test.ts";
+import type { IDemoDataTableSampleDataParams } from "@/interfaces/demo/IDemoDataTable.interface.ts";
 
 /**
  * 샘플 데이터를 페이지 단위로 반환하는 API 함수

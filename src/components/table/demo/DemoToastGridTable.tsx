@@ -2,11 +2,11 @@
 import { useTranslation } from "react-i18next";
 import Grid from "tui-grid";
 import "tui-grid/dist/tui-grid.css";
-import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 import Pagination from "@/components/table/Pagination.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { Label } from "@/components/ui/label.tsx";
+import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
 type Props = {
   rows: IDemoGridTableRow[];

@@ -1,6 +1,6 @@
 ﻿import * as React from "react"
-import { useTranslation } from "react-i18next"
 import { InfoIcon } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { Button } from '@/components/ui/button.tsx'
 import { Checkbox } from '@/components/ui/checkbox.tsx'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog.tsx'

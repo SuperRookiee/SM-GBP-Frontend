@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { getUserDetailSampleDataApi } from "@/apis/user.api.ts";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
-import { Role } from "@/enums/role.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import { Role } from "@/enums/role.ts";
 
 const UserDetailPage = () => {
     const { t } = useTranslation();

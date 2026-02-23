@@ -6,10 +6,10 @@ import { GetSampleListApi } from "@/apis/demo/sample.api.ts";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { getSampleTableColumns, getSampleTableFilter } from "@/constants/table.constants.tsx";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
-import type { ISampleApiItem } from "@/interfaces/demo/ISample.interface.ts";
 import DataTable from "@/components/table/DataTable";
 import { Button } from "@/components/ui/button";
 import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
+import type { ISampleApiItem } from "@/interfaces/demo/ISample.interface.ts";
 
 const DemoApiPage = () => {
     const { t } = useTranslation();

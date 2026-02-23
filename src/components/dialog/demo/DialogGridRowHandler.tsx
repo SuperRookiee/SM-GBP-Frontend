@@ -1,7 +1,7 @@
 ﻿import { useTranslation } from "react-i18next";
-import type { IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog.tsx";
+import type { IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
 interface IDialogGridRowHandlerProps {
     selectedRows: IDemoGridTableRow[];

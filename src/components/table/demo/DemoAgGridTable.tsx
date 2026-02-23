@@ -1,14 +1,14 @@
 ﻿import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { AllCommunityModule, type ColDef, ModuleRegistry, type SelectionChangedEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import type { IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
+import { useTranslation } from "react-i18next";
 import DialogGridRowHandler from "@/components/dialog/demo/DialogGridRowHandler.tsx";
 import { myTheme } from "@/components/table/demo/demoAgGridTheme.ts";
 import Pagination from "@/components/table/Pagination.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import style from "@/styles/demoGridTable.module.css";
+import type { IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

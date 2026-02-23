@@ -1,5 +1,5 @@
-﻿import type { IUser } from "@/interfaces/IUser.ts";
-import { Role } from "@/enums/role.ts";
+﻿import { Role } from "@/enums/role.ts";
+import type { IUser } from "@/interfaces/IUser.ts";
 
 export const USER_SAMPLE_DATA: IUser[] = [
     {

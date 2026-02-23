@@ -27,6 +27,7 @@ Miracle 프로젝트의 프론트엔드 환경 설정 및 기술 스택 가이�
 | **Utilities**  | `cva`, `clsx`, `tw-merge` | Variant 기반 스타일 관리 및 클래스 병합 |
 | **Icons**      | `lucide-react`            | 일관된 SVG 아이콘 세트             | [lucide](https://lucide.dev/)        |
 | **Typography** | `Inter Variable`          | 기본 타이포그래피                  | [Inter](https://rsms.me/inter/)      |
+| **Editor**     | `Lexical`                 | Text Editor                | [Lexical](https://lexical.dev/)      |
 
 ### 🏗 State & Infrastructure
 

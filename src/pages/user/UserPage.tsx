@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { getUserTableColumns, getUserTableFilter } from "@/constants/table.constants.tsx";

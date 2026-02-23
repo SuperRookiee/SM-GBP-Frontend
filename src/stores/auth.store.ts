@@ -1,8 +1,8 @@
 ﻿import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { devtool } from "@/utils/devtools.ts";
-import type { IUser } from "@/interfaces/IUser.ts";
 import { Role } from "@/enums/role.ts";
+import type { IUser } from "@/interfaces/IUser.ts";
 
 type AuthState = {
     user: IUser | null;
