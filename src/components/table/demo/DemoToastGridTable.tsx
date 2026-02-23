@@ -64,6 +64,20 @@ const DemoToastGridTable = ({
     const { t } = useTranslation();
     const gridWrapperRef = useRef<HTMLDivElement | null>(null);
     const gridInstanceRef = useRef<Grid | null>(null);
+    const getColumnLabel = useCallback((column: string) => {
+        const keyMap: Record<string, string> = {
+            id: "demoGrid.columns.id",
+            product: "demoGrid.columns.product",
+            category: "demoGrid.columns.category",
+            price: "demoGrid.columns.price",
+            stock: "demoGrid.columns.stock",
+            launchDate: "demoGrid.columns.launchDate",
+            status: "demoGrid.columns.status",
+            discontinued: "demoGrid.columns.discontinued",
+        };
+
+        return keyMap[column] ? t(keyMap[column]) : column;
+    }, [t]);
 
     const applyGridData = useCallback((nextRows: IDemoGridTableRow[]) => {
         gridInstanceRef.current?.resetData(nextRows);
@@ -216,17 +230,3 @@ const DemoToastGridTable = ({
 };
 
 export default DemoToastGridTable;
-    const getColumnLabel = (column: string) => {
-        const keyMap: Record<string, string> = {
-            id: "demoGrid.columns.id",
-            product: "demoGrid.columns.product",
-            category: "demoGrid.columns.category",
-            price: "demoGrid.columns.price",
-            stock: "demoGrid.columns.stock",
-            launchDate: "demoGrid.columns.launchDate",
-            status: "demoGrid.columns.status",
-            discontinued: "demoGrid.columns.discontinued",
-        };
-
-        return keyMap[column] ? t(keyMap[column]) : column;
-    };
