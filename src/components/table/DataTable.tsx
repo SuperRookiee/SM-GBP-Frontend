@@ -248,7 +248,7 @@ const DataTable = <T, >({
                         <Select value={String(draftFilterKey)}
                             onValueChange={(value) => setDraftFilterKey(value as "all" | keyof T)}>
                             <SelectTrigger className="mt-2">
-                                <SelectValue placeholder="검색 조건 선택"/>
+                                <SelectValue placeholder={t("datatable.filterPlaceholder")}/>
                             </SelectTrigger>
                             <SelectContent>
                                 {filterOptions.map((option) =>
@@ -268,7 +268,7 @@ const DataTable = <T, >({
                                 value={draftQuery}
                                 onChange={(event) => setDraftQuery(event.target.value)}
                             />
-                            <Button type="button" variant="outline" size="icon" onClick={onClickSearch} aria-label="검색">
+                            <Button type="button" variant="outline" size="icon" onClick={onClickSearch} aria-label={t("datatable.searchButtonAria")}>
                                 <Search className="h-4 w-4"/>
                             </Button>
                         </div>
@@ -365,7 +365,7 @@ const DataTable = <T, >({
                                                                 <Input
                                                                     value={columnFilterSearch[columnKey] ?? ""}
                                                                     onChange={(event) => onChangeColumnSearch(columnKey, event.target.value)}
-                                                                    placeholder="Search..."
+                                                                    placeholder={t("datatable.filterSearchPlaceholder")}
                                                                     className="mb-2 h-8"
                                                                 />
                                                                 <DropdownMenuSeparator/>
@@ -381,7 +381,7 @@ const DataTable = <T, >({
                                                                             onCheckedChange={(checked) => onToggleColumnSelectAll(columnKey, checked === true)}
                                                                             className="capitalize whitespace-nowrap"
                                                                         >
-                                                                            (Select All)
+                                                                            {t("common.selectAll")}
                                                                         </DropdownMenuCheckboxItem>
                                                                         {(columnFilterOptions.get(columnKey) ?? [])
                                                                             .filter((value) =>

@@ -1,4 +1,5 @@
-import { useActionState } from "react";
+﻿import { useActionState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import type { SampleDetailFieldName, SampleDetailFormState, SampleDetailFormValues } from "@/types/demo/sampleDetailPage.type.ts";
 import SubmitButton from "@/components/common/SubmitButton.tsx";
@@ -9,18 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 
 const roleEnum = z.enum(["designer", "developer", "manager"]);
-
-const sampleDetailFormSchema = z.object({
-    name: z.string().trim().min(2, "이름을 2자 이상 입력해주세요."),
-    email: z.string().trim().email("올바른 이메일 주소를 입력해주세요."),
-    age: z.coerce.number().int().min(18, "18세 이상만 가능").max(120),
-    role: z
-        .preprocess((v) => (v === "" ? undefined : v), roleEnum.optional())
-        .refine((v) => v !== undefined, {
-            message: "역할을 선택해주세요.",
-        }),
-    message: z.string().trim().min(10, "10자 이상").max(200).optional().or(z.literal("")),
-});
 
 const initialSampleDetailFormState: SampleDetailFormState = {
     status: "idle",
@@ -34,6 +23,18 @@ function ErrorMsg({ field, errors }: { field: SampleDetailFieldName; errors?: Re
 }
 
 const DemoFormPage = () => {
+    const { t } = useTranslation();
+
+    const sampleDetailFormSchema = useMemo(() => z.object({
+        name: z.string().trim().min(2, t("formDemo.validation.nameMin")),
+        email: z.string().trim().email(t("formDemo.validation.emailInvalid")),
+        age: z.coerce.number().int().min(18, t("formDemo.validation.ageMin")).max(120),
+        role: z
+            .preprocess((v) => (v === "" ? undefined : v), roleEnum.optional())
+            .refine((v) => v !== undefined, { message: t("formDemo.validation.roleRequired") }),
+        message: z.string().trim().min(10, t("formDemo.validation.messageMin")).max(200).optional().or(z.literal("")),
+    }), [t]);
+
     const [state, formAction] = useActionState(
         async (_prevState: SampleDetailFormState, formData: FormData): Promise<SampleDetailFormState> => {
             const rawValues = Object.fromEntries(formData);
@@ -42,33 +43,31 @@ const DemoFormPage = () => {
             if (!result.success) {
                 return {
                     status: "error",
-                    message: "입력값을 다시 확인해주세요.",
+                    message: t("formDemo.globalError"),
                     errors: z.flattenError(result.error).fieldErrors,
                     values: rawValues as Partial<SampleDetailFormValues>,
                 };
             }
 
-            // 성공 로직
             return {
                 status: "success",
-                message: `${result.data.name}님, 제출 완료!`,
+                message: t("formDemo.success", { name: result.data.name }),
                 values: result.data,
             };
         },
-        initialSampleDetailFormState
+        initialSampleDetailFormState,
     );
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen gap-6">
             <Card className="flex-5 h-full">
                 <CardHeader>
-                    <CardTitle>Demo Form</CardTitle>
-                    <CardDescription>검증 예제</CardDescription>
+                    <CardTitle>{t("formDemo.title")}</CardTitle>
+                    <CardDescription>{t("formDemo.description")}</CardDescription>
                 </CardHeader>
 
                 <CardContent className="h-full">
                     <form action={formAction} className="space-y-6">
-                        {/* 전체 메시지 */}
                         {state.message ? (
                             <div
                                 className={[
@@ -85,81 +84,60 @@ const DemoFormPage = () => {
                         ) : null}
 
                         <div className="space-y-2">
-                            <Label htmlFor="name">이름</Label>
-                            <Input
-                                id="name"
-                                name="name"
-                                defaultValue={state.values.name ?? ""}
-                                placeholder="이름"
-                                className="focus-visible:ring-primary"
-                            />
+                            <Label htmlFor="name">{t("table.name")}</Label>
+                            <Input id="name" name="name" defaultValue={state.values.name ?? ""} placeholder={t("formDemo.namePlaceholder")} className="focus-visible:ring-primary"/>
                             <ErrorMsg field="name" errors={state.errors}/>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="email">이메일</Label>
-                            <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                defaultValue={state.values.email ?? ""}
-                                placeholder="hong@example.com"
-                                className="focus-visible:ring-primary"
-                            />
+                            <Label htmlFor="email">{t("table.email")}</Label>
+                            <Input id="email" name="email" type="email" defaultValue={state.values.email ?? ""} placeholder={t("formDemo.emailPlaceholder")} className="focus-visible:ring-primary"/>
                             <ErrorMsg field="email" errors={state.errors}/>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="age">나이</Label>
-                            <Input
-                                id="age"
-                                name="age"
-                                type="number"
-                                defaultValue={state.values.age ?? ""}
-                                placeholder="18"
-                                className="focus-visible:ring-primary"
-                                min={18}
-                            />
+                            <Label htmlFor="age">{t("formDemo.age")}</Label>
+                            <Input id="age" name="age" type="number" defaultValue={state.values.age ?? ""} placeholder={t("formDemo.agePlaceholder")} className="focus-visible:ring-primary" min={18}/>
                             <ErrorMsg field="age" errors={state.errors}/>
                         </div>
 
                         <div className="space-y-2">
-                            <Label>역할</Label>
+                            <Label>{t("table.role")}</Label>
                             <Select name="role" defaultValue={state.values.role ?? undefined}>
                                 <SelectTrigger className="focus-visible:ring-primary">
-                                    <SelectValue placeholder="선택하세요"/>
+                                    <SelectValue placeholder={t("formDemo.rolePlaceholder")}/>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="designer">Designer</SelectItem>
-                                    <SelectItem value="developer">Developer</SelectItem>
-                                    <SelectItem value="manager">Manager</SelectItem>
+                                    <SelectItem value="designer">{t("formDemo.role.designer")}</SelectItem>
+                                    <SelectItem value="developer">{t("formDemo.role.developer")}</SelectItem>
+                                    <SelectItem value="manager">{t("formDemo.role.manager")}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <ErrorMsg field="role" errors={state.errors}/>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="message">메시지 (선택)</Label>
+                            <Label htmlFor="message">{t("formDemo.messageOptional")}</Label>
                             <Textarea
                                 id="message"
                                 name="message"
                                 defaultValue={state.values.message ?? ""}
-                                placeholder="10자 이상 입력하면 검증됩니다."
+                                placeholder={t("formDemo.messagePlaceholder")}
                                 className="min-h-28 focus-visible:ring-primary"
                             />
                             <ErrorMsg field="message" errors={state.errors}/>
                         </div>
 
                         <div className="flex justify-end">
-                            <SubmitButton pendingText="처리 중..." submitText="제출하기"/>
+                            <SubmitButton pendingText={t("formDemo.pending")} submitText={t("formDemo.submit")}/>
                         </div>
                     </form>
                 </CardContent>
             </Card>
             <Card className="flex-2 h-full rounded-xl bg-slate-950 p-6 text-slate-50 shadow-2xl flex flex-col">
                 <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500">Live State Preview</h4>
-                    <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-mono text-slate-400">TypeScript Validated</span>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500">{t("formDemo.previewTitle")}</h4>
+                    <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-mono text-slate-400">{t("formDemo.previewBadge")}</span>
                 </div>
                 <pre className="text-sm leading-relaxed font-mono text-emerald-400 overflow-auto max-h-150">
                     {JSON.stringify(state, null, 2)}

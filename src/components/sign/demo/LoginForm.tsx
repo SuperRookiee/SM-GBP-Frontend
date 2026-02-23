@@ -24,7 +24,7 @@ const LoginForm = ({ id, password, onIdChange, onPasswordChange, onSubmit, class
                     <div className="flex flex-col items-center gap-2 text-center">
                         <a href="#" className="flex flex-col items-center gap-2 font-medium">
                             <div className="flex size-8 items-center justify-center rounded-md"><GalleryVerticalEnd className="size-6"/></div>
-                            <span className="sr-only">Acme Inc.</span>
+                            <span className="sr-only">{t("login.brand")}</span>
                         </a>
                         <h1 className="text-xl font-bold">{t("login.welcome")}</h1>
                         <FieldDescription>{t("login.noAccount")} <a href="#">{t("login.signup")}</a></FieldDescription>

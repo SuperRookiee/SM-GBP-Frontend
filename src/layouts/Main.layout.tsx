@@ -1,4 +1,5 @@
 import { ErrorBoundary } from "react-error-boundary";
+import { useTranslation } from "react-i18next";
 import { Outlet, useLocation } from "react-router-dom";
 import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
@@ -15,6 +16,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 
 // 공통 레이아웃
 const MainLayout = () => {
+    const { t } = useTranslation();
     const { logout } = useLogout();
     const location = useLocation();
     const resetDataTablePageStore = useDataTablePageStore(state => state.reset);
@@ -35,7 +37,7 @@ const MainLayout = () => {
                     <div className="flex items-center gap-2">
                         <LanguageToggle/>
                         <ThemeToggle/>
-                        <Button size="xs" onClick={logout}>Logout</Button>
+                        <Button size="xs" onClick={logout}>{t("common.logout")}</Button>
                     </div>
                 </header>
                 <ScrollArea className="flex-1">

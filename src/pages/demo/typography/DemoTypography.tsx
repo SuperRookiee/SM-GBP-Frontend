@@ -1,83 +1,55 @@
+﻿import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 const DemoTypography = () => {
+    const { t } = useTranslation();
+
     return (
         <div className="p-8 space-y-8">
             <Card className="p-8 space-y-6">
                 <div>
-                    <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight">
-                        Typography
-                    </h1>
-                    <p className="text-muted-foreground mt-2">
-                        shadcn/ui + Tailwind 기반 타이포그래피 예제 페이지입니다.
-                    </p>
+                    <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight">{t("typography.title")}</h1>
+                    <p className="text-muted-foreground mt-2">{t("typography.description")}</p>
                 </div>
 
                 <Separator/>
 
-                {/* Headings */}
                 <div className="space-y-4">
-                    <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight">
-                        h1. Heading
-                    </h1>
-                    <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight">
-                        h2. Heading
-                    </h2>
-                    <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-                        h3. Heading
-                    </h3>
-                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-                        h4. Heading
-                    </h4>
+                    <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight">h1. {t("typography.heading")}</h1>
+                    <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight">h2. {t("typography.heading")}</h2>
+                    <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">h3. {t("typography.heading")}</h3>
+                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">h4. {t("typography.heading")}</h4>
                 </div>
 
                 <Separator/>
 
-                {/* Paragraph */}
                 <div className="space-y-4">
-                    <p className="leading-7">
-                        이것은 기본 paragraph 스타일입니다. Tailwind의{" "}
-                        <span className="font-medium">leading-7</span> 을 사용하여 가독성을
-                        확보합니다.
-                    </p>
-
-                    <p className="leading-7 text-muted-foreground">
-                        muted 스타일은 보조 설명 텍스트에 사용됩니다.
-                    </p>
-
-                    <p className="text-lg text-muted-foreground">
-                        Lead 텍스트는 강조가 필요한 도입부에 사용됩니다.
-                    </p>
+                    <p className="leading-7">{t("typography.paragraph1.prefix")} <span className="font-medium">{t("typography.leadingToken")}</span> {t("typography.paragraph1.suffix")}</p>
+                    <p className="leading-7 text-muted-foreground">{t("typography.paragraph2")}</p>
+                    <p className="text-lg text-muted-foreground">{t("typography.lead")}</p>
                 </div>
 
                 <Separator/>
 
-                {/* Inline elements */}
                 <div className="space-y-4">
-                    <p>
-                        Inline <code className="bg-muted px-1.5 py-0.5 rounded text-sm">code</code> 스타일 예시입니다.
-                    </p>
-
-                    <blockquote className="mt-6 border-l-2 pl-6 italic">
-                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed di
-                    </blockquote>
+                    <p>{t("typography.inlinePrefix")} <code className="bg-muted px-1.5 py-0.5 rounded text-sm">{t("typography.codeToken")}</code> {t("typography.inlineSuffix")}</p>
+                    <blockquote className="mt-6 border-l-2 pl-6 italic">{t("typography.quote")}</blockquote>
                 </div>
 
                 <Separator/>
 
-                {/* Lists */}
                 <div className="space-y-4">
                     <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
-                        <li>Bullet List Item 1</li>
-                        <li>Bullet List Item 2</li>
-                        <li>Bullet List Item 3</li>
+                        <li>{t("typography.bullet1")}</li>
+                        <li>{t("typography.bullet2")}</li>
+                        <li>{t("typography.bullet3")}</li>
                     </ul>
 
                     <ol className="my-6 ml-6 list-decimal [&>li]:mt-2">
-                        <li>Ordered List Item 1</li>
-                        <li>Ordered List Item 2</li>
-                        <li>Ordered List Item 3</li>
+                        <li>{t("typography.ordered1")}</li>
+                        <li>{t("typography.ordered2")}</li>
+                        <li>{t("typography.ordered3")}</li>
                     </ol>
                 </div>
             </Card>

@@ -1,4 +1,5 @@
 ﻿import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AllCommunityModule, type ColDef, ModuleRegistry, type SelectionChangedEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import type { IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
@@ -26,23 +27,6 @@ interface IDemoAgGridTableProps {
   onPageChange: (page: number) => void;
 }
 
-const columnDefs: ColDef<IDemoGridTableRow>[] = [
-    { field: "id", headerName: "상품 ID", width: 110, checkboxSelection: true, headerCheckboxSelection: true, pinned: "left" },
-    { field: "product", headerName: "상품명", flex: 1, minWidth: 180, editable: true },
-    { field: "category", headerName: "카테고리", width: 140 },
-    {
-        field: "price",
-        headerName: "가격",
-        width: 140,
-        editable: true,
-        valueFormatter: (params) => `${Number(params.value ?? 0).toLocaleString()}원`,
-    },
-    { field: "stock", headerName: "재고", width: 110, editable: true },
-    { field: "launchDate", headerName: "출시일", width: 160 },
-    { field: "status", headerName: "상태", width: 120, pinned: "right" },
-    { field: "discontinued", headerName: "단종", width: 100 },
-];
-
 const DemoAgGridTable = ({
     rows,
     isLoading,
@@ -57,9 +41,27 @@ const DemoAgGridTable = ({
     onPageSizeChange,
     onPageChange,
 }: IDemoAgGridTableProps) => {
+    const { t } = useTranslation();
     const [quickFilter, setQuickFilter] = useState("");
     const [selectedCount, setSelectedCount] = useState(0);
     const [selectedRows, setSelectedRows] = useState<IDemoGridTableRow[]>([]);
+
+    const columnDefs = useMemo<ColDef<IDemoGridTableRow>[]>(() => [
+        { field: "id", headerName: t("demoGrid.columns.id"), width: 110, checkboxSelection: true, headerCheckboxSelection: true, pinned: "left" },
+        { field: "product", headerName: t("demoGrid.columns.product"), flex: 1, minWidth: 180, editable: true },
+        { field: "category", headerName: t("demoGrid.columns.category"), width: 140 },
+        {
+            field: "price",
+            headerName: t("demoGrid.columns.price"),
+            width: 140,
+            editable: true,
+            valueFormatter: (params) => `${Number(params.value ?? 0).toLocaleString()}${t("demoGrid.currencyUnit")}`,
+        },
+        { field: "stock", headerName: t("demoGrid.columns.stock"), width: 110, editable: true },
+        { field: "launchDate", headerName: t("demoGrid.columns.launchDate"), width: 160 },
+        { field: "status", headerName: t("demoGrid.columns.status"), width: 120, pinned: "right" },
+        { field: "discontinued", headerName: t("demoGrid.columns.discontinued"), width: 100 },
+    ], [t]);
 
     const filteredRows = useMemo(() => {
         const keyword = quickFilter.trim().toLowerCase();
@@ -76,12 +78,16 @@ const DemoAgGridTable = ({
             <CardContent className="space-y-3">
                 <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
                     <div className="space-y-1">
-                        <p className="text-sm font-medium">AG Grid Quick Filter</p>
-                        <Input value={quickFilter} onChange={(event) => setQuickFilter(event.target.value)} placeholder="상품명/카테고리/상태 검색" />
+                        <p className="text-sm font-medium">{t("agGrid.quickFilterTitle")}</p>
+                        <Input
+                            value={quickFilter}
+                            onChange={(event) => setQuickFilter(event.target.value)}
+                            placeholder={t("agGrid.quickFilterPlaceholder")}
+                        />
                     </div>
                     <div className="space-y-2 text-right text-sm text-muted-foreground">
-                        <p>선택된 행: {selectedCount}개</p>
-                        <p>컬럼 헤더 메뉴에서 Pin Column으로 고정 위치를 바꿀 수 있습니다.</p>
+                        <p>{t("agGrid.selectedRows", { count: selectedCount })}</p>
+                        <p>{t("agGrid.pinHelp")}</p>
                         <DialogGridRowHandler selectedRows={selectedRows}/>
                     </div>
                 </div>
@@ -115,7 +121,7 @@ const DemoAgGridTable = ({
                 pageSize={pageSize}
                 onPageSizeChange={onPageSizeChange}
                 onPageChange={onPageChange}
-                caption={`총 ${totalCount} 건`}
+                caption={t("common.totalCount", { count: totalCount })}
             />
         </Card>
     );

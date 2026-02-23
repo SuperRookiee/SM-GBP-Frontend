@@ -69,7 +69,7 @@ const DemoApiPage = () => {
         <div className="flex min-h-full min-w-0 items-center justify-center overflow-hidden">
             <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 overflow-hidden">
                 <header className="space-y-2">
-                    <p className="text-sm font-semibold text-muted-foreground">Demo API</p>
+                    <p className="text-sm font-semibold text-muted-foreground">{t("demo.sectionApi")}</p>
                     <h1 className="text-3xl font-semibold tracking-tight">
                         {t("demo.apiTitle")}
                     </h1>

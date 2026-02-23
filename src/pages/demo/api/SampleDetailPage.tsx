@@ -1,4 +1,5 @@
 ﻿import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreateSampleApi, DeleteSampleApi, GetSampleDetailApi, UpdateSampleApi } from "@/apis/demo/sample.api.ts";
@@ -46,7 +47,6 @@ const EMPTY_FORM: FormState = {
     memo: "",
 };
 
-// #. API 상세 데이터를 폼 상태로 변환합니다.
 const toFormState = (item: ISampleApiItem): FormState => ({
     name: item.name,
     description: item.description,
@@ -61,7 +61,6 @@ const toFormState = (item: ISampleApiItem): FormState => ({
     memo: item.memo ?? "",
 });
 
-// #. 폼 상태를 API 요청 payload로 변환합니다.
 const toPayload = (form: FormState): ISampleUpsertPayload => ({
     name: form.name,
     description: form.description,
@@ -77,6 +76,7 @@ const toPayload = (form: FormState): ISampleUpsertPayload => ({
 });
 
 const SampleDetailPage = () => {
+    const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -93,12 +93,10 @@ const SampleDetailPage = () => {
         nextPath: null,
     });
 
-    // 안내 다이얼로그를 엽니다.
     const openNoticeDialog = (title: string, description: string, nextPath: string | null = null) => {
         setNoticeDialog({ open: true, title, description, nextPath });
     };
 
-    // 안내 다이얼로그를 닫고 필요 시 페이지 이동합니다.
     const closeNoticeDialog = () => {
         const nextPath = noticeDialog.nextPath;
         setNoticeDialog((prev) => ({ ...prev, open: false, nextPath: null }));
@@ -113,31 +111,28 @@ const SampleDetailPage = () => {
 
     const hasSuccess = data?.result === ApiResultEnum.SUCCESS && data.code === SuccessResultCodeEnum.OK;
     const detailItem = hasSuccess ? data.data : null;
-
-    // 핵심 로직: 수정을 시작하기 전(!isFormDirty)에는 API 데이터를 보여주고, 시작하면 form state를 보여줍니다.
     const formValue = (!isCreateMode && !isFormDirty && detailItem) ? toFormState(detailItem) : form;
 
     const resolvedError = useMemo(() => {
-        if (isError) return error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.";
-        if (data?.result === ApiResultEnum.FAIL) return data.error?.detail ?? "요청이 실패했습니다.";
+        if (isError) return error instanceof Error ? error.message : t("sampleDetail.errorDuringRequest");
+        if (data?.result === ApiResultEnum.FAIL) return data.error?.detail ?? t("sampleDetail.requestFailed");
         return null;
-    }, [data, error, isError]);
+    }, [data, error, isError, t]);
 
     const upsertMutation = useMutation({
         mutationFn: async () => {
-            // 현재 화면에 보이는 값을 payload로 변환하여 전송
             const payload = toPayload(formValue);
             return isCreateMode ? CreateSampleApi(payload) : UpdateSampleApi(sampleId, payload);
         },
         onSuccess: (response) => {
             if (!(response.result === ApiResultEnum.SUCCESS && response.code === SuccessResultCodeEnum.OK)) {
-                openNoticeDialog("저장 실패", response.error?.detail ?? "저장에 실패했습니다.");
+                openNoticeDialog(t("sampleDetail.saveFailedTitle"), response.error?.detail ?? t("sampleDetail.saveFailed"));
                 return;
             }
             void queryClient.invalidateQueries({ queryKey: ["sample", "list"] });
             void queryClient.invalidateQueries({ queryKey: ["sample", "detail", sampleId] });
-            openNoticeDialog("저장 완료", "수정되었습니다.");
-            setIsFormDirty(false); // 저장 완료 후 다시 API 데이터를 바라보도록 초기화
+            openNoticeDialog(t("sampleDetail.saveDoneTitle"), t("sampleDetail.saveDone"));
+            setIsFormDirty(false);
         }
     });
 
@@ -145,22 +140,19 @@ const SampleDetailPage = () => {
         mutationFn: () => DeleteSampleApi(sampleId),
         onSuccess: (response) => {
             if (!(response.result === ApiResultEnum.SUCCESS && response.code === SuccessResultCodeEnum.OK)) {
-                openNoticeDialog("삭제 실패", response.error?.detail ?? "삭제에 실패했습니다.");
+                openNoticeDialog(t("sampleDetail.deleteFailedTitle"), response.error?.detail ?? t("sampleDetail.deleteFailed"));
                 return;
             }
             void queryClient.invalidateQueries({ queryKey: ["sample", "list"] });
-            openNoticeDialog("삭제 완료", "삭제되었습니다.", "/demo/api");
+            openNoticeDialog(t("sampleDetail.deleteDoneTitle"), t("sampleDetail.deleteDone"), "/demo/api");
         },
     });
 
-    // 폼 입력 시 호출
     const onChange = <K extends keyof FormState>(key: K, value: FormState[K]) => {
         if (!isFormDirty) {
-            // 첫 수정 시: 현재 화면에 보이던 데이터(API or EMPTY)를 기반으로 새로운 상태 생성
             setForm({ ...formValue, [key]: value });
             setIsFormDirty(true);
         } else {
-            // 이후 수정 시: 기존 폼 상태만 업데이트
             setForm((prev) => ({ ...prev, [key]: value }));
         }
     };
@@ -170,19 +162,19 @@ const SampleDetailPage = () => {
             <div className="mx-auto flex w-full min-w-0 max-w-5xl flex-col gap-6 overflow-hidden">
                 <header className="space-y-2">
                     <div className="flex items-center justify-start">
-                        <Button variant="outline" onClick={() => navigate("/demo/api")}>목록으로</Button>
+                        <Button variant="outline" onClick={() => navigate("/demo/api")}>{t("sampleDetail.backToList")}</Button>
                     </div>
-                    <p className="text-sm font-semibold text-muted-foreground">Demo API</p>
+                    <p className="text-sm font-semibold text-muted-foreground">{t("sampleDetail.section")}</p>
                     <h1 className="text-3xl font-semibold tracking-tight">
-                        {isCreateMode ? "Sample 신규 등록" : `Sample 상세 (${sampleId})`}
+                        {isCreateMode ? t("sampleDetail.createTitle") : t("sampleDetail.detailTitle", { id: sampleId })}
                     </h1>
-                    <p className="text-sm text-muted-foreground">/sample/orm CRUD 테스트 페이지입니다.</p>
+                    <p className="text-sm text-muted-foreground">{t("sampleDetail.pageDescription")}</p>
                 </header>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>{isCreateMode ? "등록" : "조회/수정"}</CardTitle>
-                        <CardDescription>필요한 값을 입력한 뒤 저장하세요.</CardDescription>
+                        <CardTitle>{isCreateMode ? t("sampleDetail.create") : t("sampleDetail.edit")}</CardTitle>
+                        <CardDescription>{t("sampleDetail.cardDescription")}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {resolvedError && !isCreateMode ? (
@@ -192,83 +184,64 @@ const SampleDetailPage = () => {
                         ) : null}
 
                         {isLoading && !isCreateMode ? (
-                            <p className="text-sm text-muted-foreground">상세 데이터를 불러오는 중입니다...</p>
+                            <p className="text-sm text-muted-foreground">{t("sampleDetail.loading")}</p>
                         ) : (
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="name">이름</Label>
-                                    <Input id="name" value={formValue.name}
-                                           onChange={(e) => onChange("name", e.target.value)}/>
+                                    <Label htmlFor="name">{t("table.name")}</Label>
+                                    <Input id="name" value={formValue.name} onChange={(e) => onChange("name", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="category">카테고리</Label>
-                                    <Input id="category" value={formValue.category}
-                                           onChange={(e) => onChange("category", e.target.value)}/>
+                                    <Label htmlFor="category">{t("table.category")}</Label>
+                                    <Input id="category" value={formValue.category} onChange={(e) => onChange("category", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="description">설명</Label>
-                                    <Input id="description" value={formValue.description}
-                                           onChange={(e) => onChange("description", e.target.value)}/>
+                                    <Label htmlFor="description">{t("table.description")}</Label>
+                                    <Input id="description" value={formValue.description} onChange={(e) => onChange("description", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="status">상태</Label>
-                                    <Input id="status" value={formValue.status}
-                                           onChange={(e) => onChange("status", e.target.value)}/>
+                                    <Label htmlFor="status">{t("table.status")}</Label>
+                                    <Input id="status" value={formValue.status} onChange={(e) => onChange("status", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="dueDate">마감일</Label>
-                                    <Input id="dueDate" type="date" value={formValue.dueDate}
-                                           onChange={(e) => onChange("dueDate", e.target.value)}/>
+                                    <Label htmlFor="dueDate">{t("table.dueDate")}</Label>
+                                    <Input id="dueDate" type="date" value={formValue.dueDate} onChange={(e) => onChange("dueDate", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="priority">우선순위</Label>
-                                    <Input id="priority" type="number" value={formValue.priority}
-                                           onChange={(e) => onChange("priority", e.target.value)}/>
+                                    <Label htmlFor="priority">{t("table.priority")}</Label>
+                                    <Input id="priority" type="number" value={formValue.priority} onChange={(e) => onChange("priority", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="quantity">수량</Label>
-                                    <Input id="quantity" type="number" value={formValue.quantity}
-                                           onChange={(e) => onChange("quantity", e.target.value)}/>
+                                    <Label htmlFor="quantity">{t("table.quantity")}</Label>
+                                    <Input id="quantity" type="number" value={formValue.quantity} onChange={(e) => onChange("quantity", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="price">가격</Label>
-                                    <Input id="price" type="number" value={formValue.price}
-                                           onChange={(e) => onChange("price", e.target.value)}/>
+                                    <Label htmlFor="price">{t("table.price")}</Label>
+                                    <Input id="price" type="number" value={formValue.price} onChange={(e) => onChange("price", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="rate">비율</Label>
-                                    <Input id="rate" type="number" step="0.01" value={formValue.rate}
-                                           onChange={(e) => onChange("rate", e.target.value)}/>
+                                    <Label htmlFor="rate">{t("table.rate")}</Label>
+                                    <Input id="rate" type="number" step="0.01" value={formValue.rate} onChange={(e) => onChange("rate", e.target.value)}/>
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="memo">메모</Label>
-                                    <Textarea id="memo" value={formValue.memo}
-                                              onChange={(e) => onChange("memo", e.target.value)}/>
+                                    <Label htmlFor="memo">{t("table.memo")}</Label>
+                                    <Textarea id="memo" value={formValue.memo} onChange={(e) => onChange("memo", e.target.value)}/>
                                 </div>
                                 <label className="flex items-center gap-2 text-sm font-medium md:col-span-2">
-                                    <input
-                                        type="checkbox"
-                                        checked={formValue.active}
-                                        onChange={(e) => onChange("active", e.target.checked)}
-                                    />
-                                    활성 여부
+                                    <input type="checkbox" checked={formValue.active} onChange={(e) => onChange("active", e.target.checked)} />
+                                    {t("sampleDetail.activeLabel")}
                                 </label>
                             </div>
                         )}
 
                         <div className="flex flex-wrap gap-2">
-                            <Button variant="outline" onClick={() => navigate("/demo/api")}>목록으로</Button>
-                            <Button onClick={() => upsertMutation.mutate()}
-                                    disabled={upsertMutation.isPending || (isLoading && !isCreateMode)}>
-                                {isCreateMode ? "등록" : "수정"}
+                            <Button variant="outline" onClick={() => navigate("/demo/api")}>{t("sampleDetail.backToList")}</Button>
+                            <Button onClick={() => upsertMutation.mutate()} disabled={upsertMutation.isPending || (isLoading && !isCreateMode)}>
+                                {isCreateMode ? t("sampleDetail.create") : t("sampleDetail.edit")}
                             </Button>
                             {!isCreateMode ? (
-                                <Button
-                                    variant="destructive"
-                                    onClick={() => setIsDeleteDialogOpen(true)}
-                                    disabled={deleteMutation.isPending}
-                                >
-                                    삭제
+                                <Button variant="destructive" onClick={() => setIsDeleteDialogOpen(true)} disabled={deleteMutation.isPending}>
+                                    {t("table.remove")}
                                 </Button>
                             ) : null}
                         </div>
@@ -276,15 +249,14 @@ const SampleDetailPage = () => {
                 </Card>
             </div>
 
-            {/* 삭제 확인 Dialog */}
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>삭제 확인</DialogTitle>
-                        <DialogDescription>정말 삭제하시겠습니까?</DialogDescription>
+                        <DialogTitle>{t("sampleDetail.deleteConfirmTitle")}</DialogTitle>
+                        <DialogDescription>{t("sampleDetail.deleteConfirmDescription")}</DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>취소</Button>
+                        <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>{t("sampleDetail.cancel")}</Button>
                         <Button
                             variant="destructive"
                             onClick={() => {
@@ -293,13 +265,12 @@ const SampleDetailPage = () => {
                             }}
                             disabled={deleteMutation.isPending}
                         >
-                            삭제
+                            {t("table.remove")}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
-            {/* 알림 Dialog */}
             <Dialog open={noticeDialog.open} onOpenChange={(open) => !open && closeNoticeDialog()}>
                 <DialogContent>
                     <DialogHeader>
@@ -307,7 +278,7 @@ const SampleDetailPage = () => {
                         <DialogDescription>{noticeDialog.description}</DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button onClick={closeNoticeDialog}>확인</Button>
+                        <Button onClick={closeNoticeDialog}>{t("sampleDetail.confirm")}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

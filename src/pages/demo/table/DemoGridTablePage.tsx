@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CalendarIcon, ChevronDown, Search } from "lucide-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { getDemoGridTableSampleDataApi } from "@/apis/demo/demoGridTable.api.ts";
 import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
@@ -46,24 +47,19 @@ const withRowClassName = (rows: IDemoGridTableRow[]) =>
         },
     }));
 
-const formatDate = (value?: string) => {
-    if (!value) return "날짜 선택";
-    return format(new Date(value), "yyyy-MM-dd", { locale: ko });
-};
-
-const DatePickerField = ({ label, value, onChange }: {
+const DatePickerField = ({ label, value, onChange, emptyText }: {
     label: string;
     value?: string;
-    onChange: (value?: string) => void
+    onChange: (value?: string) => void;
+    emptyText: string;
 }) => (
     <div className="flex flex-col gap-2">
         <Label>{label}</Label>
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant="outline"
-                        className={cn("justify-start text-left font-normal", !value && "text-muted-foreground")}>
+                <Button variant="outline" className={cn("justify-start text-left font-normal", !value && "text-muted-foreground")}>
                     <CalendarIcon className="mr-2 size-4"/>
-                    {formatDate(value)}
+                    {value ? format(new Date(value), "yyyy-MM-dd", { locale: ko }) : emptyText}
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -79,15 +75,17 @@ const DatePickerField = ({ label, value, onChange }: {
 );
 
 const MultiCheckboxField = <T extends string, >({
-                                                    label,
-                                                    options,
-                                                    selected,
-                                                    onToggle,
-                                                }: {
+    label,
+    options,
+    selected,
+    onToggle,
+    labelRenderer,
+}: {
     label: string;
     options: T[];
     selected: T[];
     onToggle: (next: T[]) => void;
+    labelRenderer: (option: T) => string;
 }) => (
     <div className="flex flex-col gap-2">
         <Label>{label}</Label>
@@ -105,7 +103,7 @@ const MultiCheckboxField = <T extends string, >({
                                 else onToggle(selected.filter((item) => item !== option));
                             }}
                         />
-                        <Label htmlFor={`${label}-${option}`} className="font-normal">{option}</Label>
+                        <Label htmlFor={`${label}-${option}`} className="font-normal">{labelRenderer(option)}</Label>
                     </div>
                 );
             })}
@@ -114,6 +112,7 @@ const MultiCheckboxField = <T extends string, >({
 );
 
 const DemoGridTablePage = () => {
+    const { t } = useTranslation();
     const draft = useGridTablePageStore((state) => state.draft);
     const applied = useGridTablePageStore((state) => state.applied);
     const sorters = useGridTablePageStore((state) => state.sorters);
@@ -127,8 +126,21 @@ const DemoGridTablePage = () => {
     const applyFilters = useGridTablePageStore((state) => state.applyFilters);
     const resetFilters = useGridTablePageStore((state) => state.resetFilters);
 
+    const categoryLabelMap: Record<DemoGridCategory, string> = {
+        "전자기기": t("demoGrid.category.electronics"),
+        "생활용품": t("demoGrid.category.household"),
+        "패션": t("demoGrid.category.fashion"),
+        "사무용품": t("demoGrid.category.office"),
+    };
+
+    const statusLabelMap: Record<DemoGridStatus, string> = {
+        "판매중": t("demoGrid.status.onSale"),
+        "품절": t("demoGrid.status.soldOut"),
+        "품절임박": t("demoGrid.status.almostSoldOut"),
+    };
+
     const [frozenEnabled, setFrozenEnabled] = useState(true);
-    const [eventMessage, setEventMessage] = useState("이벤트 로그가 여기에 표시됩니다.");
+    const [eventMessage, setEventMessage] = useState(t("demoGrid.event.default"));
     const [columnVisible, setColumnVisible] = useState<Record<string, boolean>>(defaultColumnVisibility);
     const [emptyMode, setEmptyMode] = useState(false);
     const [page, setPage] = useState(1);
@@ -164,6 +176,9 @@ const DemoGridTablePage = () => {
         setColumnVisible((prev) => ({ ...prev, [columnName]: visible }));
     }, []);
 
+    const resolvedCategories = applied.categories.map((item) => categoryLabelMap[item]).join(", ") || t("common.all");
+    const resolvedStatuses = applied.statuses.map((item) => statusLabelMap[item]).join(", ") || t("common.all");
+
     return (
         <div className={`space-y-4 ${style.demoGridPlayground}`}>
             <Collapsible open={isFilterPanelOpen} onOpenChange={setIsFilterPanelOpen}>
@@ -171,13 +186,12 @@ const DemoGridTablePage = () => {
                     <CardHeader>
                         <div className="flex items-start justify-between gap-2">
                             <div>
-                                <CardTitle>Grid Table</CardTitle>
-                                <CardDescription>같은 store를 공유하면서 Toast UI / AG Grid를 비교합니다.</CardDescription>
+                                <CardTitle>{t("demoGrid.title")}</CardTitle>
+                                <CardDescription>{t("demoGrid.description")}</CardDescription>
                             </div>
                             <CollapsibleTrigger asChild>
                                 <Button variant="outline" size="sm">
-                                    <ChevronDown
-                                        className={cn("size-4 transition-transform", isFilterPanelOpen && "rotate-180")}/>
+                                    <ChevronDown className={cn("size-4 transition-transform", isFilterPanelOpen && "rotate-180")}/>
                                 </Button>
                             </CollapsibleTrigger>
                         </div>
@@ -186,80 +200,115 @@ const DemoGridTablePage = () => {
                         <CardContent className="space-y-4">
                             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
                                 <div className="flex flex-col gap-2">
-                                    <Label htmlFor="grid-search">전체 검색</Label>
-                                    <Input id="grid-search" value={draft.keyword}
-                                           onChange={(event) => setDraftKeyword(event.target.value)}
-                                           placeholder="상품명/카테고리/상태 검색"/>
+                                    <Label htmlFor="grid-search">{t("demoGrid.searchLabel")}</Label>
+                                    <Input
+                                        id="grid-search"
+                                        value={draft.keyword}
+                                        onChange={(event) => setDraftKeyword(event.target.value)}
+                                        placeholder={t("demoGrid.searchPlaceholder")}
+                                    />
                                 </div>
 
-                                <DatePickerField label="출시일 시작" value={draft.dateFrom} onChange={setDraftDateFrom}/>
-                                <DatePickerField label="출시일 종료" value={draft.dateTo} onChange={setDraftDateTo}/>
+                                <DatePickerField
+                                    label={t("demoGrid.launchDateFrom")}
+                                    value={draft.dateFrom}
+                                    onChange={setDraftDateFrom}
+                                    emptyText={t("demoGrid.datePlaceholder")}
+                                />
+                                <DatePickerField
+                                    label={t("demoGrid.launchDateTo")}
+                                    value={draft.dateTo}
+                                    onChange={setDraftDateTo}
+                                    emptyText={t("demoGrid.datePlaceholder")}
+                                />
 
                                 <div className="flex items-end gap-2">
-                                    <Button type="button" onClick={() => {
-                                        applyFilters();
-                                        setPage(1);
-                                        setEmptyMode(false);
-                                        setEventMessage("검색 조건 반영 완료");
-                                    }}>
-                                        <Search className="size-4"/>검색
+                                    <Button
+                                        type="button"
+                                        onClick={() => {
+                                            applyFilters();
+                                            setPage(1);
+                                            setEmptyMode(false);
+                                            setEventMessage(t("demoGrid.event.searchApplied"));
+                                        }}
+                                    >
+                                        <Search className="size-4"/>{t("common.search")}
                                     </Button>
                                 </div>
                             </div>
 
                             <div className="grid gap-3 md:grid-cols-2">
-                                <MultiCheckboxField label="카테고리" options={CATEGORY_OPTIONS} selected={draft.categories}
-                                                    onToggle={setDraftCategories}/>
-                                <MultiCheckboxField label="상태" options={STATUS_OPTIONS} selected={draft.statuses}
-                                                    onToggle={setDraftStatuses}/>
+                                <MultiCheckboxField
+                                    label={t("demoGrid.categoryLabel")}
+                                    options={CATEGORY_OPTIONS}
+                                    selected={draft.categories}
+                                    onToggle={setDraftCategories}
+                                    labelRenderer={(option) => categoryLabelMap[option]}
+                                />
+                                <MultiCheckboxField
+                                    label={t("demoGrid.statusLabel")}
+                                    options={STATUS_OPTIONS}
+                                    selected={draft.statuses}
+                                    onToggle={setDraftStatuses}
+                                    labelRenderer={(option) => statusLabelMap[option]}
+                                />
                             </div>
 
                             <div className="flex flex-wrap items-center gap-4 border-t pt-4">
                                 <div className="inline-flex items-center gap-2">
-                                    <Checkbox id="includeDiscontinued" checked={draft.includeDiscontinued}
-                                              onCheckedChange={(checked) => setDraftIncludeDiscontinued(checked === true)}/>
-                                    <Label htmlFor="includeDiscontinued">단종 포함</Label>
+                                    <Checkbox id="includeDiscontinued" checked={draft.includeDiscontinued} onCheckedChange={(checked) => setDraftIncludeDiscontinued(checked === true)}/>
+                                    <Label htmlFor="includeDiscontinued">{t("demoGrid.includeDiscontinued")}</Label>
                                 </div>
 
-                                <Button variant="outline" onClick={() => {
-                                    setSorters([{ key: "price", direction: "asc" }, {
-                                        key: "stock",
-                                        direction: "desc"
-                                    }]);
-                                    setPage(1);
-                                    setEmptyMode(false);
-                                    setEventMessage("멀티 정렬 실행: price ASC + stock DESC");
-                                    refetch();
-                                }}>
-                                    멀티 정렬 실행
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setSorters([{ key: "price", direction: "asc" }, { key: "stock", direction: "desc" }]);
+                                        setPage(1);
+                                        setEmptyMode(false);
+                                        setEventMessage(t("demoGrid.event.multiSortDone"));
+                                        refetch();
+                                    }}
+                                >
+                                    {t("demoGrid.multiSort")}
                                 </Button>
 
-                                <Button variant="outline" onClick={() => {
-                                    setEmptyMode(true);
-                                    setEventMessage("Empty data 상태 확인 완료");
-                                }}>
-                                    Empty 상태
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setEmptyMode(true);
+                                        setEventMessage(t("demoGrid.event.emptyChecked"));
+                                    }}
+                                >
+                                    {t("demoGrid.emptyState")}
                                 </Button>
 
-                                <Button variant="secondary" onClick={() => {
-                                    resetFilters();
-                                    setPage(1);
-                                    setPageSize(DEFAULT_TABLE.pageSize);
-                                    setFrozenEnabled(true);
-                                    setSorters([]);
-                                    setEmptyMode(false);
-                                    setColumnVisible(defaultColumnVisibility);
-                                    setEventMessage("필터/정렬/상태 초기화 완료");
-                                    refetch();
-                                }}>
-                                    초기화
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => {
+                                        resetFilters();
+                                        setPage(1);
+                                        setPageSize(DEFAULT_TABLE.pageSize);
+                                        setFrozenEnabled(true);
+                                        setSorters([]);
+                                        setEmptyMode(false);
+                                        setColumnVisible(defaultColumnVisibility);
+                                        setEventMessage(t("demoGrid.event.resetDone"));
+                                        refetch();
+                                    }}
+                                >
+                                    {t("demoGrid.reset")}
                                 </Button>
                             </div>
 
                             <p className="text-xs text-muted-foreground">
-                                적용된 조건: 검색어({applied.keyword || "-"}) /
-                                기간({applied.dateFrom || "-"} ~ {applied.dateTo || "-"}) /
-                                카테고리({applied.categories.join(", ") || "전체"}) / 상태({applied.statuses.join(", ") || "전체"})
+                                {t("demoGrid.appliedSummary", {
+                                    keyword: applied.keyword || "-",
+                                    from: applied.dateFrom || "-",
+                                    to: applied.dateTo || "-",
+                                    categories: resolvedCategories,
+                                    statuses: resolvedStatuses,
+                                })}
                             </p>
                         </CardContent>
                     </CollapsibleContent>
@@ -268,12 +317,11 @@ const DemoGridTablePage = () => {
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-3">
                 <TabsList>
-                    <TabsTrigger value="toast-ui">Toast UI</TabsTrigger>
-                    <TabsTrigger value="ag-grid">AG Grid</TabsTrigger>
+                    <TabsTrigger value="toast-ui">{t("demoGrid.tabs.toast")}</TabsTrigger>
+                    <TabsTrigger value="ag-grid">{t("demoGrid.tabs.ag")}</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="toast-ui" forceMount
-                             className={cn("space-y-4", activeTab !== "toast-ui" && "hidden")}>
+                <TabsContent value="toast-ui" forceMount className={cn("space-y-4", activeTab !== "toast-ui" && "hidden")}>
                     <DemoToastGridTable
                         rows={gridRows}
                         isLoading={isLoading}
@@ -297,6 +345,8 @@ const DemoGridTablePage = () => {
                         onPageChange={setPage}
                         categoryOptions={CATEGORY_OPTIONS}
                         statusOptions={STATUS_OPTIONS}
+                        categoryLabelMap={categoryLabelMap}
+                        statusLabelMap={statusLabelMap}
                     />
                 </TabsContent>
 

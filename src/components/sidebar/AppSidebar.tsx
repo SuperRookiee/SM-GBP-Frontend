@@ -26,8 +26,8 @@ const AppSidebar = () => {
                             <Link to="/" onClick={handleMenuClick}>
                                 <Item className="p-0" size="xs">
                                     <ItemContent>
-                                        <ItemTitle className="text-sm">Miracle</ItemTitle>
-                                        <ItemDescription>v1.0.0</ItemDescription>
+                                        <ItemTitle className="text-sm">{t("sidebar.brand")}</ItemTitle>
+                                        <ItemDescription>{t("sidebar.version")}</ItemDescription>
                                     </ItemContent>
                                 </Item>
                             </Link>

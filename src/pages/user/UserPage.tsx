@@ -47,7 +47,7 @@ const UserPage = () => {
         <div className="flex min-h-full items-center justify-center">
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
                 <header className="space-y-2">
-                    <p className="text-sm font-semibold text-muted-foreground">User Management</p>
+                    <p className="text-sm font-semibold text-muted-foreground">{t("user.management")}</p>
                     <h1 className="text-3xl font-semibold tracking-tight">{t("user.title")}</h1>
                     <p className="text-sm text-muted-foreground">
                         {t("user.description")}

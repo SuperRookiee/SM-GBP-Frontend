@@ -1,4 +1,5 @@
 ﻿import { useCallback, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import Grid from "tui-grid";
 import "tui-grid/dist/tui-grid.css";
 import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
@@ -30,6 +31,8 @@ type Props = {
   onPageChange: (page: number) => void;
   categoryOptions: DemoGridCategory[];
   statusOptions: DemoGridStatus[];
+  categoryLabelMap: Record<DemoGridCategory, string>;
+  statusLabelMap: Record<DemoGridStatus, string>;
 };
 
 const DemoToastGridTable = ({
@@ -55,7 +58,10 @@ const DemoToastGridTable = ({
     onPageChange,
     categoryOptions,
     statusOptions,
+    categoryLabelMap,
+    statusLabelMap,
 }: Props) => {
+    const { t } = useTranslation();
     const gridWrapperRef = useRef<HTMLDivElement | null>(null);
     const gridInstanceRef = useRef<Grid | null>(null);
 
@@ -80,38 +86,38 @@ const DemoToastGridTable = ({
                 el,
                 data: rows,
                 columns: [
-                    { header: "상품 ID", name: "id", align: "center", width: 100, sortable: true, filter: "text" },
-                    { header: "상품명", name: "product", minWidth: 180, sortable: true, filter: "text", editor: "text" },
+                    { header: t("demoGrid.columns.id"), name: "id", align: "center", width: 100, sortable: true, filter: "text" },
+                    { header: t("demoGrid.columns.product"), name: "product", minWidth: 180, sortable: true, filter: "text", editor: "text" },
                     {
-                        header: "카테고리",
+                        header: t("demoGrid.columns.category"),
                         name: "category",
                         align: "center",
                         width: 140,
                         sortable: true,
                         filter: "select",
-                        editor: { type: "select", options: { listItems: categoryOptions.map((value) => ({ text: value, value })) } },
+                        editor: { type: "select", options: { listItems: categoryOptions.map((value) => ({ text: categoryLabelMap[value], value })) } },
                     },
                     {
-                        header: "가격",
+                        header: t("demoGrid.columns.price"),
                         name: "price",
                         align: "right",
                         width: 140,
                         sortable: true,
                         editor: "text",
-                        formatter: ({ value }: { value: unknown }) => `${Number(value).toLocaleString()}원`,
+                        formatter: ({ value }: { value: unknown }) => `${Number(value).toLocaleString()}${t("demoGrid.currencyUnit")}`,
                     },
-                    { header: "재고", name: "stock", align: "right", width: 100, sortable: true, filter: "number", editor: "text" },
-                    { header: "출시일", name: "launchDate", align: "center", width: 160, sortable: true, filter: "date" },
+                    { header: t("demoGrid.columns.stock"), name: "stock", align: "right", width: 100, sortable: true, filter: "number", editor: "text" },
+                    { header: t("demoGrid.columns.launchDate"), name: "launchDate", align: "center", width: 160, sortable: true, filter: "date" },
                     {
-                        header: "상태",
+                        header: t("demoGrid.columns.status"),
                         name: "status",
                         align: "center",
                         width: 140,
                         sortable: true,
                         filter: "select",
-                        editor: { type: "select", options: { listItems: statusOptions.map((value) => ({ text: value, value })) } },
+                        editor: { type: "select", options: { listItems: statusOptions.map((value) => ({ text: statusLabelMap[value], value })) } },
                     },
-                    { header: "단종", name: "discontinued", align: "center", width: 100, sortable: true },
+                    { header: t("demoGrid.columns.discontinued"), name: "discontinued", align: "center", width: 100, sortable: true },
                 ],
                 columnOptions: { resizable: true },
                 rowHeaders: ["rowNum", "checkbox"],
@@ -121,9 +127,9 @@ const DemoToastGridTable = ({
                     height: 40,
                     position: "bottom",
                     columnContent: {
-                        product: { template: () => "합계" },
+                        product: { template: () => t("toastGrid.summaryTotal") },
                         price: { template: (valueMap: { sum: number }) => `₩${Number(valueMap.sum).toLocaleString()}` },
-                        stock: { template: (valueMap: { sum: number }) => `재고 ${valueMap.sum}` },
+                        stock: { template: (valueMap: { sum: number }) => t("toastGrid.summaryStock", { sum: valueMap.sum }) },
                     },
                 },
             });
@@ -131,9 +137,9 @@ const DemoToastGridTable = ({
             grid.setFrozenColumnCount(frozenEnabled ? 2 : 0);
             grid.on("click", (event) => {
                 const typedEvent = event as { rowKey: number; columnName: string };
-                setEventMessage(`Toast UI 셀 클릭: rowKey=${typedEvent.rowKey}, column=${typedEvent.columnName}`);
+                setEventMessage(t("toastGrid.cellClick", { rowKey: typedEvent.rowKey, column: typedEvent.columnName }));
             });
-            grid.on("afterChange", () => setEventMessage("Toast UI 편집 완료"));
+            grid.on("afterChange", () => setEventMessage(t("toastGrid.editDone")));
             gridInstanceRef.current = grid;
         };
 
@@ -144,7 +150,7 @@ const DemoToastGridTable = ({
             grid?.destroy();
             gridInstanceRef.current = null;
         };
-    }, [categoryOptions, frozenEnabled, rows, setEventMessage, statusOptions]);
+    }, [categoryLabelMap, categoryOptions, frozenEnabled, rows, setEventMessage, statusLabelMap, statusOptions, t]);
 
     useEffect(() => {
         applyGridData(rows);
@@ -166,17 +172,17 @@ const DemoToastGridTable = ({
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="inline-flex items-center gap-2">
                         <Checkbox id="frozenColumn" checked={frozenEnabled} onCheckedChange={(checked) => onToggleFrozen(checked === true)} />
-                        <Label htmlFor="frozenColumn">Frozen Column(앞 2개)</Label>
+                        <Label htmlFor="frozenColumn">{t("toastGrid.frozenColumn")}</Label>
                     </div>
                 </div>
 
                 <div>
-                    <p className="mb-2 text-sm font-medium">컬럼 표시/숨김</p>
+                    <p className="mb-2 text-sm font-medium">{t("toastGrid.columnVisibility")}</p>
                     <div className="flex flex-wrap gap-4">
                         {Object.keys(columnVisible).map((column) => (
                             <div key={column} className="inline-flex items-center gap-2">
                                 <Checkbox id={`column-${column}`} checked={columnVisible[column]} onCheckedChange={(checked) => onToggleColumn(column, checked === true)} />
-                                <Label htmlFor={`column-${column}`}>{column}</Label>
+                                <Label htmlFor={`column-${column}`}>{getColumnLabel(column)}</Label>
                             </div>
                         ))}
                     </div>
@@ -184,9 +190,9 @@ const DemoToastGridTable = ({
 
                 <div className="h-90">
                     <div className="text-sm text-muted-foreground">
-                        이벤트 로그: {eventMessage}
-                        {(isLoading || isFetching) && " · 데이터 로딩 중"}
-                        {isError && " · 데이터 조회 실패"}
+                        {t("toastGrid.eventLog")}: {eventMessage}
+                        {(isLoading || isFetching) && ` · ${t("toastGrid.loading")}`}
+                        {isError && ` · ${t("toastGrid.error")}`}
                     </div>
                     <div ref={gridWrapperRef} className="h-full" />
                 </div>
@@ -203,10 +209,24 @@ const DemoToastGridTable = ({
                 pageSize={pageSize}
                 onPageSizeChange={onPageSizeChange}
                 onPageChange={onPageChange}
-                caption={`총 ${totalCount} 건`}
+                caption={t("common.totalCount", { count: totalCount })}
             />
         </Card>
     );
 };
 
 export default DemoToastGridTable;
+    const getColumnLabel = (column: string) => {
+        const keyMap: Record<string, string> = {
+            id: "demoGrid.columns.id",
+            product: "demoGrid.columns.product",
+            category: "demoGrid.columns.category",
+            price: "demoGrid.columns.price",
+            stock: "demoGrid.columns.stock",
+            launchDate: "demoGrid.columns.launchDate",
+            status: "demoGrid.columns.status",
+            discontinued: "demoGrid.columns.discontinued",
+        };
+
+        return keyMap[column] ? t(keyMap[column]) : column;
+    };

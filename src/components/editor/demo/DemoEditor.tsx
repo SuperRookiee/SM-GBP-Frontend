@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { $isListItemNode, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, ListItemNode, ListNode, REMOVE_LIST_COMMAND, } from "@lexical/list";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
@@ -86,6 +87,7 @@ const TabIndentListPlugin = () => {
 };
 
 const EditorToolbar = () => {
+    const { t } = useTranslation();
     const [editor] = useLexicalComposerContext();
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
@@ -163,33 +165,27 @@ const EditorToolbar = () => {
 
     return (
         <div className="flex flex-wrap gap-2 border-b px-4 py-3">
-            <ToolbarButton label="뒤로" icon={<Undo2 size={14}/>} disabled={!canUndo}
-                           onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}/>
-            <ToolbarButton label="앞으로" icon={<Redo2 size={14}/>} disabled={!canRedo}
-                           onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}/>
-            <ToolbarButton label="B" isActive={formats.bold}
-                           onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}/>
-            <ToolbarButton label="I" isActive={formats.italic}
-                           onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}/>
-            <ToolbarButton label="U" isActive={formats.underline}
-                           onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}/>
+            <ToolbarButton label={t("editor.undo")} icon={<Undo2 size={14}/>} disabled={!canUndo} onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}/>
+            <ToolbarButton label={t("editor.redo")} icon={<Redo2 size={14}/>} disabled={!canRedo} onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}/>
+            <ToolbarButton label="B" isActive={formats.bold} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}/>
+            <ToolbarButton label="I" isActive={formats.italic} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}/>
+            <ToolbarButton label="U" isActive={formats.underline} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}/>
             <ToolbarButton label="H1" onClick={() => applyHeading("h1")}/>
             <ToolbarButton label="H2" onClick={() => applyHeading("h2")}/>
-            <ToolbarButton label="본문" onClick={() => applyHeading("paragraph")}/>
-            <ToolbarButton label="왼쪽" icon={<AlignLeft size={14}/>} onClick={() => applyAlign("left")}/>
-            <ToolbarButton label="가운데" icon={<AlignCenter size={14}/>} onClick={() => applyAlign("center")}/>
-            <ToolbarButton label="오른쪽" icon={<AlignRight size={14}/>} onClick={() => applyAlign("right")}/>
-            <ToolbarButton label="양쪽" icon={<AlignJustify size={14}/>} onClick={() => applyAlign("justify")}/>
-            <ToolbarButton label="• List"
-                           onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}/>
-            <ToolbarButton label="1. List"
-                           onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}/>
-            <ToolbarButton label="Clear List" onClick={() => editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined)}/>
+            <ToolbarButton label={t("editor.paragraph")} onClick={() => applyHeading("paragraph")}/>
+            <ToolbarButton label={t("editor.alignLeft")} icon={<AlignLeft size={14}/>} onClick={() => applyAlign("left")}/>
+            <ToolbarButton label={t("editor.alignCenter")} icon={<AlignCenter size={14}/>} onClick={() => applyAlign("center")}/>
+            <ToolbarButton label={t("editor.alignRight")} icon={<AlignRight size={14}/>} onClick={() => applyAlign("right")}/>
+            <ToolbarButton label={t("editor.alignJustify")} icon={<AlignJustify size={14}/>} onClick={() => applyAlign("justify")}/>
+            <ToolbarButton label={t("editor.bulletList")} onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}/>
+            <ToolbarButton label={t("editor.orderedList")} onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}/>
+            <ToolbarButton label={t("editor.clearList")} onClick={() => editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined)}/>
         </div>
     );
 };
 
 const DemoEditor = () => {
+    const { t } = useTranslation();
     const [value, setValue] = useState("");
 
     const onChange = (editorState: EditorState, editor: LexicalEditor) => {
@@ -205,8 +201,8 @@ const DemoEditor = () => {
                     <EditorToolbar/>
                     <div className="editor-shell">
                         <RichTextPlugin
-                            contentEditable={<ContentEditable className="editor-input" aria-label="Demo editor input"/>}
-                            placeholder={<div className="editor-placeholder">내용을 입력해보세요...</div>}
+                            contentEditable={<ContentEditable className="editor-input" aria-label={t("editor.inputAria")} />}
+                            placeholder={<div className="editor-placeholder">{t("editor.placeholder")}</div>}
                             ErrorBoundary={LexicalErrorBoundary}
                         />
                         <HistoryPlugin/>
@@ -220,7 +216,7 @@ const DemoEditor = () => {
             </Card>
 
             <Card className="p-4">
-                <h2 className="mb-3 font-semibold">Lexical JSON Output</h2>
+                <h2 className="mb-3 font-semibold">{t("editor.jsonOutput")}</h2>
                 <ScrollArea className="h-120">
                     <pre className="bg-muted overflow-auto rounded-md p-3 text-xs">{value || "{ }"}</pre>
                 </ScrollArea>
