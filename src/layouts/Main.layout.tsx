@@ -1,6 +1,6 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { useTranslation } from "react-i18next";
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";
 import { useSamplePageStore } from "@/stores/page/demo/sample.store.ts";
 import { useUserPageStore } from "@/stores/page/userPage.store.ts";
@@ -30,10 +30,13 @@ const MainLayout = () => {
     return (
         <div className="flex h-svh min-w-0 flex-col overflow-hidden">
             {/* <AppSidebar /> */}
-            <header className="flex items-center justify-end gap-2 border-b px-4 py-2">
-                <LanguageToggle/>
-                <ThemeToggle/>
-                <Button size="xs" onClick={logout}>{t("common.logout")}</Button>
+            <header className="flex items-center justify-between border-b px-4 py-2">
+                <Link to="/" className="text-2xl font-black tracking-tight">SAMSUNG</Link>
+                <div className="flex items-center gap-2">
+                    <LanguageToggle/>
+                    <ThemeToggle/>
+                    <Button size="xs" onClick={logout}>{t("common.logout")}</Button>
+                </div>
             </header>
             <AppGnb/>
             <ScrollArea className="flex-1">
