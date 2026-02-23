@@ -21,9 +21,9 @@ import { editorConfig } from "@/components/editor/demo/demoEditorConfig";
 import ToolbarButton from "@/components/editor/ToolbarButton";
 import { Card } from "@/components/ui/card";
 import "@/styles/demoEditor.css";
+import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 
 type TextFormat = "bold" | "italic" | "underline";
-
 
 const EditorToolbar = () => {
     const [editor] = useLexicalComposerContext();
@@ -161,7 +161,9 @@ const DemoEditor = () => {
 
             <Card className="p-4">
                 <h2 className="mb-3 font-semibold">Lexical JSON Output</h2>
-                <pre className="bg-muted h-[360px] overflow-auto rounded-md p-3 text-xs">{value || "{ }"}</pre>
+                <ScrollArea className="h-120">
+                    <pre className="bg-muted rounded-md p-3 text-xs">{value || "{ }"}</pre>
+                </ScrollArea>
             </Card>
         </div>
     );
