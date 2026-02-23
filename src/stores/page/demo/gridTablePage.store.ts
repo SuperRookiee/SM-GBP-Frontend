@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtool } from "@/utils/devtools.ts";
-import type { DemoGridCategory, DemoGridStatus, IDemoGridSortOption } from "@/interface/demo/IDemoGridTable.interface.ts";
+import type { DemoGridCategory, DemoGridStatus, IDemoGridSortOption } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
 type GridTableFilterState = {
   keyword: string;
@@ -51,3 +51,4 @@ export const useGridTablePageStore = create<GridTablePageState>()(
         resetFilters: () => set({ draft: { ...initialFilterState }, applied: { ...initialFilterState }, sorters: [] }),
     })),
 );
+

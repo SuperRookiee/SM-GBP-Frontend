@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { AllCommunityModule, type ColDef, ModuleRegistry, type SelectionChangedEvent } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import type { IDemoGridTableRow } from "@/interface/demo/IDemoGridTable.interface.ts";
+import type { IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 import DialogGridRowHandler from "@/components/dialog/demo/DialogGridRowHandler.tsx";
 import { myTheme } from "@/components/table/demo/demoAgGridTheme.ts";
 import Pagination from "@/components/table/Pagination.tsx";

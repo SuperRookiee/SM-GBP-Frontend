@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+﻿import { useCallback, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CalendarIcon, ChevronDown, Search } from "lucide-react";
@@ -8,7 +8,7 @@ import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
 import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
 import { useGridTablePageStore } from "@/stores/page/demo/gridTablePage.store.ts";
 import { cn } from "@/utils/utils.ts";
-import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interface/demo/IDemoGridTable.interface.ts";
+import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 import DemoAgGridTable from "@/components/table/demo/DemoAgGridTable.tsx";
 import DemoToastGridTable from "@/components/table/demo/DemoToastGridTable.tsx";
 import { Button } from "@/components/ui/button.tsx";

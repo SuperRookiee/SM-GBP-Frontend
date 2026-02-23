@@ -1,11 +1,11 @@
-import { Delete, Get, Post, Put } from "@/utils/http.ts";
+﻿import { Delete, Get, Post, Put } from "@/utils/http.ts";
 import type {
     ISampleApiItem,
     ISampleListRequest,
     ISampleListResponse,
     ISampleUpsertPayload,
-} from "@/interface/demo/ISample.interface.ts";
-import type { IApiResponse } from "@/interface/IApiResponse.ts";
+} from "@/interfaces/demo/ISample.interface.ts";
+import type { IApiResponse } from "@/interfaces/IApiResponse.ts";
 
 // 샘플 목록을 조회합니다.
 export const GetSampleListApi = (params: ISampleListRequest) => {

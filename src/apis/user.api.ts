@@ -1,4 +1,4 @@
-import type { IUser, IUserSampleDataParams } from "@/interface/IUser.ts";
+import type { IUser, IUserSampleDataParams } from "@/interfaces/IUser.ts";
 import { USER_SAMPLE_DATA } from "@/tests/data/user.test.ts";
 
 export type UserTableResponse = {
@@ -39,3 +39,4 @@ export const getUserSampleDataApi = async ({
         total: sortedRows.length,
     };
 };
+

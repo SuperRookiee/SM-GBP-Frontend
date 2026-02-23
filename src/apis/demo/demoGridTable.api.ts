@@ -1,4 +1,4 @@
-import type { IDemoGridSortOption, IDemoGridTableRow, IDemoGridTableSampleDataParams } from "@/interface/demo/IDemoGridTable.interface.ts";
+import type { IDemoGridSortOption, IDemoGridTableRow, IDemoGridTableSampleDataParams } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 import { DEMO_GRID_TABLE_SAMPLE_DATA } from "@/tests/data/demoGridTableSampleData.test.ts";
 
 const compareByDirection = (a: string | number, b: string | number, direction: "asc" | "desc") => {
@@ -49,3 +49,4 @@ export const getDemoGridTableSampleDataApi = async ({
 
     return sortRows(filteredRows, sorters);
 };
+

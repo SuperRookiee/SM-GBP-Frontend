@@ -17,8 +17,8 @@ import { mergeRegister } from "@lexical/utils";
 import type { EditorState, ElementFormatType, Klass, LexicalEditor, LexicalNode } from "lexical";
 import { $createParagraphNode, $getSelection, $isRangeSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_LOW, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, KEY_TAB_COMMAND, OUTDENT_CONTENT_COMMAND, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND, } from "lexical";
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Redo2, Undo2 } from "lucide-react";
-import ToolbarButton from "@/components/editor/ToolbarButton";
-import { Card } from "@/components/ui/card";
+import ToolbarButton from "@/components/editor/ToolbarButton.tsx";
+import { Card } from "@/components/ui/card.tsx";
 import "@/styles/demoEditor.css";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 

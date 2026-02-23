@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { IUser } from "@/interface/IUser.ts";
+import type { IUser } from "@/interfaces/IUser.ts";
 
 export type UserColumn<T = IUser> = {
   key: keyof T;
@@ -16,3 +16,4 @@ export type UserFilterOption<T = IUser> = {
   value: "all" | keyof T;
   label: string;
 };
+

@@ -1,12 +1,12 @@
 import { useActionState } from "react";
 import { z } from "zod";
+import type { SampleDetailFieldName, SampleDetailFormState, SampleDetailFormValues } from "@/types/demo/sampleDetailPage.type.ts";
 import SubmitButton from "@/components/common/SubmitButton.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { SampleDetailFieldName, SampleDetailFormState, SampleDetailFormValues } from "@/type/demo/sampleDetailPage.type.ts";
 
 const roleEnum = z.enum(["designer", "developer", "manager"]);
 

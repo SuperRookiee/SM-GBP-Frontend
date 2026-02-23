@@ -1,4 +1,4 @@
-import type { IUser } from "@/interface/IUser.ts";
+﻿import type { IUser } from "@/interfaces/IUser.ts";
 import { Role } from "@/enums/role.ts";
 
 export const USER_SAMPLE_DATA: IUser[] = [

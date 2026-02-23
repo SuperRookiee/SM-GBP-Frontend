@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { IDemoDataTableRow } from "@/interface/demo/IDemoDataTable.interface.ts";
+import type { IDemoDataTableRow } from "@/interfaces/demo/IDemoDataTable.interface.ts";
 
 export type DemoDataTableColumn<T = IDemoDataTableRow> = {
   key: keyof T | string;
@@ -21,3 +21,4 @@ export type DemoDataTableResponse = {
   rows: IDemoDataTableRow[];
   total: number;
 };
+

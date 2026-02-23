@@ -1,4 +1,4 @@
-import type { IDemoGridTableRow } from "@/interface/demo/IDemoGridTable.interface.ts";
+﻿import type { IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
 export const DEMO_GRID_TABLE_SAMPLE_DATA: IDemoGridTableRow[] = [
     { id: 1, product: "무선 키보드", category: "전자기기", price: 65000, stock: 25, status: "판매중", launchDate: "2024-01-11", discontinued: "N" },

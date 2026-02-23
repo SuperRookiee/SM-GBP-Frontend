@@ -1,6 +1,6 @@
 import type { TFunction } from "i18next";
-import type { IDemoDataTableRow } from "@/interface/demo/IDemoDataTable.interface.ts";
-import type { ISampleRow } from "@/interface/demo/ISample.interface.ts";
+import type { IDemoDataTableRow } from "@/interfaces/demo/IDemoDataTable.interface.ts";
+import type { ISampleRow } from "@/interfaces/demo/ISample.interface.ts";
 import type { ActionItem } from "@/types/ActionItem.type.ts";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demo/demoDataTable.types.ts";
 import type { UserColumn, UserFilterOption } from "@/types/user.types.ts";
@@ -94,3 +94,4 @@ export const getUserTableColumns = (t: TFunction): UserColumn[] => [
     { key: "role", label: t("table.permission"), width: 140, filterable: true },
     { key: "user_id", label: "User ID", width: 180, filterable: true },
 ];
+

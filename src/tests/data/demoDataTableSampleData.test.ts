@@ -1,4 +1,4 @@
-import type { IDemoDataTableRow } from "@/interface/demo/IDemoDataTable.interface.ts";
+﻿import type { IDemoDataTableRow } from "@/interfaces/demo/IDemoDataTable.interface.ts";
 
 export const DEMO_DATA_TABLE_SAMPLE_DATA: IDemoDataTableRow[] = [
     {

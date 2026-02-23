@@ -1,6 +1,6 @@
 import type { BasePageStore } from "@/stores/page/base.store.ts";
 import { createTablePageStore } from "@/stores/page/base.store.ts";
-import type { ISampleRow } from "@/interface/demo/ISample.interface.ts";
+import type { ISampleRow } from "@/interfaces/demo/ISample.interface.ts";
 
 export const useSamplePageStore = createTablePageStore<ISampleRow>({
     persistKey: "sample-data-table-state",
@@ -8,3 +8,4 @@ export const useSamplePageStore = createTablePageStore<ISampleRow>({
 });
 
 export type SamplePageState = BasePageStore<ISampleRow>;
+

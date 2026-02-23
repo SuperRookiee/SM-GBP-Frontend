@@ -1,4 +1,4 @@
-import DemoEditor from "./DemoEditor";
+import DemoEditor from "@/components/editor/demo/DemoEditor.tsx";
 
 const DemoEditorPage = () => {
     return (
