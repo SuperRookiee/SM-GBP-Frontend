@@ -30,7 +30,6 @@ const App = () => {
                 <Route path="/forgot_password" element={<ForgotPasswordPage/>}/>
                 <Route path="/forgot-password" element={<Navigate to="/forgot_password" replace/>}/>
                 <Route path="/sign_up" element={<SignupPage/>}/>
-                <Route path="/signup" element={<Navigate to="/sign_up" replace/>}/>
             </Route>
 
             {/* Protected Routes */}
@@ -60,7 +59,6 @@ const App = () => {
                     </Route>
 
                     <Route path="/my_page" element={<MyPage/>}/>
-                    <Route path="/mypage" element={<Navigate to="/my_page" replace/>}/>
 
                     <Route path="*" element={<NotFound/>}/>
                 </Route>
