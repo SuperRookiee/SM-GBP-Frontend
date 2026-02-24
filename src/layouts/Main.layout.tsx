@@ -1,4 +1,5 @@
-﻿import { ErrorBoundary } from "react-error-boundary";
+﻿import { Fragment } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";
@@ -71,16 +72,18 @@ const MainLayout = () => {
                                 const isLast = index === breadcrumbs.length - 1;
 
                                 return (
-                                    <BreadcrumbItem key={item.href}>
+                                    <Fragment key={item.href}>
                                         <BreadcrumbSeparator />
-                                        {isLast ? (
-                                            <BreadcrumbPage>{item.title}</BreadcrumbPage>
-                                        ) : (
-                                            <BreadcrumbLink asChild>
-                                                <Link to={item.href}>{item.title}</Link>
-                                            </BreadcrumbLink>
-                                        )}
-                                    </BreadcrumbItem>
+                                        <BreadcrumbItem>
+                                            {isLast ? (
+                                                <BreadcrumbPage>{item.title}</BreadcrumbPage>
+                                            ) : (
+                                                <BreadcrumbLink asChild>
+                                                    <Link to={item.href}>{item.title}</Link>
+                                                </BreadcrumbLink>
+                                            )}
+                                        </BreadcrumbItem>
+                                    </Fragment>
                                 );
                             })}
                         </BreadcrumbList>
@@ -95,3 +98,4 @@ const MainLayout = () => {
 };
 
 export default MainLayout;
+

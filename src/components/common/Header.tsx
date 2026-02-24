@@ -1,12 +1,12 @@
-﻿import { Bell, LogOut } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { useAuthStore } from "@/stores/auth.store.ts";
+﻿import {Bell, LogOut} from "lucide-react";
+import {useTranslation} from "react-i18next";
+import {Link} from "react-router-dom";
+import {useAuthStore} from "@/stores/auth.store.ts";
 import useLogout from "@/hooks/useLogout.tsx";
 import LanguageToggle from "@/components/common/LanguageToggle.tsx";
 import ThemeToggle from "@/components/common/ThemeToggle.tsx";
-import { Button } from "@/components/ui/button.tsx";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx";
+import {Button} from "@/components/ui/button.tsx";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuTrigger} from "@/components/ui/dropdown-menu.tsx";
 
 const Header = () => {
     const { t } = useTranslation();

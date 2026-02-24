@@ -11,6 +11,7 @@ import {Card, CardContent} from "@/components/ui/card.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Label} from "@/components/ui/label.tsx";
+import {USER_SAMPLE_DATA} from "@/tests/data/user.test.ts";
 
 type LoginFormState = {
     submitted: boolean;
@@ -20,6 +21,9 @@ type LoginSubmitButtonProps = {
     disabled: boolean;
     text: string;
 };
+
+const findUserByLoginId = (loginId: string) =>
+    USER_SAMPLE_DATA.find((user) => user.user_id.toLowerCase() === loginId.trim().toLowerCase());
 
 const LoginSubmitButton = ({disabled, text}: LoginSubmitButtonProps) => {
     const {pending} = useFormStatus();
@@ -40,20 +44,20 @@ const LoginPage = () => {
     const [id, setId] = useState(savedId);
     const [password, setPassword] = useState("");
     const [rememberId, setRememberId] = useState(Boolean(savedId));
-
-    // 인증이 필요한 페이지에서 넘어왔다면 원래 경로로 보낸다.
-    const from = location.state?.from?.pathname || "/";
+    const from = location.state?.from?.pathname || "/"; // 인증이 필요한 페이지에서 넘어왔다면 원래 경로로 보낸다.
 
     const [formState, loginAction, isPending] = useActionState(
         (_prevState: LoginFormState, formData: FormData): LoginFormState => {
             const submittedId = String(formData.get("id") ?? "").trim();
-            const submittedPassword = String(formData.get("password") ?? "");
+            const submittedPassword = String(formData.get("password") ?? "").trim();
+            const matchedUser = findUserByLoginId(submittedId);
 
-            if (submittedId === "1" && submittedPassword === "1") {
+            // #. 임시 로그인 규칙: ID는 user_id, 비밀번호는 password와 일치해야 로그인 성공
+            if (matchedUser && submittedPassword === matchedUser.password) {
                 if (rememberId) setCookie(REMEMBER_ID_COOKIE_KEY, submittedId, REMEMBER_ID_COOKIE_MAX_AGE);
                 else removeCookie(REMEMBER_ID_COOKIE_KEY);
 
-                setUser({id: 1, name: t("login.admin"), role: "admin", user_id: "admin"});
+                setUser(matchedUser);
                 navigate(from, {replace: true});
             }
 
@@ -62,8 +66,9 @@ const LoginPage = () => {
         {submitted: false},
     );
 
-    const showIdError = formState.submitted && id !== "1";
-    const showPasswordError = formState.submitted && password !== "1";
+    const matchedUser = findUserByLoginId(id);
+    const showIdError = formState.submitted && !matchedUser;
+    const showPasswordError = formState.submitted && !!matchedUser && password.trim() !== matchedUser.password;
     const isFormReady = id.trim().length > 0 && password.trim().length > 0;
 
     // 아이디 저장 체크 상태에 따라 쿠키를 동기화한다.

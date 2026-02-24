@@ -73,7 +73,6 @@
             privacy: "개인정보 처리방침",
             termsSuffix: "에 동의하게 됩니다.",
             failed: "아이디 또는 비밀번호가 틀렸습니다.",
-            admin: "관리자",
         },
         signup: {
             title: "회원가입",

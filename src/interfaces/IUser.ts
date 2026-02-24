@@ -5,6 +5,7 @@ export interface IUser {
     name: string;
     role: Role;
     user_id: string;
+    password: string;
 }
 
 export interface IUserSampleDataParams {

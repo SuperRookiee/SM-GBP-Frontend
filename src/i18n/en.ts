@@ -72,8 +72,7 @@
             and: "and",
             privacy: "Privacy Policy",
             termsSuffix: ".",
-            failed: "Invalid ID or password.",
-            admin: "Admin"
+            failed: "Invalid ID or password."
         },
         signup: {
             title: "Sign Up",
