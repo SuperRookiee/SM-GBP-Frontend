@@ -1,18 +1,17 @@
-﻿import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { MENU } from "@/constants/menu.constants.tsx";
-import { cn } from "@/utils/utils.ts";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle, } from "@/components/ui/navigation-menu.tsx";
+﻿import {useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {Link} from "react-router-dom";
+import {MENU} from "@/constants/menu.constants.tsx";
+import {cn} from "@/utils/utils.ts";
+import {NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle,} from "@/components/ui/navigation-menu.tsx";
 
-const AppGnb = () => {
+const GNB = () => {
     const { t } = useTranslation();
     const [openMenuKey, setOpenMenuKey] = useState<string | null>(null);
 
-    const openMenu = useMemo(
-        () => MENU.navMain.find((item) => item.titleKey === openMenuKey && item.items?.length),
-        [openMenuKey]
-    );
+    const openMenu = useMemo(() =>
+        MENU.navMain.find((item) => item.titleKey === openMenuKey && item.items?.length),
+    [openMenuKey]);
 
     return (
         <div className="relative z-40 border-b bg-background" onMouseLeave={() => setOpenMenuKey(null)}>
@@ -82,4 +81,4 @@ const AppGnb = () => {
     );
 };
 
-export default AppGnb;
+export default GNB;
