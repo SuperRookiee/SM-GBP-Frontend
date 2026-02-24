@@ -1,5 +1,6 @@
 import type {SignupAuthorityGroup, SignupSelectOption} from "@/types/signup.types.ts";
 
+// 권역 옵션
 export const SIGNUP_AUTHORITY_OPTIONS: SignupSelectOption[] = [
     {value: "default", labelKey: "signup.options.authority.default"},
     {value: "all", labelKey: "signup.options.authority.all"},
@@ -14,22 +15,7 @@ export const SIGNUP_AUTHORITY_OPTIONS: SignupSelectOption[] = [
     {value: "sw_asia", labelKey: "signup.options.authority.swAsia"},
 ];
 
-export const SIGNUP_CORPORATION_OPTIONS: SignupSelectOption[] = [
-    {value: "default", labelKey: "signup.options.corporation.default"},
-    {value: "all", labelKey: "signup.options.corporation.all"},
-    {value: "sec", labelKey: "signup.options.corporation.sec"},
-    {value: "sdc", labelKey: "signup.options.corporation.sdc"},
-];
-
-export const SIGNUP_COUNTRY_OPTIONS: SignupSelectOption[] = [
-    {value: "default", labelKey: "signup.options.country.default"},
-    {value: "all", labelKey: "signup.options.country.all"},
-    {value: "kr", labelKey: "signup.options.country.kr"},
-    {value: "us", labelKey: "signup.options.country.us"},
-    {value: "uk", labelKey: "signup.options.country.uk"},
-    {value: "de", labelKey: "signup.options.country.de"},
-];
-
+// 전화번호 국가 코드
 export const SIGNUP_PHONE_CODE_OPTIONS: SignupSelectOption[] = [
     {value: "+82", labelKey: "signup.options.phoneCode.kr"},
     {value: "+1", labelKey: "signup.options.phoneCode.us"},
@@ -37,6 +23,7 @@ export const SIGNUP_PHONE_CODE_OPTIONS: SignupSelectOption[] = [
     {value: "+49", labelKey: "signup.options.phoneCode.de"},
 ];
 
+// 계정 권한 레벨 옵션 (default: 일반 사용자, corporation_staff: 법인 직원, corporation_admin: 법인 관리자, hq_staff: 본사 직원, hq_admin: 본사 관리자)
 export const SIGNUP_PERMISSION_LEVEL_OPTIONS: SignupSelectOption[] = [
     {value: "default", labelKey: "signup.options.permissionLevel.default"},
     {value: "corporation_staff", labelKey: "signup.options.permissionLevel.corporationStaff"},

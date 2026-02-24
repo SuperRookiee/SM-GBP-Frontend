@@ -9,12 +9,10 @@ import {SectionTitle} from "@/components/signup/SectionTitle.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent} from "@/components/ui/card.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
-
-type TermKey = "service" | "privacy" | "overseas" | "marketing";
 
 type FormValues = {
     authority: string;
@@ -57,6 +55,8 @@ const DEFAULT_FORM: FormValues = {
     confirmPassword: "",
     permissionLevel: "",
 };
+
+type TermKey = "service" | "privacy" | "overseas" | "marketing";
 
 const MOCK_TAKEN_EMAILS = ["admin@samsung.com", "test@samsung.com"];
 
@@ -346,6 +346,8 @@ const SignupPage = () => {
             return;
         }
 
+        const submitPayload = {form, agreements};
+        console.log("signup submit payload", submitPayload);
         setValidationErrors({});
         setOpenCompleteDialog(true);
     };
@@ -479,7 +481,7 @@ const SignupPage = () => {
                                             className="min-w-56 flex-1"
                                         />
                                         <Button type="button" variant="secondary" onClick={onCheckDuplicate}>{t("signup.buttons.checkDuplicate")}</Button>
-                                        <Button type="button" onClick={onSendAuthCode}>
+                                        <Button type="button" onClick={onSendAuthCode} disabled={!isEmailDuplicateChecked || !isEmailAvailable}>
                                             {generatedAuthCode ? "인증코드 재발송" : t("signup.buttons.sendAuthCode")}
                                         </Button>
                                     </div>
@@ -604,6 +606,9 @@ const SignupPage = () => {
                 <DialogContent className="max-h-[80svh] overflow-auto sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>{openTerm ? termMeta[openTerm].title : ""}</DialogTitle>
+                        <DialogDescription>
+                            약관 전문 내용을 확인하고 동의 여부를 선택할 수 있습니다.
+                        </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-3 text-sm leading-6">
                         {openTerm ? termMeta[openTerm].body.map((line) => <p key={line}>{line}</p>) : null}
@@ -627,6 +632,9 @@ const SignupPage = () => {
                 <DialogContent className="sm:max-w-xl">
                     <DialogHeader>
                         <DialogTitle>{t("signup.completeDialog.title")}</DialogTitle>
+                        <DialogDescription>
+                            회원가입 신청 완료 안내와 후속 절차를 확인할 수 있습니다.
+                        </DialogDescription>
                     </DialogHeader>
                     <p className="text-center text-base leading-7">
                         {t("signup.completeDialog.line1")}<br/>
