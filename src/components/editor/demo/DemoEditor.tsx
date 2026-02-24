@@ -51,6 +51,7 @@ const editorConfig = {
     },
 };
 
+// #. 리스트에 선택값이 있는지 판단한다.
 const isSelectionInList = () => {
     const selection = $getSelection();
 
@@ -110,10 +111,12 @@ const EditorToolbar = () => {
         });
     }, [editor]);
 
+// #. 문단 정렬 설정을 적용한다.
     const applyAlign = (alignType: ElementFormatType) => {
         editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignType);
     };
 
+// #. 헤딩 또는 본문 형식을 적용한다.
     const applyHeading = (headingType: "h1" | "h2" | "paragraph") => {
         editor.update(() => {
             const selection = $getSelection();
@@ -188,6 +191,7 @@ const DemoEditor = () => {
     const { t } = useTranslation();
     const [value, setValue] = useState("");
 
+// #. 에디터 내용 변경 이벤트를 처리한다.
     const onChange = (editorState: EditorState, editor: LexicalEditor) => {
         editorState.read(() => {
             setValue(JSON.stringify(editor.toJSON(), null, 2));
@@ -226,3 +230,4 @@ const DemoEditor = () => {
 };
 
 export default DemoEditor;
+

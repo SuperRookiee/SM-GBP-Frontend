@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+﻿import { type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
@@ -35,6 +35,7 @@ const Pagination = ({
     const { t } = useTranslation();
     const resolvedCaption = caption ?? t("common.totalCount", { count: totalCount });
 
+// #. 페이지 크기 변경 이벤트를 처리한다.
     const onChangePageSize = (value: string) => {
         if (!onPageSizeChange) return;
         const nextPageSize = Number(value);
@@ -94,3 +95,4 @@ const Pagination = ({
 };
 
 export default Pagination;
+

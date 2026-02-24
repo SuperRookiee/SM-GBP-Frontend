@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSampleDataApi } from "@/apis/user.api";
@@ -7,6 +7,7 @@ import { getUserTableColumns, getUserTableFilter } from "@/constants/table.const
 import { useUserPageStore } from "@/stores/page/userPage.store.ts";
 import DataTable from "@/components/table/DataTable";
 
+// #. 사용자 목록 페이지 컴포넌트다.
 const UserPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -84,3 +85,4 @@ const UserPage = () => {
 };
 
 export default UserPage;
+

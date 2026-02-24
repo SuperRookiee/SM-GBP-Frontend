@@ -1,4 +1,4 @@
-import type { StoreApi } from "zustand";
+﻿import type { StoreApi } from "zustand";
 
 type SetState<T> = StoreApi<T>["setState"];
 type GetState<T> = StoreApi<T>["getState"];
@@ -93,8 +93,10 @@ export const createStoreHelpers = <T, Snapshot extends Record<string, unknown>>(
 }: CreateStoreHelpersOptions<T, Snapshot>) => {
     const setIfChanged = createSetIfChanged<T>(set, get);
     const defaults = snapshot(initialState);
+// #. 현재 상태가 기본값에서 변경됐는지 판단한다.
     const hasStateChanged = () => hasChanged<Snapshot>(snapshot(get()), defaults, { comparators });
     const reset = createResetIfDirty(set, get, initialState, hasStateChanged);
+// #. 스토어 상태를 초기값으로 재설정한다.
     const resetStore = () => {
         if (!resetStorePartial) return;
         setIfChanged(resetStorePartial);
@@ -122,3 +124,4 @@ export const createPageStoreHelpers = <T extends { page: number }, Snapshot exte
         setWithPageReset,
     };
 };
+

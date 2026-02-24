@@ -1,4 +1,4 @@
-import * as React from "react"
+﻿import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 import { cn } from "@/utils/utils"
@@ -30,6 +30,7 @@ type SidebarContextProps = {
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
 
+// #. 사이드바 상태와 제어 함수를 제공한다.
 const useSidebar = () => {
   const context = React.useContext(SidebarContext)
   if (!context) {
@@ -81,6 +82,7 @@ const SidebarProvider = ({
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
+// #. 단축키 입력으로 사이드바 토글을 처리한다.
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
         event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
@@ -688,3 +690,4 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+

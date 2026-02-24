@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useMemo, useRef } from "react";
+﻿import { useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 export const useResetStore = (pathScope: string, reset: () => void) => {
@@ -27,12 +27,14 @@ export const useResetStore = (pathScope: string, reset: () => void) => {
     }, [pathname, normalizedScope, onReset]);
 };
 
+// #. 현재 경로가 지정한 범위 안에 있는지 판단한다.
 const isInScopeNormalized = (pathname: string, normalizedScope: string) => {
     if (!normalizedScope) return false;
     if (pathname === normalizedScope) return true;
     return pathname.startsWith(`${normalizedScope}/`);
 };
 
+// #. 경로 문자열을 비교 가능한 형태로 정규화한다.
 const normalizePath = (path: string) => {
     const trimmed = path.trim(); // 빈 문자열/공백 입력 방어
     if (!trimmed) return "";
@@ -41,3 +43,4 @@ const normalizePath = (path: string) => {
 
     return trimmed.endsWith("/") ? trimmed.slice(0, -1) : trimmed;
 };
+

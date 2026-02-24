@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from "lucide-react";
+﻿import { ChevronRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { MENU } from "@/constants/menu.constants.tsx";
@@ -13,6 +13,7 @@ const AppSidebar = () => {
     const { isMobile, setOpenMobile } = useSidebar();
     const { t } = useTranslation();
 
+// #. 메뉴 클릭 시 사이드바 닫기 동작을 처리한다.
     const handleMenuClick = () => {
         if (isMobile) setOpenMobile(false);
     }
@@ -137,3 +138,4 @@ const AppSidebar = () => {
 };
 
 export default AppSidebar;
+

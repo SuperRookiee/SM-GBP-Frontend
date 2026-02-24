@@ -1,7 +1,7 @@
 import {useState, type ComponentProps} from "react";
 import {Eye, EyeOff} from "lucide-react";
-import {Input} from "@/components/ui/input.tsx";
 import {cn} from "@/utils/utils.ts";
+import {Input} from "@/components/ui/input.tsx";
 
 type PasswordInputProps = Omit<ComponentProps<typeof Input>, "type"> & {
     containerClassName?: string;

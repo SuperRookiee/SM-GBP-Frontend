@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 import DialogChatSettings from "@/components/dialog/demo/DialogChatSettings"
 import DialogNoCloseButton from "@/components/dialog/demo/DialogNoCloseButton"
 import DialogScrollableContent from "@/components/dialog/demo/DialogScrollableContent"

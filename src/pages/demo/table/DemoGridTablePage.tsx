@@ -37,6 +37,7 @@ const defaultColumnVisibility: Record<string, boolean> = {
     discontinued: true,
 };
 
+// #. 행 데이터에 표시용 클래스명을 합성한다.
 const withRowClassName = (rows: IDemoGridTableRow[]) =>
     rows.map((row) => ({
         ...row,
@@ -372,3 +373,4 @@ const DemoGridTablePage = () => {
 };
 
 export default DemoGridTablePage;
+

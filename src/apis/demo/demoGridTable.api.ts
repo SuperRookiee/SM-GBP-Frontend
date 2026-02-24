@@ -1,6 +1,7 @@
-import { DEMO_GRID_TABLE_SAMPLE_DATA } from "@/tests/data/demoGridTableSampleData.test.ts";
+﻿import { DEMO_GRID_TABLE_SAMPLE_DATA } from "@/tests/data/demoGridTableSampleData.test.ts";
 import type { IDemoGridSortOption, IDemoGridTableRow, IDemoGridTableSampleDataParams } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
+// #. 정렬 방향에 따라 두 값을 비교한다.
 const compareByDirection = (a: string | number, b: string | number, direction: "asc" | "desc") => {
     const comparison = typeof a === "number" && typeof b === "number"
         ? a - b
@@ -9,6 +10,7 @@ const compareByDirection = (a: string | number, b: string | number, direction: "
     return direction === "asc" ? comparison : -comparison;
 };
 
+// #. 정렬 조건에 따라 목록을 정렬한다.
 const sortRows = (rows: IDemoGridTableRow[], sorters: IDemoGridSortOption[] = []) => {
     if (sorters.length === 0) return rows;
 
@@ -49,4 +51,5 @@ export const getDemoGridTableSampleDataApi = async ({
 
     return sortRows(filteredRows, sorters);
 };
+
 

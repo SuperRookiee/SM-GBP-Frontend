@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+﻿import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { DEFAULT_TABLE, SELECT_COL_SIZE } from "@/constants/table.constants.tsx";
@@ -55,6 +55,7 @@ interface IGridTableClientProps<T> {
     onRowClick?: (row: T) => void;          // 행 클릭 핸들러
 }
 
+// #. 컬럼 너비 스타일 객체를 계산한다.
 const getColumnWidthStyle = (width?: string | number) => {
     if (width === undefined) return undefined;
     const computedWidth = typeof width === "number" ? `${width}px` : width;
@@ -162,6 +163,7 @@ const DataTable = <T, >({
         Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
     [pageWindowEnd, pageWindowStart]);
 
+// #. 현재 정렬 상태에 맞는 표시값을 반환한다.
     const sortIndicator = (key: keyof T) => {
         if (sortKey !== key) return null;
         return <span className="ml-1 text-xs text-muted-foreground">{sortDirection === "asc" ? "▲" : "▼"}</span>;
@@ -495,3 +497,4 @@ const DataTable = <T, >({
 };
 
 export default DataTable;
+

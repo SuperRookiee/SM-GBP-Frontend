@@ -93,10 +93,12 @@ const SampleDetailPage = () => {
         nextPath: null,
     });
 
+// #. 알림 다이얼로그를 열고 메시지를 설정한다.
     const openNoticeDialog = (title: string, description: string, nextPath: string | null = null) => {
         setNoticeDialog({ open: true, title, description, nextPath });
     };
 
+// #. 알림 다이얼로그를 닫고 후속 이동을 처리한다.
     const closeNoticeDialog = () => {
         const nextPath = noticeDialog.nextPath;
         setNoticeDialog((prev) => ({ ...prev, open: false, nextPath: null }));
@@ -148,7 +150,8 @@ const SampleDetailPage = () => {
         },
     });
 
-    const onChange = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+// #. 입력 폼 값 변경 이벤트를 처리한다.
+const onChange = <K extends keyof FormState>(key: K, value: FormState[K]) => {
         if (!isFormDirty) {
             setForm({ ...formValue, [key]: value });
             setIsFormDirty(true);
@@ -287,3 +290,4 @@ const SampleDetailPage = () => {
 };
 
 export default SampleDetailPage;
+

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text";
@@ -49,6 +49,7 @@ const DemoEditorToolbar = () => {
         });
     }, [editor]);
 
+// #. 제목/본문 형식을 토글한다.
     const toggleHeading = () => {
         editor.update(() => {
             const selection = $getSelection();
@@ -98,3 +99,4 @@ const DemoEditorToolbar = () => {
 };
 
 export default DemoEditorToolbar;
+

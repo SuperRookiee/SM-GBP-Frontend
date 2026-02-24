@@ -1,4 +1,4 @@
-type SectionTitleProps = {
+﻿type SectionTitleProps = {
     title: string;
     required?: boolean;
     hint?: string;

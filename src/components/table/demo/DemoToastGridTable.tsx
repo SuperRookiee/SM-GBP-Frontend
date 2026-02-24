@@ -87,6 +87,7 @@ const DemoToastGridTable = ({
         let grid: Grid | null = null;
         let frameId: number;
 
+// #. 토스트 그리드 인스턴스를 초기화한다.
         const initGrid = () => {
             const el = gridWrapperRef.current;
             if (!el) return;
@@ -230,3 +231,4 @@ const DemoToastGridTable = ({
 };
 
 export default DemoToastGridTable;
+

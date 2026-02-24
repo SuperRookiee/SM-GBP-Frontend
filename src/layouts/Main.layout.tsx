@@ -1,4 +1,4 @@
-import { ErrorBoundary } from "react-error-boundary";
+﻿import { ErrorBoundary } from "react-error-boundary";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";

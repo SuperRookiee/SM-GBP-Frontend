@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getUserDetailSampleDataApi } from "@/apis/user.api.ts";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Role } from "@/enums/role.ts";
 
+// #. 사용자 상세 페이지 컴포넌트다.
 const UserDetailPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -89,3 +90,4 @@ const UserDetailPage = () => {
 };
 
 export default UserDetailPage;
+
