@@ -602,6 +602,7 @@
             api: "API",
             typography: "타이포그래피",
             editor: "에디터",
+            image: "이미지",
             notFound: "404",
             user: "사용자",
             settings: "설정",

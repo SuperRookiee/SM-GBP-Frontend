@@ -16,6 +16,7 @@ export const MENU = {
                 { titleKey: "menu.api", url: "/demo/api" },
                 { titleKey: "menu.typography", url: "/demo/typography" },
                 { titleKey: "menu.editor", url: "/demo/editor" },
+                { titleKey: "menu.image", url: "/demo/image" },
                 { titleKey: "menu.notFound", url: "/demo/not_found" },
             ],
         },

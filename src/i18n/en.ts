@@ -594,6 +594,7 @@
             api: "API",
             typography: "Typography",
             editor: "Editor",
+            image: "Image",
             notFound: "404",
             user: "User",
             settings: "Settings",

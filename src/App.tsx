@@ -9,6 +9,7 @@ import DemoChartPage from "@/pages/demo/chart/DemoChartPage.tsx";
 import DemoDialogPage from "@/pages/demo/dialog/DemoDialogPage.tsx";
 import DemoEditorPage from "@/pages/demo/editor/DemoEditorPage.tsx";
 import DemoFormPage from "@/pages/demo/form/DemoFormPage.tsx";
+import DemoImagePage from "@/pages/demo/image/DemoImagePage.tsx";
 import DemoDataTablePage from "@/pages/demo/table/DemoDataTablePage.tsx";
 import DemoGridTablePage from "@/pages/demo/table/DemoGridTablePage.tsx";
 import DemoTypography from "@/pages/demo/typography/DemoTypography.tsx";
@@ -47,6 +48,7 @@ const App = () => {
                         <Route path="api/:id" element={<SampleDetailPage/>}/>
                         <Route path="typography" element={<DemoTypography/>}/>
                         <Route path="editor" element={<DemoEditorPage/>}/>
+                        <Route path="image" element={<DemoImagePage/>}/>
                     </Route>
 
                     <Route path="/user">
