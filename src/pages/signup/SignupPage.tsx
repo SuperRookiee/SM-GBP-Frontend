@@ -1,4 +1,4 @@
-﻿import {useMemo, useState} from "react";
+﻿import {type JSX, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {z} from "zod";
@@ -13,6 +13,8 @@ import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, Di
 import {Input} from "@/components/ui/input.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
+
+type FormOnSubmit = NonNullable<JSX.IntrinsicElements["form"]["onSubmit"]>;
 
 type FormValues = {
     authority: string;
@@ -77,35 +79,32 @@ const SignupPage = () => {
     const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
 
     // #. 약관 타입별 라벨/본문을 한곳에서 관리한다.
-    const termMeta = useMemo<Record<TermKey, TermMeta>>(
-        () => ({
-            service: {
-                label: t("signup.terms.service.label"),
-                required: true,
-                title: t("signup.terms.service.title"),
-                body: t("signup.terms.service.body", {returnObjects: true}) as string[],
-            },
-            privacy: {
-                label: t("signup.terms.privacy.label"),
-                required: true,
-                title: t("signup.terms.privacy.title"),
-                body: t("signup.terms.privacy.body", {returnObjects: true}) as string[],
-            },
-            overseas: {
-                label: t("signup.terms.overseas.label"),
-                required: true,
-                title: t("signup.terms.overseas.title"),
-                body: t("signup.terms.overseas.body", {returnObjects: true}) as string[],
-            },
-            marketing: {
-                label: t("signup.terms.marketing.label"),
-                required: false,
-                title: t("signup.terms.marketing.title"),
-                body: t("signup.terms.marketing.body", {returnObjects: true}) as string[],
-            },
-        }),
-        [t],
-    );
+    const termMeta = useMemo<Record<TermKey, TermMeta>>(() => ({
+        service: {
+            label: t("signup.terms.service.label"),
+            required: true,
+            title: t("signup.terms.service.title"),
+            body: t("signup.terms.service.body", {returnObjects: true}) as string[],
+        },
+        privacy: {
+            label: t("signup.terms.privacy.label"),
+            required: true,
+            title: t("signup.terms.privacy.title"),
+            body: t("signup.terms.privacy.body", {returnObjects: true}) as string[],
+        },
+        overseas: {
+            label: t("signup.terms.overseas.label"),
+            required: true,
+            title: t("signup.terms.overseas.title"),
+            body: t("signup.terms.overseas.body", {returnObjects: true}) as string[],
+        },
+        marketing: {
+            label: t("signup.terms.marketing.label"),
+            required: false,
+            title: t("signup.terms.marketing.title"),
+            body: t("signup.terms.marketing.body", {returnObjects: true}) as string[],
+        },
+    }), [t]);
 
     // #. 약관 전체 동의 여부를 계산한다.
     const allAgreed = useMemo(() => Object.values(agreements).every(Boolean), [agreements]);
@@ -310,7 +309,7 @@ const SignupPage = () => {
     };
 
     // #. 제출 시 스키마 검증 후 에러를 매핑하거나 완료 다이얼로그를 연다.
-    const onSubmit = (e: React.FormEvent) => {
+    const onSubmit: FormOnSubmit = (e) => {
         e.preventDefault();
         setSubmitted(true);
 
@@ -651,3 +650,7 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
+
+
+
+
