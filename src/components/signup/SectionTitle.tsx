@@ -1,8 +1,8 @@
-﻿type SectionTitleProps = {
+interface SectionTitleProps {
     title: string;
     required?: boolean;
     hint?: string;
-};
+}
 
 const SectionTitle = ({title, required, hint}: SectionTitleProps) => {
     return (

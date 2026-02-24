@@ -80,6 +80,30 @@ const UserDetailPage = () => {
                                     <p className="text-xs text-muted-foreground">{t("user.userIdLabel")}</p>
                                     <p className="text-sm font-medium">{data?.user_id}</p>
                                 </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground">{t("signup.fields.authority")}</p>
+                                    <p className="text-sm font-medium">{data?.authority}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground">{t("signup.fields.corporation")}</p>
+                                    <p className="text-sm font-medium">{data?.corporation}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground">{t("signup.fields.countryOptional")}</p>
+                                    <p className="text-sm font-medium">{data?.country}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground">{t("signup.fields.department")}</p>
+                                    <p className="text-sm font-medium">{data?.department}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground">{t("signup.fields.phone")}</p>
+                                    <p className="text-sm font-medium">{data ? `${data.phone_country} ${data.phone_number}` : "-"}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs text-muted-foreground">{t("signup.fields.permissionLevel")}</p>
+                                    <p className="text-sm font-medium">{data?.permission_level}</p>
+                                </div>
                             </div>
                         )}
                     </CardContent>

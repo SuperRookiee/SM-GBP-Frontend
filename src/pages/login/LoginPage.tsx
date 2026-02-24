@@ -1,4 +1,4 @@
-﻿import {useActionState, useEffect, useState} from "react";
+import {useActionState, useEffect, useState} from "react";
 import {useFormStatus} from "react-dom";
 import {useTranslation} from "react-i18next";
 import {Link, useLocation, useNavigate} from "react-router-dom";
@@ -17,7 +17,7 @@ type LoginFormState = {
     submitted: boolean;
 };
 
-type LoginSubmitButtonProps = {
+interface LoginSubmitButtonProps {
     disabled: boolean;
     text: string;
 };
@@ -136,14 +136,14 @@ const LoginPage = () => {
                             <p className="py-1">
                                 <span className="mr-1 text-foreground">1.</span>
                                 {t("login.forgotPasswordPrefix")}{" "}
-                                <Link to="/forgot-password" className="font-semibold text-primary underline underline-offset-2">
+                                <Link to="/forgot_password" className="font-semibold text-primary underline underline-offset-2">
                                     {t("login.forgotPasswordLink")}
                                 </Link>
                             </p>
                             <p className="py-1">
                                 <span className="mr-1 text-foreground">2.</span>
                                 {t("login.signupPrefix")}{" "}
-                                <Link to="/signup" className="font-semibold text-primary underline underline-offset-2">
+                                <Link to="/sign_up" className="font-semibold text-primary underline underline-offset-2">
                                     {t("login.signup")}
                                 </Link>
                             </p>
@@ -160,3 +160,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+

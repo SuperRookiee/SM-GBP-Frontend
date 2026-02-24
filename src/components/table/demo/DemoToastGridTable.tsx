@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Grid from "tui-grid";
 import "tui-grid/dist/tui-grid.css";
@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
-type Props = {
+interface Props {
   rows: IDemoGridTableRow[];
   isLoading: boolean;
   isFetching: boolean;
@@ -231,4 +231,5 @@ const DemoToastGridTable = ({
 };
 
 export default DemoToastGridTable;
+
 

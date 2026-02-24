@@ -1,4 +1,4 @@
-﻿import * as React from "react"
+import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 import { cn } from "@/utils/utils"
@@ -18,7 +18,7 @@ const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
-type SidebarContextProps = {
+interface SidebarContextProps {
   state: "expanded" | "collapsed"
   open: boolean
   setOpen: (open: boolean) => void
@@ -690,4 +690,5 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
 

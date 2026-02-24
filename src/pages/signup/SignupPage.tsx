@@ -2,14 +2,19 @@
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {z} from "zod";
-import {SIGNUP_AFFILIATION_GROUPS, SIGNUP_AUTHORITY_OPTIONS, SIGNUP_PERMISSION_LEVEL_OPTIONS, SIGNUP_PHONE_CODE_OPTIONS,} from "@/constants/signup.constants.ts";
+import {SIGNUP_AFFILIATION_GROUPS} from "@/constants/affiliation.constants.ts";
+import {SIGNUP_AUTHORITY_OPTIONS} from "@/constants/authority.constants.ts";
+import {SIGNUP_PERMISSION_LEVEL_OPTIONS} from "@/constants/permissionLevel.constants.ts";
+import {SIGNUP_PHONE_CODE_OPTIONS} from "@/constants/phoneCode.constants.ts";
+import type {TermKey} from "@/types/signup.types.ts";
 import {PasswordInput} from "@/components/common/PasswordInput.tsx";
+import AgreementTermDialog from "@/components/dialog/AgreementTermDialog.tsx";
+import SignupCompleteDialog from "@/components/dialog/SignupCompleteDialog.tsx";
 import {FieldBlock} from "@/components/signup/FieldBlock.tsx";
 import {SectionTitle} from "@/components/signup/SectionTitle.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent} from "@/components/ui/card.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
@@ -57,8 +62,6 @@ const DEFAULT_FORM: FormValues = {
     confirmPassword: "",
     permissionLevel: "",
 };
-
-type TermKey = "service" | "privacy" | "overseas" | "marketing";
 
 const MOCK_TAKEN_EMAILS = ["admin@samsung.com", "test@samsung.com"];
 
@@ -600,51 +603,28 @@ const SignupPage = () => {
                 </CardContent>
             </Card>
 
-            {/* 약관 전문 확인 다이얼로그 */}
-            <Dialog open={openTerm !== null} onOpenChange={(open) => setOpenTerm(open ? openTerm : null)}>
-                <DialogContent className="max-h-[80svh] overflow-auto sm:max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle>{openTerm ? termMeta[openTerm].title : ""}</DialogTitle>
-                        <DialogDescription>
-                            약관 전문 내용을 확인하고 동의 여부를 선택할 수 있습니다.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-3 text-sm leading-6">
-                        {openTerm ? termMeta[openTerm].body.map((line) => <p key={line}>{line}</p>) : null}
-                    </div>
-                    <DialogFooter>
-                        <Button
-                            type="button"
-                            onClick={() => {
-                                if (openTerm) onToggleAgreement(openTerm, true);
-                                setOpenTerm(null);
-                            }}
-                        >
-                            {t("signup.buttons.agree")}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <AgreementTermDialog
+                open={openTerm !== null}
+                title={openTerm ? termMeta[openTerm].title : ""}
+                description="약관 전문 내용을 확인하고 동의 여부를 선택할 수 있습니다."
+                body={openTerm ? termMeta[openTerm].body : []}
+                confirmLabel={t("signup.buttons.agree")}
+                onOpenChange={(open) => setOpenTerm(open ? openTerm : null)}
+                onConfirm={() => {
+                    if (openTerm) onToggleAgreement(openTerm, true);
+                    setOpenTerm(null);
+                }}
+            />
 
-            {/* 회원가입 완료 안내 다이얼로그 */}
-            <Dialog open={openCompleteDialog} onOpenChange={setOpenCompleteDialog}>
-                <DialogContent className="sm:max-w-xl">
-                    <DialogHeader>
-                        <DialogTitle>{t("signup.completeDialog.title")}</DialogTitle>
-                        <DialogDescription>
-                            회원가입 신청 완료 안내와 후속 절차를 확인할 수 있습니다.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <p className="text-center text-base leading-7">
-                        {t("signup.completeDialog.line1")}<br/>
-                        {t("signup.completeDialog.line2")}<br/>
-                        {t("signup.completeDialog.line3")}
-                    </p>
-                    <DialogFooter className="sm:justify-center">
-                        <Button type="button" onClick={() => navigate("/login")}>{t("signup.buttons.confirm")}</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <SignupCompleteDialog
+                open={openCompleteDialog}
+                title={t("signup.completeDialog.title")}
+                description="회원가입 신청 완료 안내와 후속 절차를 확인할 수 있습니다."
+                lines={[t("signup.completeDialog.line1"), t("signup.completeDialog.line2"), t("signup.completeDialog.line3")]}
+                confirmLabel={t("signup.buttons.confirm")}
+                onOpenChange={setOpenCompleteDialog}
+                onConfirm={() => navigate("/login")}
+            />
         </>
     );
 };

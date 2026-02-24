@@ -26,7 +26,11 @@ const Header = () => {
         <header className="flex items-center justify-between border-b px-4 py-2">
             <Link to={user ? "/" : "/login"} className="text-2xl font-black">SAMSUNG</Link>
             <div className="flex items-center gap-2">
-                {user && <span className="text-sm text-muted-foreground">{t("header.greeting", { name: user.name })}</span>}
+                {user ? (
+                    <Link to="/my_page" className="text-sm text-muted-foreground hover:underline">
+                        {t("header.greeting", {name: user.name})}
+                    </Link>
+                ) : null}
                 <ThemeToggle/>
                 <LanguageToggle/>
                 {user ? (

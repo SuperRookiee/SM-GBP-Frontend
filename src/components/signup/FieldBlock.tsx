@@ -1,11 +1,11 @@
 ﻿import {type ReactNode} from "react";
 
-type FieldBlockProps = {
+interface FieldBlockProps {
     label: string;
     required?: boolean;
     errors?: string[];
     children: ReactNode;
-};
+}
 
 const FieldBlock = ({label, required, errors = [], children}: FieldBlockProps) => {
     return (

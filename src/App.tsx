@@ -1,4 +1,4 @@
-﻿import { Route, Routes } from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import MainLayout from "@/layouts/Main.layout.tsx";
 import PublicLayout from "@/layouts/Public.layout.tsx";
 import NotFound from "@/components/errors/NotFound.tsx";
@@ -15,6 +15,7 @@ import DemoGridTablePage from "@/pages/demo/table/DemoGridTablePage.tsx";
 import DemoTypography from "@/pages/demo/typography/DemoTypography.tsx";
 import ForgotPasswordPage from "@/pages/forgot-password/ForgotPasswordPage.tsx";
 import LoginPage from "@/pages/login/LoginPage.tsx";
+import MyPage from "@/pages/my-page/MyPage.tsx";
 import SignupPage from "@/pages/signup/SignupPage.tsx";
 import UserDetailPage from "@/pages/user/detail/UserDetailPage.tsx";
 import UserPage from "@/pages/user/UserPage.tsx";
@@ -26,8 +27,10 @@ const App = () => {
             {/* Public Routes */}
             <Route element={<PublicLayout/>}>
                 <Route path="/login" element={<LoginPage/>}/>
-                <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
-                <Route path="/signup" element={<SignupPage/>}/>
+                <Route path="/forgot_password" element={<ForgotPasswordPage/>}/>
+                <Route path="/forgot-password" element={<Navigate to="/forgot_password" replace/>}/>
+                <Route path="/sign_up" element={<SignupPage/>}/>
+                <Route path="/signup" element={<Navigate to="/sign_up" replace/>}/>
             </Route>
 
             {/* Protected Routes */}
@@ -55,6 +58,9 @@ const App = () => {
                         <Route index element={<UserPage />} />
                         <Route path=":id" element={<UserDetailPage />} />
                     </Route>
+
+                    <Route path="/my_page" element={<MyPage/>}/>
+                    <Route path="/mypage" element={<Navigate to="/my_page" replace/>}/>
 
                     <Route path="*" element={<NotFound/>}/>
                 </Route>

@@ -3,13 +3,13 @@ import {Eye, EyeOff} from "lucide-react";
 import {cn} from "@/utils/utils.ts";
 import {Input} from "@/components/ui/input.tsx";
 
-type PasswordInputProps = Omit<ComponentProps<typeof Input>, "type"> & {
+interface PasswordInputProps extends Omit<ComponentProps<typeof Input>, "type"> {
     containerClassName?: string;
     toggleButtonClassName?: string;
     showLabel?: string;
     hideLabel?: string;
     defaultVisible?: boolean;
-};
+}
 
 const PasswordInput = ({
     className,

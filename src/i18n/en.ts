@@ -224,6 +224,12 @@
                 line3: "A notice email will be sent to your registered email after approval.",
             },
         },
+        myPage: {
+            buttons: {
+                withdraw: "Request Withdrawal",
+                update: "Update Profile",
+            },
+        },
         notFound: {
             title: "Page Not Found",
             description: "The requested page may have been moved or deleted.",
@@ -625,6 +631,7 @@
             image: "Image",
             notFound: "404",
             user: "User",
+            myPage: "My page",
             settings: "Settings",
             sampleSecondary1: "Secondary 1",
             sampleSecondary2: "Secondary 2",

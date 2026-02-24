@@ -30,6 +30,7 @@ const AppBreadcrumb = ({className}: IAppBreadcrumbProps) => {
         image: "menu.image",
         not_found: "menu.notFound",
         user: "menu.user",
+        my_page: "menu.myPage",
         new: "sampleDetail.create",
     };
 

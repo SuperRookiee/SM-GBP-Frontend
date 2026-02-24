@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import * as React from "react"
 import type { DefaultLegendContentProps, LegendPayload, TooltipContentProps } from "recharts"
@@ -18,7 +18,7 @@ export type ChartConfig = {
   )
 }
 
-type ChartContextProps = {
+interface ChartContextProps {
   config: ChartConfig
 }
 
@@ -362,3 +362,4 @@ export {
   ChartLegendContent,
   ChartStyle,
 }
+

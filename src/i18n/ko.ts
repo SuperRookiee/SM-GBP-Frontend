@@ -234,6 +234,12 @@
                 line3: "승인 완료 시 가입하신 이메일로 안내 메일을 보내드립니다.",
             },
         },
+        myPage: {
+            buttons: {
+                withdraw: "회원탈퇴 신청",
+                update: "회원정보 수정",
+            },
+        },
         notFound: {
             title: "페이지를 찾을 수 없습니다",
             description: "요청하신 주소가 변경되었거나 삭제되었을 수 있습니다.",
@@ -633,6 +639,7 @@
             image: "이미지",
             notFound: "404",
             user: "사용자",
+            myPage: "My page",
             settings: "설정",
             sampleSecondary1: "보조 메뉴 1",
             sampleSecondary2: "보조 메뉴 2",
