@@ -40,6 +40,20 @@
             brandSub: "Miracle Web",
             brand: "Miracle",
             subtitle: "데모 대시보드 페이지",
+            sections: {
+                store: {
+                    title: "매장 관리",
+                    placeholder: "법인 하위 매장 타입별 운영 현황",
+                },
+                google: {
+                    title: "구글 전송현황 관리",
+                    placeholder: "비즈니스 등록 / 제품 / 이벤트 등록 후 구글 승인 현황",
+                },
+                review: {
+                    title: "리뷰 관리",
+                    placeholder: "일자별 리뷰 등록 현황 / 별점",
+                },
+            },
         },
         login: {
             brand: "Acme Inc.",

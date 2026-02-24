@@ -40,6 +40,20 @@
             brandSub: "Miracle Web",
             brand: "Miracle",
             subtitle: "Demo dashboard page",
+            sections: {
+                store: {
+                    title: "Store Management",
+                    placeholder: "Store operation status by type under each corporation",
+                },
+                google: {
+                    title: "Google Transmission Status",
+                    placeholder: "Google approval status after business/product/event registration",
+                },
+                review: {
+                    title: "Review Management",
+                    placeholder: "Review registration status by date / rating",
+                },
+            },
         },
         login: {
             brand: "Acme Inc.",
