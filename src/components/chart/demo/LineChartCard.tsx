@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { TrendingUpIcon } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import ChartCardFooter from "@/components/chart/demo/ChartCardFooter.tsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart.tsx";
 
 export type LineChartDatum = {
@@ -59,16 +59,12 @@ const LineChartCard = ({
                     </LineChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter>
-                <div className="grid gap-2">
-                    <div className="flex items-center gap-2 leading-none font-medium">
-                        {footerTitle} <TrendingUpIcon className="size-4" />
-                    </div>
-                    <div className="text-muted-foreground flex items-center gap-2 leading-none">
-                        {footerSubtitle}
-                    </div>
-                </div>
-            </CardFooter>
+            <ChartCardFooter
+                title={footerTitle}
+                subtitle={footerSubtitle}
+                className="flex-col items-start gap-2"
+                contentClassName="flex items-center gap-2 leading-none font-medium"
+            />
         </Card>
     );
 };

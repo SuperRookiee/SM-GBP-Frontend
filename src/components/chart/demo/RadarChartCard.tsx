@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { TrendingUpIcon } from "lucide-react";
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import ChartCardFooter from "@/components/chart/demo/ChartCardFooter.tsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart.tsx";
 
 export type RadarChartDatum = {
@@ -51,14 +51,11 @@ const RadarChartCard = ({
                     </RadarChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col gap-2">
-                <div className="flex items-center gap-2 leading-none font-medium">
-                    {footerTitle} <TrendingUpIcon className="size-4" />
-                </div>
-                <div className="text-muted-foreground flex items-center gap-2 leading-none">
-                    {footerSubtitle}
-                </div>
-            </CardFooter>
+            <ChartCardFooter
+                title={footerTitle}
+                subtitle={footerSubtitle}
+                className="flex-col gap-2"
+            />
         </Card>
     );
 };

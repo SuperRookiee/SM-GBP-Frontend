@@ -1,7 +1,7 @@
 import { type ReactNode, useMemo } from "react";
-import { TrendingUpIcon } from "lucide-react";
 import { Label, Pie, PieChart } from "recharts";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import ChartCardFooter from "@/components/chart/demo/ChartCardFooter.tsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart.tsx";
 
 export type PieChartDatum = Record<string, number | string>;
@@ -84,12 +84,12 @@ const PieChartCard = ({
                     </PieChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col gap-2">
-                <div className="flex items-center gap-2 leading-none font-medium">
-                    {footerTitle} <TrendingUpIcon className="size-4" />
-                </div>
-                <div className="text-muted-foreground leading-none">{footerSubtitle}</div>
-            </CardFooter>
+            <ChartCardFooter
+                title={footerTitle}
+                subtitle={footerSubtitle}
+                className="flex-col gap-2"
+                subtitleClassName="text-muted-foreground leading-none"
+            />
         </Card>
     );
 };

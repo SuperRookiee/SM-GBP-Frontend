@@ -1,7 +1,7 @@
 ﻿import type { ReactNode } from "react";
-import { TrendingUpIcon } from "lucide-react";
 import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import ChartCardFooter from "@/components/chart/demo/ChartCardFooter.tsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { type ChartConfig, ChartContainer } from "@/components/ui/chart.tsx";
 
 export type RadialChartDatum = Record<string, number | string>;
@@ -97,12 +97,12 @@ const RadialChartCard = (props: IRadialChartCardProps) => {
                     </RadialBarChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col gap-2">
-                <div className="flex items-center gap-2 leading-none font-medium">
-                    {props.footerTitle} <TrendingUpIcon className="size-4"/>
-                </div>
-                <div className="text-muted-foreground leading-none">{props.footerSubtitle}</div>
-            </CardFooter>
+            <ChartCardFooter
+                title={props.footerTitle}
+                subtitle={props.footerSubtitle}
+                className="flex-col gap-2"
+                subtitleClassName="text-muted-foreground leading-none"
+            />
         </Card>
     );
 };

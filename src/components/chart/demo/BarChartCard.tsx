@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { TrendingUpIcon } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import ChartCardFooter from "@/components/chart/demo/ChartCardFooter.tsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart.tsx";
 
 export type BarChartDatum = {
@@ -58,12 +58,13 @@ const BarChartCard = ({
                     </BarChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col items-start gap-2">
-                <div className="flex gap-2 leading-none font-medium">
-                    {footerTitle} <TrendingUpIcon className="size-4"/>
-                </div>
-                <div className="text-muted-foreground leading-none">{footerSubtitle}</div>
-            </CardFooter>
+            <ChartCardFooter
+                title={footerTitle}
+                subtitle={footerSubtitle}
+                className="flex-col items-start gap-2"
+                contentClassName="flex gap-2 leading-none font-medium"
+                subtitleClassName="text-muted-foreground leading-none"
+            />
         </Card>
     );
 };
