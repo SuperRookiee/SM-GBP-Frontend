@@ -9,16 +9,3 @@ export const PERMISSION_LEVEL_OPTIONS: SelectOption[] = [
     {value: "hq_admin", labelKey: "signup.options.permissionLevel.hqAdmin"},
 ];
 
-// #. 권한 레벨 문자열을 내부 value로 매핑한다.
-export const PERMISSION_LEVEL_VALUE_MAP: Record<string, string> = {
-    "법인 실무자": "corporation_staff",
-    "법인 총괄관리자": "corporation_admin",
-    "HQ 수행사": "hq_staff",
-    "HQ 총괄관리자": "hq_admin",
-    corporation_staff: "corporation_staff",
-    corporation_admin: "corporation_admin",
-    hq_staff: "hq_staff",
-    hq_admin: "hq_admin",
-};
-
-
