@@ -1,11 +1,12 @@
-﻿import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getUserDetailSampleDataApi } from "@/apis/user.api.ts";
-import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
+import { SIGNUP_AUTHORITY_OPTIONS, CORPORATION_LABEL_KEY_BY_CODE } from "@/constants/country.constant.ts";
+import { GC_TIME, STALE_TIME } from "@/constants/query.constant.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
-import { Role } from "@/enums/role.ts";
+import { RoleEnum } from "@/enums/role.enum.ts";
 
 // #. 사용자 상세 페이지 컴포넌트다.
 const UserDetailPage = () => {
@@ -24,11 +25,16 @@ const UserDetailPage = () => {
         refetchOnWindowFocus: false,
     });
 
-    const roleLabelMap: Record<Role, string> = {
-        [Role.ADMIN]: t("user.role.admin"),
-        [Role.USER]: t("user.role.user"),
-        [Role.GUEST]: t("user.role.guest"),
+    const roleLabelMap: Record<RoleEnum, string> = {
+        [RoleEnum.ADMIN]: t("user.role.admin"),
+        [RoleEnum.USER]: t("user.role.user"),
+        [RoleEnum.GUEST]: t("user.role.guest"),
     };
+    const authorityLabelMap = Object.fromEntries(
+        SIGNUP_AUTHORITY_OPTIONS
+            .filter((option) => option.value !== "default" && option.value !== "all")
+            .map((option) => [option.value, t(option.labelKey)]),
+    );
 
     const resolvedError = isInvalidId
         ? t("user.invalidId")
@@ -82,11 +88,11 @@ const UserDetailPage = () => {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-xs text-muted-foreground">{t("signup.fields.authority")}</p>
-                                    <p className="text-sm font-medium">{data?.authority}</p>
+                                    <p className="text-sm font-medium">{data?.authority ? authorityLabelMap[data.authority] ?? data.authority : "-"}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-xs text-muted-foreground">{t("signup.fields.corporation")}</p>
-                                    <p className="text-sm font-medium">{data?.corporation}</p>
+                                    <p className="text-sm font-medium">{data?.corporation ? (CORPORATION_LABEL_KEY_BY_CODE[data.corporation] ? t(CORPORATION_LABEL_KEY_BY_CODE[data.corporation]) : data.corporation) : "-"}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-xs text-muted-foreground">{t("signup.fields.countryOptional")}</p>
@@ -114,4 +120,7 @@ const UserDetailPage = () => {
 };
 
 export default UserDetailPage;
+
+
+
 

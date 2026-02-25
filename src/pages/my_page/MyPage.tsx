@@ -2,16 +2,15 @@ import {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {z} from "zod";
-import {SIGNUP_AFFILIATION_GROUPS} from "@/constants/affiliation.constants.ts";
-import {SIGNUP_AUTHORITY_OPTIONS} from "@/constants/authority.constants.ts";
-import {SIGNUP_PERMISSION_LEVEL_OPTIONS} from "@/constants/permissionLevel.constants.ts";
-import {SIGNUP_PHONE_CODE_OPTIONS} from "@/constants/phoneCode.constants.ts";
+import {SIGNUP_AUTHORITY_OPTIONS, CORPORATION_LABEL_KEY_BY_CODE, COUNTRY_GROUPS, COUNTRY_LABEL_KEY_BY_CODE} from "@/constants/country.constant.ts";
+import {PERMISSION_LEVEL_OPTIONS} from "@/constants/permissionLevel.constant.ts";
+import {PHONE_CODE_OPTIONS} from "@/constants/phoneCode.constant.ts";
 import {useAuthStore} from "@/stores/auth.store.ts";
-import type {TermKey} from "@/types/signup.types.ts";
+import type {AgreementTermKey} from "@/types/common.types.ts";
 import {PasswordInput} from "@/components/common/PasswordInput.tsx";
 import AgreementTermDialog from "@/components/dialog/AgreementTermDialog.tsx";
-import {FieldBlock} from "@/components/signup/FieldBlock.tsx";
-import {SectionTitle} from "@/components/signup/SectionTitle.tsx";
+import {FieldBlock} from "@/components/sign_up/FieldBlock.tsx";
+import {SectionTitle} from "@/components/sign_up/SectionTitle.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent} from "@/components/ui/card.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
@@ -83,7 +82,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
         overseas: user?.agreements?.overseas ?? true,
         marketing: user?.agreements?.marketing ?? false,
     });
-    const [openTerm, setOpenTerm] = useState<TermKey | null>(null);
+    const [openTerm, setOpenTerm] = useState<AgreementTermKey | null>(null);
     const [openWithdrawDialog, setOpenWithdrawDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
@@ -94,8 +93,8 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
 
         const groups =
             form.authority === "all"
-                ? SIGNUP_AFFILIATION_GROUPS
-                : SIGNUP_AFFILIATION_GROUPS.filter((g) => g.authorityCode === form.authority);
+                ? COUNTRY_GROUPS
+                : COUNTRY_GROUPS.filter((g) => g.authorityCode === form.authority);
 
         return Array.from(
             new Set(groups.flatMap((g) =>
@@ -110,8 +109,8 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
 
         const groups =
             form.authority === "all"
-                ? SIGNUP_AFFILIATION_GROUPS
-                : SIGNUP_AFFILIATION_GROUPS.filter(
+                ? COUNTRY_GROUPS
+                : COUNTRY_GROUPS.filter(
                     (g) => g.authorityCode === form.authority
                 );
 
@@ -246,7 +245,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
     );
 
     // #. 약관별 라벨/제목/본문 메타 정보를 구성한다.
-    const termMeta = useMemo<Record<TermKey, TermMeta>>(() => ({
+    const termMeta = useMemo<Record<AgreementTermKey, TermMeta>>(() => ({
         service: {
             label: t("signup.terms.service.label"),
             title: t("signup.terms.service.title"),
@@ -309,7 +308,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
     };
 
     // #.개별 약관 동의 상태를 변경한다.
-    const onToggleAgreement = (key: TermKey, checked: boolean) => {
+    const onToggleAgreement = (key: AgreementTermKey, checked: boolean) => {
         setAgreements((prev) => ({...prev, [key]: checked}));
     };
 
@@ -370,7 +369,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
                                         <SelectContent>
                                             {filteredCorporations.map((corp) => (
                                                 <SelectItem key={corp} value={corp}>
-                                                    {corp}
+                                                    {CORPORATION_LABEL_KEY_BY_CODE[corp] ? t(CORPORATION_LABEL_KEY_BY_CODE[corp]) : corp}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -385,7 +384,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
                                         <SelectContent>
                                             {filteredCountries.map((country) => (
                                                 <SelectItem key={country} value={country}>
-                                                    {country}
+                                                    {COUNTRY_LABEL_KEY_BY_CODE[country] ? t(COUNTRY_LABEL_KEY_BY_CODE[country]) : country}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -413,7 +412,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
                                             <SelectValue placeholder={t("signup.placeholders.countryCode")}/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {SIGNUP_PHONE_CODE_OPTIONS.map((option) => (
+                                            {PHONE_CODE_OPTIONS.map((option) => (
                                                 <SelectItem key={option.value} value={option.value}>
                                                     {t(option.labelKey)}
                                                 </SelectItem>
@@ -460,7 +459,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
                                         <SelectValue placeholder={t("signup.placeholders.select")}/>
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {SIGNUP_PERMISSION_LEVEL_OPTIONS.map((option) => (
+                                        {PERMISSION_LEVEL_OPTIONS.map((option) => (
                                             <SelectItem key={option.value} value={option.value}>
                                                 {t(option.labelKey)}
                                             </SelectItem>
@@ -478,7 +477,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
                                 </Label>
 
                                 <div className="space-y-2 text-sm">
-                                    {(Object.keys(termMeta) as TermKey[]).map((key) => (
+                                    {(Object.keys(termMeta) as AgreementTermKey[]).map((key) => (
                                         <div key={key} className="flex items-center gap-2">
                                             <Checkbox checked={agreements[key]}
                                                       onCheckedChange={(checked) => onToggleAgreement(key, checked === true)}/>
@@ -559,3 +558,14 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
 };
 
 export default MyPage;
+
+
+
+
+
+
+
+
+
+
+

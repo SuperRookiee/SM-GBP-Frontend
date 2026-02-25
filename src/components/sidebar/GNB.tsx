@@ -1,7 +1,7 @@
 ﻿import {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
-import {MENU} from "@/constants/menu.constants.tsx";
+import {MENU} from "@/constants/menu.constant.tsx";
 import {cn} from "@/utils/utils.ts";
 import {NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle,} from "@/components/ui/navigation-menu.tsx";
 

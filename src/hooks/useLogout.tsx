@@ -1,7 +1,7 @@
 ﻿import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store.ts";
 
-// #. 로그아웃 기능을 제공하는 훅이다.
+// #. 로그아웃 기능을 제공하는 훅
 const UseLogout = () => {
     const navigate = useNavigate();
     const clearUser = useAuthStore((s) => s.clearUser);

@@ -1,6 +1,6 @@
 ﻿import { MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { ActionItem } from "@/types/ActionItem.type";
+import type { ActionItem } from "@/types/actionItem.type.ts";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
 

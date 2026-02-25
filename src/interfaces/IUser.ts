@@ -1,9 +1,9 @@
-import type { Role } from "@/enums/role.ts";
+import type { RoleEnum } from "@/enums/role.enum.ts";
 
 export interface IUser {
     id: number;
     name: string;
-    role: Role;
+    role: RoleEnum;
     user_id: string;
     password: string;
     authority: string;

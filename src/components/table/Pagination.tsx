@@ -1,7 +1,7 @@
-﻿import { type ReactNode } from "react";
+import { type ReactNode } from "react";
+import { ChevronLeftIcon, ChevronsLeftIcon, ChevronRightIcon, ChevronsRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 
 interface ITablePaginationProps {
   currentPage: number;
@@ -9,13 +9,9 @@ interface ITablePaginationProps {
   pageNumbers: number[];
   previousPage: number | null;
   nextPage: number | null;
-  totalCount: number;
   isLoading?: boolean;
-  caption?: ReactNode;
-  pageSize?: number;
-  pageSizeOptions?: number[];
   onPageChange: (page: number) => void;
-  onPageSizeChange?: (pageSize: number) => void;
+  caption?: ReactNode;
 };
 
 const Pagination = ({
@@ -24,57 +20,20 @@ const Pagination = ({
     pageNumbers,
     previousPage,
     nextPage,
-    totalCount,
     isLoading = false,
-    caption,
-    pageSize,
-    pageSizeOptions = [5, 10, 25, 50, 100],
     onPageChange,
-    onPageSizeChange,
 }: ITablePaginationProps) => {
     const { t } = useTranslation();
-    const resolvedCaption = caption ?? t("common.totalCount", { count: totalCount });
-
-// #. 페이지 크기 변경 이벤트를 처리한다.
-    const onChangePageSize = (value: string) => {
-        if (!onPageSizeChange) return;
-        const nextPageSize = Number(value);
-        if (Number.isNaN(nextPageSize)) return;
-
-        onPageSizeChange(nextPageSize);
-        onPageChange(1);
-    };
 
     return (
-        <div className="flex flex-col gap-4 border-t border-border px-6 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between" aria-busy={isLoading}>
-            <div className="flex flex-wrap items-center gap-3">
-                <span>
-                    {t("common.pageInfo", { currentPage, totalPages })}
-                </span>
-                <span className="inline-block min-w-10 text-right tabular-nums">{resolvedCaption}</span>
-
-                {onPageSizeChange && pageSize !== undefined && (
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">{t("common.rowsPerPage")}</span>
-                        <Select value={String(pageSize)} onValueChange={onChangePageSize}>
-                            <SelectTrigger className="h-8 w-20">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {pageSizeOptions.map((size) => (
-                                    <SelectItem key={size} value={String(size)}>
-                                        {size}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                )}
-            </div>
-
+        <div className="flex justify-end border-t border-border px-6 py-4 text-sm text-muted-foreground" aria-busy={isLoading}>
             <div className="flex flex-wrap items-center gap-2">
-                <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}>{t("common.first")}</Button>
-                <Button type="button" variant="outline" size="sm" onClick={() => previousPage && onPageChange(previousPage)} disabled={!previousPage}>{t("common.previous")}</Button>
+                <Button type="button" variant="outline" size="icon" onClick={() => onPageChange(1)} disabled={currentPage === 1} aria-label={t("common.first")}>
+                    <ChevronsLeftIcon className="h-4 w-4" />
+                </Button>
+                <Button type="button" variant="outline" size="icon" onClick={() => previousPage && onPageChange(previousPage)} disabled={!previousPage} aria-label={t("common.previous")}>
+                    <ChevronLeftIcon className="h-4 w-4" />
+                </Button>
                 {pageNumbers.map((pageNumber) => (
                     <Button
                         key={pageNumber}
@@ -87,12 +46,15 @@ const Pagination = ({
                         {pageNumber}
                     </Button>
                 ))}
-                <Button type="button" variant="outline" size="sm" onClick={() => nextPage && onPageChange(nextPage)} disabled={!nextPage}>{t("common.next")}</Button>
-                <Button type="button" variant="outline" size="sm" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}>{t("common.last")}</Button>
+                <Button type="button" variant="outline" size="icon" onClick={() => nextPage && onPageChange(nextPage)} disabled={!nextPage} aria-label={t("common.next")}>
+                    <ChevronRightIcon className="h-4 w-4" />
+                </Button>
+                <Button type="button" variant="outline" size="icon" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages} aria-label={t("common.last")}>
+                    <ChevronsRightIcon className="h-4 w-4" />
+                </Button>
             </div>
         </div>
     );
 };
 
 export default Pagination;
-

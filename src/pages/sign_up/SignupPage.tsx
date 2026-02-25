@@ -1,17 +1,16 @@
-﻿import {type JSX, useMemo, useState} from "react";
+import {type JSX, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {z} from "zod";
-import {SIGNUP_AFFILIATION_GROUPS} from "@/constants/affiliation.constants.ts";
-import {SIGNUP_AUTHORITY_OPTIONS} from "@/constants/authority.constants.ts";
-import {SIGNUP_PERMISSION_LEVEL_OPTIONS} from "@/constants/permissionLevel.constants.ts";
-import {SIGNUP_PHONE_CODE_OPTIONS} from "@/constants/phoneCode.constants.ts";
-import type {TermKey} from "@/types/signup.types.ts";
+import {SIGNUP_AUTHORITY_OPTIONS, CORPORATION_LABEL_KEY_BY_CODE, COUNTRY_GROUPS, COUNTRY_LABEL_KEY_BY_CODE} from "@/constants/country.constant.ts";
+import {PERMISSION_LEVEL_OPTIONS} from "@/constants/permissionLevel.constant.ts";
+import {PHONE_CODE_OPTIONS} from "@/constants/phoneCode.constant.ts";
+import type {AgreementTermKey} from "@/types/common.types.ts";
 import {PasswordInput} from "@/components/common/PasswordInput.tsx";
 import AgreementTermDialog from "@/components/dialog/AgreementTermDialog.tsx";
 import SignupCompleteDialog from "@/components/dialog/SignupCompleteDialog.tsx";
-import {FieldBlock} from "@/components/signup/FieldBlock.tsx";
-import {SectionTitle} from "@/components/signup/SectionTitle.tsx";
+import {FieldBlock} from "@/components/sign_up/FieldBlock.tsx";
+import {SectionTitle} from "@/components/sign_up/SectionTitle.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent} from "@/components/ui/card.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
@@ -69,7 +68,7 @@ const SignupPage = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [form, setForm] = useState<FormValues>(DEFAULT_FORM);
-    const [agreements, setAgreements] = useState<Record<TermKey, boolean>>({service: false, privacy: false, overseas: false, marketing: false});
+    const [agreements, setAgreements] = useState<Record<AgreementTermKey, boolean>>({service: false, privacy: false, overseas: false, marketing: false});
     const [generatedAuthCode, setGeneratedAuthCode] = useState("");
     const [isEmailDuplicateChecked, setIsEmailDuplicateChecked] = useState(false);
     const [isEmailAvailable, setIsEmailAvailable] = useState(false);
@@ -77,12 +76,12 @@ const SignupPage = () => {
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [emailAuthMessage, setEmailAuthMessage] = useState("");
     const [submitted, setSubmitted] = useState(false);
-    const [openTerm, setOpenTerm] = useState<TermKey | null>(null);
+    const [openTerm, setOpenTerm] = useState<AgreementTermKey | null>(null);
     const [openCompleteDialog, setOpenCompleteDialog] = useState(false);
     const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
 
     // #. 약관 타입별 라벨/본문을 한곳에서 관리한다.
-    const termMeta = useMemo<Record<TermKey, TermMeta>>(() => ({
+    const termMeta = useMemo<Record<AgreementTermKey, TermMeta>>(() => ({
         service: {
             label: t("signup.terms.service.label"),
             required: true,
@@ -270,21 +269,24 @@ const SignupPage = () => {
         if (!form.authority || form.authority === "default") return [];
 
         const groups = form.authority === "all"
-            ? SIGNUP_AFFILIATION_GROUPS
-            : SIGNUP_AFFILIATION_GROUPS.filter((group) => group.authorityCode === form.authority);
+            ? COUNTRY_GROUPS
+            : COUNTRY_GROUPS.filter((group) => group.authorityCode === form.authority);
 
         const corporationCodes = groups.flatMap((group) => group.corporations.map((corp) => corp.corporationCode));
         const uniqueCorporationCodes = Array.from(new Set(corporationCodes));
-        return uniqueCorporationCodes.map((corporationCode) => ({value: corporationCode, label: corporationCode}));
-    }, [form.authority]);
+        return uniqueCorporationCodes.map((corporationCode) => ({
+            value: corporationCode,
+            label: CORPORATION_LABEL_KEY_BY_CODE[corporationCode] ? t(CORPORATION_LABEL_KEY_BY_CODE[corporationCode]) : corporationCode,
+        }));
+    }, [form.authority, t]);
 
     // #. 선택된 권역/법인 기준 국가 목록을 계산한다.
     const filteredCountryOptions = useMemo<DynamicSelectOption[]>(() => {
         if (!form.authority || form.authority === "default") return [];
 
         const groups = form.authority === "all"
-            ? SIGNUP_AFFILIATION_GROUPS
-            : SIGNUP_AFFILIATION_GROUPS.filter((group) => group.authorityCode === form.authority);
+            ? COUNTRY_GROUPS
+            : COUNTRY_GROUPS.filter((group) => group.authorityCode === form.authority);
 
         const countries = !form.corporation || form.corporation === "all" || form.corporation === "default"
             ? groups.flatMap((group) => group.corporations.flatMap((corp) => corp.countries))
@@ -293,8 +295,11 @@ const SignupPage = () => {
                 .find((corp) => corp.corporationCode === form.corporation)?.countries ?? [];
 
         const uniqueCountries = Array.from(new Set(countries));
-        return uniqueCountries.map((country) => ({value: country, label: country}));
-    }, [form.authority, form.corporation]);
+        return uniqueCountries.map((country) => ({
+            value: country,
+            label: COUNTRY_LABEL_KEY_BY_CODE[country] ? t(COUNTRY_LABEL_KEY_BY_CODE[country]) : country,
+        }));
+    }, [form.authority, form.corporation, t]);
 
     // #. 전체 동의 체크 시 개별 약관 상태를 일괄 반영한다.
     const onToggleAll = (checked: boolean) => {
@@ -307,7 +312,7 @@ const SignupPage = () => {
     };
 
     // #. 약관 개별 동의 상태를 변경한다.
-    const onToggleAgreement = (key: TermKey, checked: boolean) => {
+    const onToggleAgreement = (key: AgreementTermKey, checked: boolean) => {
         setAgreements((prev) => ({...prev, [key]: checked}));
     };
 
@@ -445,7 +450,7 @@ const SignupPage = () => {
                                             <SelectValue placeholder={t("signup.placeholders.countryCode")}/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {SIGNUP_PHONE_CODE_OPTIONS.map((option) => (
+                                            {PHONE_CODE_OPTIONS.map((option) => (
                                                 <SelectItem key={option.value} value={option.value}>{t(option.labelKey)}</SelectItem>
                                             ))}
                                         </SelectContent>
@@ -543,7 +548,7 @@ const SignupPage = () => {
                                         <SelectValue placeholder={t("signup.placeholders.select")}/>
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {SIGNUP_PERMISSION_LEVEL_OPTIONS.map((option) => (
+                                        {PERMISSION_LEVEL_OPTIONS.map((option) => (
                                             <SelectItem key={option.value} value={option.value}>{t(option.labelKey)}</SelectItem>
                                         ))}
                                     </SelectContent>
@@ -560,7 +565,7 @@ const SignupPage = () => {
                                 </Label>
 
                                 <div className="space-y-2 pl-0.5">
-                                    {(Object.keys(termMeta) as TermKey[]).map((key) => (
+                                    {(Object.keys(termMeta) as AgreementTermKey[]).map((key) => (
                                         <div key={key} className="flex items-center gap-2 text-sm">
                                             <Checkbox checked={agreements[key]}
                                                       onCheckedChange={(checked) => onToggleAgreement(key, checked === true)}/>
@@ -630,6 +635,17 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
+
+
+
+
+
+
+
+
+
+
+
 
 
 

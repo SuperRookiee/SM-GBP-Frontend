@@ -2,7 +2,7 @@ import {useActionState, useEffect, useState} from "react";
 import {useFormStatus} from "react-dom";
 import {useTranslation} from "react-i18next";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import {REMEMBER_ID_COOKIE_KEY, REMEMBER_ID_COOKIE_MAX_AGE} from "@/constants/auth.constants.ts";
+import {REMEMBER_ID_COOKIE_KEY, REMEMBER_ID_COOKIE_MAX_AGE} from "@/constants/auth.constant.ts";
 import {useAuthStore} from "@/stores/auth.store.ts";
 import {getCookie, removeCookie, setCookie} from "@/utils/cookie.ts";
 import {PasswordInput} from "@/components/common/PasswordInput.tsx";
@@ -160,4 +160,5 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
 

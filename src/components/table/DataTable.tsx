@@ -1,18 +1,18 @@
-﻿import { type ReactNode, useEffect, useMemo, useState } from "react";
-import { Filter, Search } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { DEFAULT_TABLE, SELECT_COL_SIZE } from "@/constants/table.constants.tsx";
-import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demo/demoDataTable.types.ts";
+﻿import {type ReactNode, useEffect, useMemo, useState} from "react";
+import {Filter, Search} from "lucide-react";
+import {useTranslation} from "react-i18next";
+import {DEFAULT_TABLE, SELECT_COL_SIZE} from "@/constants/table.constant.tsx";
+import type {DemoDataTableColumn, DemoDataTableFilterOption} from "@/types/demo/demoDataTable.types.ts";
 import Pagination from "@/components/table/Pagination.tsx";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Checkbox} from "@/components/ui/checkbox";
+import {DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
+import {Input} from "@/components/ui/input";
+import {ScrollArea} from "@/components/ui/scroll-area";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Skeleton} from "@/components/ui/skeleton";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
 interface IGridTableClientProps<T> {
     // 필수 데이터 및 제목 설정
@@ -36,7 +36,7 @@ interface IGridTableClientProps<T> {
     onQueryChange: (query: string) => void;    // 검색어 변경 핸들러
     onSortChange: (key: keyof T) => void;      // 정렬 변경 핸들러
     onFilterChange: (filterKey: "all" | keyof T) => void; // 검색 필터 변경 핸들러
-    onPageSizeChange?: (pageSize: number) => void; // 페이지 크기 변경 핸들러
+    onPageSizeChange?: (pageSize: number) => void; // 페이지 크기 변경 핸들러 (호환성 유지)
     // 선택(Checkbox) 기능 관련
     enableSelect?: boolean;                    // 체크박스 선택 기능 활성화 여부
     selectedRowIds?: Array<string | number>;   // 외부에서 제어되는 선택된 행 ID 목록
@@ -51,8 +51,10 @@ interface IGridTableClientProps<T> {
     tableHeightClassName?: string;             // 테이블 높이 조절 CSS 클래스
     // 렌더링 및 유틸리티
     getRowId?: (row: T) => string | number;    // 각 행의 고유 ID를 가져오는 함수
-    captionRenderer?: (total: number) => ReactNode; // 총 건수 표시 렌더러
+    captionRenderer?: (total: number) => ReactNode; // 총 건수 표시 렌더러 (호환성 유지)
     onRowClick?: (row: T) => void;          // 행 클릭 핸들러
+    showToolbar?: boolean;                  // 상단 검색/필터 영역 노출 여부
+    headerRight?: ReactNode;                // 카드 헤더 우측 사용자 영역
 }
 
 // #. 컬럼 너비 스타일 객체를 계산한다.
@@ -65,26 +67,25 @@ const getColumnWidthStyle = (width?: string | number) => {
 const DataTable = <T, >({
     rows, total, pageSize, title, description, columns, filterOptions,
     query, filterKey, sortKey, sortDirection, page,
-    onQueryChange, onFilterChange, onSortChange, onPageChange, onPageSizeChange,
+    onQueryChange, onFilterChange, onSortChange, onPageChange,
     isLoading = false,
     isFetching = false,
     searchLabel,
     searchPlaceholder,
     filterLabel,
     getRowId = (row) => (row as { id: string | number }).id,
-    captionRenderer,
     enableSelect = false,
     selectedRowIds = [],
     onSelectedRowIdsChange,
     tableHeightClassName = "h-105",
-    pageSizeOptions = [5, 10, 25, 50, 100],
     onRowClick,
+    showToolbar = true,
+    headerRight,
 }: IGridTableClientProps<T>) => {
     const { t } = useTranslation();
     const resolvedSearchLabel = searchLabel ?? t("common.search");
     const resolvedSearchPlaceholder = searchPlaceholder ?? t("common.searchPlaceholder");
     const resolvedFilterLabel = filterLabel ?? t("common.searchCondition");
-    const resolvedCaptionRenderer = captionRenderer ?? ((count: number) => t("common.totalCount", { count }));
 
     const [draftQuery, setDraftQuery] = useState(query);
     const [draftFilterKey, setDraftFilterKey] = useState<"all" | keyof T>(filterKey);
@@ -237,45 +238,49 @@ const DataTable = <T, >({
     };
 
     return (
-        <Card className="mx-auto w-full min-w-0 shadow-sm pb-0 max-w-112.5
-                        sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
+        <Card className="mx-auto w-full min-w-0 shadow-sm pb-0">
+            {/* max-w-112.5 sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl 2xl:max-w-full> */}
             <CardHeader className="flex justify-between">
                 <div>
                     <CardTitle>{title}</CardTitle>
                     {description && <CardDescription>{description}</CardDescription>}
                 </div>
-                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
-                    <div className="w-full sm:w-40">
-                        <label className="text-xs font-medium text-muted-foreground">{resolvedFilterLabel}</label>
-                        <Select value={String(draftFilterKey)}
-                            onValueChange={(value) => setDraftFilterKey(value as "all" | keyof T)}>
-                            <SelectTrigger className="mt-2">
-                                <SelectValue placeholder={t("datatable.filterPlaceholder")}/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {filterOptions.map((option) =>
-                                    <SelectItem key={String(option.value)} value={String(option.value)}>
-                                        {option.label}
-                                    </SelectItem>,
-                                )}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                {showToolbar ? (
+                    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
+                        <div className="w-full sm:w-40">
+                            <label className="text-xs font-medium text-muted-foreground">{resolvedFilterLabel}</label>
+                            <Select value={String(draftFilterKey)}
+                                onValueChange={(value) => setDraftFilterKey(value as "all" | keyof T)}>
+                                <SelectTrigger className="mt-2">
+                                    <SelectValue placeholder={t("datatable.filterPlaceholder")}/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {filterOptions.map((option) =>
+                                        <SelectItem key={String(option.value)} value={String(option.value)}>
+                                            {option.label}
+                                        </SelectItem>,
+                                    )}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <div className="w-full sm:w-72">
-                        <label className="text-xs font-medium text-muted-foreground">{resolvedSearchLabel}</label>
-                        <div className="mt-2 flex items-center gap-2">
-                            <Input
-                                placeholder={resolvedSearchPlaceholder}
-                                value={draftQuery}
-                                onChange={(event) => setDraftQuery(event.target.value)}
-                            />
-                            <Button type="button" variant="outline" size="icon" onClick={onClickSearch} aria-label={t("datatable.searchButtonAria")}>
-                                <Search className="h-4 w-4"/>
-                            </Button>
+                        <div className="w-full sm:w-72">
+                            <label className="text-xs font-medium text-muted-foreground">{resolvedSearchLabel}</label>
+                            <div className="mt-2 flex items-center gap-2">
+                                <Input
+                                    placeholder={resolvedSearchPlaceholder}
+                                    value={draftQuery}
+                                    onChange={(event) => setDraftQuery(event.target.value)}
+                                />
+                                <Button type="button" variant="outline" size="icon" onClick={onClickSearch} aria-label={t("datatable.searchButtonAria")}>
+                                    <Search className="h-4 w-4"/>
+                                </Button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    headerRight ?? null
+                )}
             </CardHeader>
 
             <CardContent>
@@ -484,12 +489,7 @@ const DataTable = <T, >({
                 pageNumbers={pageNumbers}
                 previousPage={previousPage}
                 nextPage={nextPage}
-                totalCount={total}
-                caption={resolvedCaptionRenderer(total)}
                 isLoading={isLoading || isFetching}
-                pageSize={pageSize}
-                pageSizeOptions={pageSizeOptions}
-                onPageSizeChange={onPageSizeChange}
                 onPageChange={onPageChange}
             />
         </Card>

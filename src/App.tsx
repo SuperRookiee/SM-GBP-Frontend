@@ -1,7 +1,10 @@
-import {Navigate, Route, Routes} from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import MainLayout from "@/layouts/Main.layout.tsx";
 import PublicLayout from "@/layouts/Public.layout.tsx";
 import NotFound from "@/components/errors/NotFound.tsx";
+import AdminListPage from "@/pages/admin_settings/AdminListPage.tsx";
+import AdminNoticePage from "@/pages/admin_settings/AdminNoticePage.tsx";
+import AdminPermissionInfoPage from "@/pages/admin_settings/AdminPermissionInfoPage.tsx";
 import DashboardPage from "@/pages/dashboard/DashboardPage.tsx";
 import DemoApiPage from "@/pages/demo/api/DemoApiPage.tsx";
 import SampleDetailPage from "@/pages/demo/api/SampleDetailPage.tsx";
@@ -13,10 +16,10 @@ import DemoImagePage from "@/pages/demo/image/DemoImagePage.tsx";
 import DemoDataTablePage from "@/pages/demo/table/DemoDataTablePage.tsx";
 import DemoGridTablePage from "@/pages/demo/table/DemoGridTablePage.tsx";
 import DemoTypography from "@/pages/demo/typography/DemoTypography.tsx";
-import ForgotPasswordPage from "@/pages/forgot-password/ForgotPasswordPage.tsx";
+import ForgotPasswordPage from "@/pages/forgot_password/ForgotPasswordPage.tsx";
 import LoginPage from "@/pages/login/LoginPage.tsx";
-import MyPage from "@/pages/my-page/MyPage.tsx";
-import SignupPage from "@/pages/signup/SignupPage.tsx";
+import MyPage from "@/pages/my_page/MyPage.tsx";
+import SignupPage from "@/pages/sign_up/SignupPage.tsx";
 import UserDetailPage from "@/pages/user/detail/UserDetailPage.tsx";
 import UserPage from "@/pages/user/UserPage.tsx";
 import AuthRouter from "@/routes/AuthRouter.tsx";
@@ -28,7 +31,6 @@ const App = () => {
             <Route element={<PublicLayout/>}>
                 <Route path="/login" element={<LoginPage/>}/>
                 <Route path="/forgot_password" element={<ForgotPasswordPage/>}/>
-                <Route path="/forgot-password" element={<Navigate to="/forgot_password" replace/>}/>
                 <Route path="/sign_up" element={<SignupPage/>}/>
             </Route>
 
@@ -36,6 +38,13 @@ const App = () => {
             <Route element={<AuthRouter/>}>
                 <Route path="/" element={<MainLayout/>}>
                     <Route index element={<DashboardPage/>}/>
+
+                    {/* 관리자 설정 */}
+                    <Route path="/admin_settings">
+                        <Route path="list" element={<AdminListPage/>}/>
+                        <Route path="permission_register" element={<AdminPermissionInfoPage/>}/>
+                        <Route path="notice" element={<AdminNoticePage/>}/>
+                    </Route>
 
                     {/* Demo */}
                     <Route path="/demo">
@@ -58,6 +67,7 @@ const App = () => {
                         <Route path=":id" element={<UserDetailPage />} />
                     </Route>
 
+                    {/* 마이페이지 */}
                     <Route path="/my_page" element={<MyPage/>}/>
 
                     <Route path="*" element={<NotFound/>}/>

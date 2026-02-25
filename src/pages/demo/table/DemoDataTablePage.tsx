@@ -2,8 +2,8 @@
 import { useTranslation } from "react-i18next";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getDemoDataTableSampleDataApi } from "@/apis/demo/demoDataTable.api.ts";
-import { GC_TIME, STALE_TIME } from "@/constants/query.constants.ts";
-import { getDemoDataTableColumns, getDemoDataTableFilter } from "@/constants/table.constants.tsx";
+import { GC_TIME, STALE_TIME } from "@/constants/query.constant.ts";
+import { getDemoDataTableColumns, getDemoDataTableFilter } from "@/constants/table.constant.tsx";
 import { useDataTablePageStore } from "@/stores/page/demo/dataTablePage.store.ts";
 import type { DemoDataTableResponse } from "@/types/demo/demoDataTable.types.ts";
 import DataTable from "@/components/table/DataTable";

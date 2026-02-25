@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_TABLE } from "@/constants/table.constants.tsx";
+import { DEFAULT_TABLE } from "@/constants/table.constant.tsx";
 import { devtool } from "@/utils/devtools";
 import { canonicalizeQuery } from "@/utils/queryCanonicalize.ts";
 import { createPageStoreHelpers } from "@/utils/storeUtils";

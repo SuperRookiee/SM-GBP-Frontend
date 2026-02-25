@@ -1,7 +1,7 @@
 ﻿import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { devtool } from "@/utils/devtools.ts";
-import { Role } from "@/enums/role.ts";
+import { RoleEnum } from "@/enums/role.enum.ts";
 import type { IUser } from "@/interfaces/IUser.ts";
 
 type AuthState = {
@@ -28,8 +28,8 @@ export const useIsAuthenticated = () => useAuthStore(state => !!state.user);
 // 현재 유저 role
 export const useUserRole = () => useAuthStore(state => state.user?.role ?? null);
 // 특정 role 여부
-export const useHasRole = (role: Role) => useAuthStore(state => state.user?.role === role);
+export const useHasRole = (role: RoleEnum) => useAuthStore(state => state.user?.role === role);
 // role별 convenience hooks
-export const useIsAdmin = () => useHasRole(Role.ADMIN);
-export const useIsUser = () => useHasRole(Role.USER);
-export const useIsGuest = () => useHasRole(Role.GUEST);
+export const useIsAdmin = () => useHasRole(RoleEnum.ADMIN);
+export const useIsUser = () => useHasRole(RoleEnum.USER);
+export const useIsGuest = () => useHasRole(RoleEnum.GUEST);

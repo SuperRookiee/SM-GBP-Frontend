@@ -1,11 +1,11 @@
-﻿import {Role} from "@/enums/role.ts";
+﻿import {RoleEnum} from "@/enums/role.enum.ts";
 import type {IUser} from "@/interfaces/IUser.ts";
 
 export const USER_SAMPLE_DATA: IUser[] = [
     {
         id: 1,
         name: "A",
-        role: Role.ADMIN,
+        role: RoleEnum.ADMIN,
         user_id: "aa@miracle.com",
         password: "1",
         authority: "europe",
@@ -25,7 +25,7 @@ export const USER_SAMPLE_DATA: IUser[] = [
     {
         id: 2,
         name: "B",
-        role: Role.USER,
+        role: RoleEnum.USER,
         user_id: "bb@miracle.com",
         password: "1",
         authority: "middle_east",
@@ -45,7 +45,7 @@ export const USER_SAMPLE_DATA: IUser[] = [
     {
         id: 3,
         name: "C",
-        role: Role.GUEST,
+        role: RoleEnum.GUEST,
         user_id: "cc@miracle.com",
         password: "1",
         authority: "north_america",

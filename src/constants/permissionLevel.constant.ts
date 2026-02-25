@@ -1,7 +1,7 @@
-import type {SignupSelectOption} from "@/types/signup.types.ts";
+import type {SelectOption} from "@/types/common.types.ts";
 
-// #. 권한 레벨 선택 옵션 목록이다.
-export const SIGNUP_PERMISSION_LEVEL_OPTIONS: SignupSelectOption[] = [
+// #. 공통 권한 레벨 선택 옵션 목록
+export const PERMISSION_LEVEL_OPTIONS: SelectOption[] = [
     {value: "default", labelKey: "signup.options.permissionLevel.default"},
     {value: "corporation_staff", labelKey: "signup.options.permissionLevel.corporationStaff"},
     {value: "corporation_admin", labelKey: "signup.options.permissionLevel.corporationAdmin"},
@@ -20,3 +20,5 @@ export const PERMISSION_LEVEL_VALUE_MAP: Record<string, string> = {
     hq_staff: "hq_staff",
     hq_admin: "hq_admin",
 };
+
+

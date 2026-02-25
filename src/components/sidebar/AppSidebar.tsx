@@ -1,7 +1,7 @@
 ﻿import { ChevronRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { MENU } from "@/constants/menu.constants.tsx";
+import { MENU } from "@/constants/menu.constant.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@/components/ui/collapsible'

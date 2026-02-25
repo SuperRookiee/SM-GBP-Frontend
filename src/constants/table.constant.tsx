@@ -1,7 +1,7 @@
 ﻿import type { TFunction } from "i18next";
-import type { ActionItem } from "@/types/ActionItem.type.ts";
+import type { ActionItem } from "@/types/actionItem.type.ts";
 import type { DemoDataTableColumn, DemoDataTableFilterOption } from "@/types/demo/demoDataTable.types.ts";
-import type { UserColumn, UserFilterOption } from "@/types/user.types.ts";
+import type { UserColumn, UserFilterOption } from "@/types/user.type.ts";
 import ActionMenu from "@/components/common/ActionMenu";
 import type { IDemoDataTableRow } from "@/interfaces/demo/IDemoDataTable.interface.ts";
 import type { ISampleRow } from "@/interfaces/demo/ISample.interface.ts";

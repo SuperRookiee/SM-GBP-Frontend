@@ -1,7 +1,7 @@
 import {Fragment} from "react";
 import {useTranslation} from "react-i18next";
 import {Link, useLocation} from "react-router-dom";
-import {MENU} from "@/constants/menu.constants.tsx";
+import {MENU} from "@/constants/menu.constant.tsx";
 import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
 
 type BreadcrumbItemData = {
@@ -30,7 +30,11 @@ const AppBreadcrumb = ({className}: IAppBreadcrumbProps) => {
         image: "menu.image",
         not_found: "menu.notFound",
         user: "menu.user",
-        my_page: "menu.myPage",
+        "my_page": "menu.myPage",
+        admin_settings: "menu.adminSetting",
+        list: "menu.adminList",
+        permission_register: "menu.adminPermissionInfoRegister",
+        notice: "menu.adminNotice",
         new: "sampleDetail.create",
     };
 
@@ -99,3 +103,4 @@ const AppBreadcrumb = ({className}: IAppBreadcrumbProps) => {
 };
 
 export default AppBreadcrumb;
+

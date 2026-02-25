@@ -71,12 +71,12 @@ export const MENU = {
         },
         {
             titleKey: "menu.adminSetting",
-            url: "#",
+            url: "/admin_settings/list",
             icon: <Settings2Icon/>,
             items: [
-                {titleKey: "menu.adminAllList", url: "#"},
-                {titleKey: "menu.adminPermissionInfoRegister", url: "#"},
-                {titleKey: "menu.adminNotice", url: "#"},
+                {titleKey: "menu.adminList", url: "/admin_settings/list"},
+                {titleKey: "menu.adminPermissionInfoRegister", url: "/admin_settings/permission_register"},
+                {titleKey: "menu.adminNotice", url: "/admin_settings/notice"},
             ],
         },
         {
