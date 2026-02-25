@@ -1,5 +1,5 @@
-import type {AuthorityCountryGroup} from "@/types/country.type.ts";
 import type {SelectOption} from "@/types/common.types.ts";
+import type {AuthorityCountryGroup} from "@/types/country.type.ts";
 
 // #. 권역 선택 옵션 목록
 export const SIGNUP_AUTHORITY_OPTIONS: SelectOption[] = [
