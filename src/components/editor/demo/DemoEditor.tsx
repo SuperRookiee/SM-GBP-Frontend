@@ -399,7 +399,7 @@ const BlockSideActions = ({shellRef}: { shellRef: React.RefObject<HTMLDivElement
         const blockRect = blockElement.getBoundingClientRect();
 
         setActiveBlockKey(key);
-        setBlockTop(blockRect.top - shellRect.top + 2);
+        setBlockTop(blockRect.top - shellRect.top);
     }, [editor, shellRef]);
 
     useEffect(() => {
@@ -562,7 +562,7 @@ const BlockSideActions = ({shellRef}: { shellRef: React.RefObject<HTMLDivElement
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button type="button" size="icon-xs" variant="ghost" className="demo-editor-block-action-button">
-                            <Plus size={14}/>
+                            <Plus size={12}/>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" side="right" className="min-w-52">
@@ -587,7 +587,7 @@ const BlockSideActions = ({shellRef}: { shellRef: React.RefObject<HTMLDivElement
                     className={cn("demo-editor-block-action-button", isDraggingBlock ? "cursor-grabbing" : "cursor-grab")}
                     onPointerDown={onDragHandlePointerDown}
                 >
-                    <GripVertical size={14}/>
+                    <GripVertical size={12}/>
                 </Button>
             </div>
             {isDraggingBlock && dragGuideTop !== null && (

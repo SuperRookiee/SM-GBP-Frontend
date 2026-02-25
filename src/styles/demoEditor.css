@@ -194,7 +194,7 @@
 }
 
 .editor-input {
-    padding-left: 2.75rem;
+    padding-left: 3rem;
 }
 
 .editor-placeholder {
@@ -210,14 +210,12 @@
 
 .demo-editor-block-actions {
     position: absolute;
-    left: 0.35rem;
+    left: 0.1rem;
     z-index: 30;
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.1rem;
+    gap: 0;
     border-radius: 0.5rem;
-    background: color-mix(in oklab, var(--color-muted) 55%, transparent);
     opacity: 0;
     transition: opacity 0.15s ease;
 }
