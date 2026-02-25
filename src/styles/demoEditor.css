@@ -114,3 +114,126 @@
 .editor-text-underline {
     text-decoration: underline;
 }
+
+.demo-editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+    background-color: color-mix(in oklab, var(--color-muted) 65%, transparent);
+    padding: 0.65rem;
+}
+
+.demo-editor-toolbar-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-right: 1px solid var(--color-border);
+    padding-right: 0.5rem;
+}
+
+.demo-editor-toolbar-group:last-child {
+    border-right: 0;
+}
+
+.demo-editor-toolbar-button {
+    min-width: 2rem;
+}
+
+.demo-editor-toolbar-button.is-active {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+}
+
+.demo-editor-toolbar-trigger {
+    height: 2rem;
+}
+
+.demo-editor-font-size-control {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius) - 2px);
+    overflow: hidden;
+}
+
+.demo-editor-font-size-value {
+    min-width: 2rem;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.demo-editor-color-icon {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.demo-editor-color-popover {
+    width: 18rem;
+}
+
+.demo-editor-color-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 0.4rem;
+}
+
+.demo-editor-color-swatch {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 0.3rem;
+    border: 1px solid color-mix(in oklab, var(--color-foreground) 15%, transparent);
+    cursor: pointer;
+}
+
+.demo-editor-color-sample {
+    margin-top: 0.75rem;
+    height: 0.75rem;
+    border-radius: 9999px;
+}
+
+.editor-input {
+    padding-left: 2.75rem;
+}
+
+.editor-placeholder {
+    left: 2.75rem;
+}
+
+.editor-heading-h3 {
+    margin: 0.6rem 0 0.4rem;
+    font-size: 1.15rem;
+    line-height: 1.35;
+    font-weight: 700;
+}
+
+.demo-editor-block-actions {
+    position: absolute;
+    left: 0.35rem;
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    border-radius: 0.5rem;
+    background: color-mix(in oklab, var(--color-muted) 55%, transparent);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.editor-shell:hover .demo-editor-block-actions,
+.editor-shell:focus-within .demo-editor-block-actions {
+    opacity: 1;
+}
+
+.demo-editor-block-action-button {
+    color: var(--color-muted-foreground);
+}
+
+.demo-editor-block-actions-title {
+    border-bottom: 1px solid var(--color-border);
+    margin: -0.25rem -0.25rem 0.25rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-muted-foreground);
+}
