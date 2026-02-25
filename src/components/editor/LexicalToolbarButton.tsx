@@ -1,5 +1,5 @@
-﻿import { cn } from "@/utils/utils";
-import { Button } from "@/components/ui/button";
+﻿import {cn} from "@/utils/utils.ts";
+import {Button} from "@/components/ui/button.tsx";
 
 export interface LexicalToolbarButtonProps {
     isActive?: boolean;

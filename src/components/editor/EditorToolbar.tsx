@@ -1,18 +1,11 @@
-﻿import { useCallback, useEffect, useState } from "react";
-import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND } from "@lexical/list";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text";
-import { $setBlocksType } from "@lexical/selection";
-import { mergeRegister } from "@lexical/utils";
-import {
-    $createParagraphNode,
-    $getSelection,
-    $isRangeSelection,
-    COMMAND_PRIORITY_LOW,
-    FORMAT_TEXT_COMMAND,
-    SELECTION_CHANGE_COMMAND,
-} from "lexical";
-import LexicalToolbarButton from "@/components/editor/demo/LexicalToolbarButton";
+﻿import {useCallback, useEffect, useState} from "react";
+import {INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND} from "@lexical/list";
+import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
+import {$createHeadingNode, $isHeadingNode} from "@lexical/rich-text";
+import {$setBlocksType} from "@lexical/selection";
+import {mergeRegister} from "@lexical/utils";
+import {$createParagraphNode, $getSelection, $isRangeSelection, COMMAND_PRIORITY_LOW, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND,} from "lexical";
+import LexicalToolbarButton from "@/components/editor/LexicalToolbarButton.tsx";
 
 interface ToolbarFormats {
     bold: boolean;
@@ -21,7 +14,7 @@ interface ToolbarFormats {
     heading: boolean;
 }
 
-const DemoEditorToolbar = () => {
+const EditorToolbar = () => {
     const [editor] = useLexicalComposerContext();
     const [formats, setFormats] = useState<ToolbarFormats>({
         bold: false,
@@ -98,5 +91,5 @@ const DemoEditorToolbar = () => {
     );
 };
 
-export default DemoEditorToolbar;
+export default EditorToolbar;
 
