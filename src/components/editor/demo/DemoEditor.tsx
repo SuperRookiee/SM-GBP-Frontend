@@ -109,6 +109,7 @@ const EditorToolbar = () => {
     const [blockType, setBlockType] = useState<BlockType>("paragraph");
     const [fontFamily, setFontFamily] = useState("Arial");
     const [fontSize, setFontSize] = useState(15);
+    const [fontSizeInput, setFontSizeInput] = useState("15");
     const [textColor, setTextColor] = useState("#000000");
 
     const blockLabel = useMemo(() => {
@@ -144,7 +145,9 @@ const EditorToolbar = () => {
 
             setFontFamily($getSelectionStyleValueForProperty(selection, "font-family", "Arial").replaceAll("\"", ""));
             const resolvedSize = Number.parseInt($getSelectionStyleValueForProperty(selection, "font-size", "15px"), 10);
-            setFontSize(Number.isNaN(resolvedSize) ? 15 : resolvedSize);
+            const nextFontSize = Number.isNaN(resolvedSize) ? 15 : resolvedSize;
+            setFontSize(nextFontSize);
+            setFontSizeInput(String(nextFontSize));
             setTextColor($getSelectionStyleValueForProperty(selection, "color", "#000000"));
         });
     }, [editor]);
@@ -178,6 +181,22 @@ const EditorToolbar = () => {
             if (!$isRangeSelection(selection)) return;
             $patchStyleText(selection, styles);
         });
+    };
+
+    const applyFontSize = (nextSize: number) => {
+        const clamped = Math.min(72, Math.max(10, nextSize));
+        setFontSize(clamped);
+        setFontSizeInput(String(clamped));
+        applyTextStyle({"font-size": `${clamped}px`});
+    };
+
+    const commitFontSizeInput = () => {
+        const parsed = Number.parseInt(fontSizeInput, 10);
+        if (Number.isNaN(parsed)) {
+            setFontSizeInput(String(fontSize));
+            return;
+        }
+        applyFontSize(parsed);
     };
 
     useEffect(() => {
@@ -265,10 +284,27 @@ const EditorToolbar = () => {
 
                 <div className="demo-editor-font-size-control">
                     <Button variant="ghost" size="icon-sm" className={toolbarButtonClass}
-                            onClick={() => applyTextStyle({"font-size": `${Math.max(10, fontSize - 1)}px`})}><Minus size={15}/></Button>
-                    <div className="demo-editor-font-size-value">{fontSize}</div>
+                            onClick={() => applyFontSize(fontSize - 1)}><Minus size={15}/></Button>
+                    <input
+                        type="number"
+                        min={10}
+                        max={72}
+                        step={1}
+                        inputMode="numeric"
+                        className="demo-editor-font-size-input"
+                        value={fontSizeInput}
+                        onChange={(event) => setFontSizeInput(event.target.value)}
+                        onBlur={commitFontSizeInput}
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                                event.preventDefault();
+                                commitFontSizeInput();
+                                (event.currentTarget as HTMLInputElement).blur();
+                            }
+                        }}
+                    />
                     <Button variant="ghost" size="icon-sm" className={toolbarButtonClass}
-                            onClick={() => applyTextStyle({"font-size": `${Math.min(72, fontSize + 1)}px`})}><Plus size={15}/></Button>
+                            onClick={() => applyFontSize(fontSize + 1)}><Plus size={15}/></Button>
                 </div>
             </div>
 
@@ -512,7 +548,12 @@ const BlockSideActions = ({shellRef}: { shellRef: React.RefObject<HTMLDivElement
         resolveDropTargetFromPointer(event.clientY);
     }, [resolveDropTargetFromPointer]);
 
-    const onDragPointerUp = useCallback(() => {
+    const onDragPointerUp = useCallback((event: PointerEvent) => {
+        const target = event.target as HTMLElement | null;
+        if (target?.closest(".demo-editor-toolbar")) {
+            return;
+        }
+
         const {blockKey, dropTargetKey, dropPosition} = dragStateRef.current;
         if (blockKey && dropTargetKey) {
             moveBlockByDropTarget(blockKey, dropTargetKey, dropPosition);
@@ -520,19 +561,23 @@ const BlockSideActions = ({shellRef}: { shellRef: React.RefObject<HTMLDivElement
         stopDragging();
     }, [moveBlockByDropTarget, stopDragging]);
 
+    const onDragPointerCancel = useCallback(() => {
+        stopDragging();
+    }, [stopDragging]);
+
     useEffect(() => {
         if (!isDraggingBlock) return;
 
         window.addEventListener("pointermove", onDragPointerMove);
         window.addEventListener("pointerup", onDragPointerUp);
-        window.addEventListener("pointercancel", onDragPointerUp);
+        window.addEventListener("pointercancel", onDragPointerCancel);
 
         return () => {
             window.removeEventListener("pointermove", onDragPointerMove);
             window.removeEventListener("pointerup", onDragPointerUp);
-            window.removeEventListener("pointercancel", onDragPointerUp);
+            window.removeEventListener("pointercancel", onDragPointerCancel);
         };
-    }, [isDraggingBlock, onDragPointerMove, onDragPointerUp]);
+    }, [isDraggingBlock, onDragPointerMove, onDragPointerUp, onDragPointerCancel]);
 
     const onDragHandlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
         if (!activeBlockKey) return;
@@ -562,20 +607,20 @@ const BlockSideActions = ({shellRef}: { shellRef: React.RefObject<HTMLDivElement
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button type="button" size="icon-xs" variant="ghost" className="demo-editor-block-action-button">
-                            <Plus size={12}/>
+                            <Plus size={10}/>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" side="right" className="min-w-52">
                         <div className="demo-editor-block-actions-title">Filter blocks...</div>
-                        <DropdownMenuItem onClick={() => insertBlockAfter("paragraph")}><Text size={14}/>Paragraph</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => insertBlockAfter("h1")}><Heading size={14}/>Heading 1</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => insertBlockAfter("h2")}><Heading size={14}/>Heading 2</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => insertBlockAfter("h3")}><Heading size={14}/>Heading 3</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => insertBlockAfter("quote")}><Quote size={14}/>Quote</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => insertBlockAfter("paragraph")}><Text size={10}/>Paragraph</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => insertBlockAfter("h1")}><Heading size={10}/>Heading 1</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => insertBlockAfter("h2")}><Heading size={10}/>Heading 2</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => insertBlockAfter("h3")}><Heading size={10}/>Heading 3</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => insertBlockAfter("quote")}><Quote size={10}/>Quote</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}><ListOrdered
-                            size={14}/>Numbered List</DropdownMenuItem>
+                            size={10}/>Numbered List</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}><ListChecks
-                            size={14}/>Bullet List</DropdownMenuItem>
+                            size={10}/>Bullet List</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -587,7 +632,7 @@ const BlockSideActions = ({shellRef}: { shellRef: React.RefObject<HTMLDivElement
                     className={cn("demo-editor-block-action-button", isDraggingBlock ? "cursor-grabbing" : "cursor-grab")}
                     onPointerDown={onDragHandlePointerDown}
                 >
-                    <GripVertical size={12}/>
+                    <GripVertical size={10}/>
                 </Button>
             </div>
             {isDraggingBlock && dragGuideTop !== null && (
