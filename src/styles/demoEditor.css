@@ -115,6 +115,27 @@
     text-decoration: underline;
 }
 
+.editor-text-strikethrough {
+    text-decoration: line-through;
+}
+
+.editor-text-subscript {
+    vertical-align: sub;
+    font-size: 0.75em;
+}
+
+.editor-text-superscript {
+    vertical-align: super;
+    font-size: 0.75em;
+}
+
+.editor-text-code {
+    border-radius: 0.25rem;
+    padding: 0.05rem 0.25rem;
+    background: color-mix(in oklab, var(--color-muted) 75%, transparent);
+    font-family: "Courier New", Courier, monospace;
+}
+
 .demo-editor-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -188,6 +209,39 @@
     width: 18rem;
 }
 
+.demo-editor-color-picker {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.demo-editor-color-picker-row {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.demo-editor-color-picker-label {
+    font-size: 0.85rem;
+    color: var(--color-muted-foreground);
+}
+
+.demo-editor-color-hex-input {
+    height: 2rem;
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius) - 2px);
+    background: var(--color-background);
+    padding: 0 0.625rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    outline: none;
+}
+
+.demo-editor-color-hex-input:focus-visible {
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 35%, transparent);
+}
+
 .demo-editor-color-grid {
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -195,25 +249,104 @@
 }
 
 .demo-editor-color-swatch {
+    position: relative;
     width: 1.25rem;
     height: 1.25rem;
     border-radius: 0.3rem;
-    border: 1px solid color-mix(in oklab, var(--color-foreground) 15%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-foreground) 22%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-background) 55%, transparent);
     cursor: pointer;
 }
 
-.demo-editor-color-sample {
-    margin-top: 0.75rem;
-    height: 0.75rem;
+.demo-editor-color-swatch.is-active {
+    box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--color-background) 45%, transparent),
+        0 0 0 2px var(--color-primary);
+}
+
+.demo-editor-color-swatch.is-contrast {
+    border-color: color-mix(in oklab, var(--color-foreground) 40%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-background) 30%, transparent);
+}
+
+.demo-editor-color-swatch.is-transparent {
+    background-image:
+        linear-gradient(45deg, color-mix(in oklab, var(--color-foreground) 14%, transparent) 25%, transparent 25%),
+        linear-gradient(-45deg, color-mix(in oklab, var(--color-foreground) 14%, transparent) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, color-mix(in oklab, var(--color-foreground) 14%, transparent) 75%),
+        linear-gradient(-45deg, transparent 75%, color-mix(in oklab, var(--color-foreground) 14%, transparent) 75%);
+    background-size: 0.5rem 0.5rem;
+    background-position: 0 0, 0 0.25rem, 0.25rem -0.25rem, -0.25rem 0;
+}
+
+.demo-editor-color-sv {
+    position: relative;
+    height: 11rem;
+    border-radius: 0.45rem;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    cursor: crosshair;
+}
+
+.demo-editor-color-sv-overlay-white,
+.demo-editor-color-sv-overlay-black {
+    position: absolute;
+    inset: 0;
+}
+
+.demo-editor-color-sv-overlay-white {
+    background: linear-gradient(to right, #fff, transparent);
+}
+
+.demo-editor-color-sv-overlay-black {
+    background: linear-gradient(to top, #000, transparent);
+}
+
+.demo-editor-color-sv-thumb {
+    position: absolute;
+    width: 1.35rem;
+    height: 1.35rem;
     border-radius: 9999px;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 35%);
+    transform: translate(-50%, -50%);
+}
+
+.demo-editor-color-hue {
+    position: relative;
+    height: 0.9rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background: linear-gradient(
+        to right,
+        #ff0000 0%,
+        #ffff00 17%,
+        #00ff00 33%,
+        #00ffff 50%,
+        #0000ff 67%,
+        #ff00ff 83%,
+        #ff0000 100%
+    );
+    cursor: ew-resize;
+}
+
+.demo-editor-color-hue-thumb {
+    position: absolute;
+    top: 50%;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 35%);
+    transform: translate(-50%, -50%);
 }
 
 .editor-input {
-    padding-left: 3rem;
+    padding-left: 3.5rem;
 }
 
 .editor-placeholder {
-    left: 2.75rem;
+    left: 3.5rem;
 }
 
 .editor-heading-h3 {
@@ -229,6 +362,7 @@
     z-index: 30;
     display: inline-flex;
     align-items: center;
+    gap: 0;
     border-radius: 0.5rem;
     opacity: 0;
     transition: opacity 0.15s ease;
@@ -266,4 +400,27 @@
     background: var(--color-primary);
     pointer-events: none;
     box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 18%, transparent);
+}
+
+.demo-editor-selection-toolbar {
+    position: fixed;
+    z-index: 40;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.7rem;
+    background: color-mix(in oklab, var(--color-background) 95%, transparent);
+    box-shadow: 0 8px 24px color-mix(in oklab, var(--color-foreground) 10%, transparent);
+}
+
+.demo-editor-selection-button {
+    min-width: 1.9rem;
+}
+
+.demo-editor-selection-button.is-active {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
 }

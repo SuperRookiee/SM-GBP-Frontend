@@ -83,7 +83,7 @@ const AppBreadcrumb = ({className}: IAppBreadcrumbProps) => {
                     const isLast = index === items.length - 1;
 
                     return (
-                        <Fragment key={item.href}>
+                        <Fragment key={`${item.href}-${index}`}>
                             <BreadcrumbSeparator/>
                             <BreadcrumbItem>
                                 {isLast ? (
@@ -103,4 +103,3 @@ const AppBreadcrumb = ({className}: IAppBreadcrumbProps) => {
 };
 
 export default AppBreadcrumb;
-
