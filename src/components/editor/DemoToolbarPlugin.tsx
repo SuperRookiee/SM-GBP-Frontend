@@ -57,15 +57,17 @@ const hsvToRgb = (h: number, s: number, v: number) => {
     const c = v * s;
     const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
     const m = v - c;
-    let rPrime = 0;
-    let gPrime = 0;
-    let bPrime = 0;
-    if (h < 60) [rPrime, gPrime, bPrime] = [c, x, 0];
-    else if (h < 120) [rPrime, gPrime, bPrime] = [x, c, 0];
-    else if (h < 180) [rPrime, gPrime, bPrime] = [0, c, x];
-    else if (h < 240) [rPrime, gPrime, bPrime] = [0, x, c];
-    else if (h < 300) [rPrime, gPrime, bPrime] = [x, 0, c];
-    else [rPrime, gPrime, bPrime] = [c, 0, x];
+    const [rPrime, gPrime, bPrime] = h < 60
+        ? [c, x, 0]
+        : h < 120
+            ? [x, c, 0]
+            : h < 180
+                ? [0, c, x]
+                : h < 240
+                    ? [0, x, c]
+                    : h < 300
+                        ? [x, 0, c]
+                        : [c, 0, x];
     return {
         r: Math.round((rPrime + m) * 255),
         g: Math.round((gPrime + m) * 255),
@@ -106,16 +108,10 @@ interface IColorPickerProps {
 const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onClear, onDragStateChange}: IColorPickerProps) => {
     const svRef = useRef<HTMLDivElement>(null);
     const hueRef = useRef<HTMLDivElement>(null);
-    const [hsv, setHsv] = useState({h: 0, s: 0, v: 0});
-    const [hexInput, setHexInput] = useState("#000000");
-
-    useEffect(() => {
-        const parsed = parseColor(value);
-        if (!parsed || parsed.kind === "transparent") return;
-        const nextHsv = rgbToHsv(parsed.r, parsed.g, parsed.b);
-        setHsv(nextHsv);
-        setHexInput(rgbToHex(parsed.r, parsed.g, parsed.b));
-    }, [value]);
+    const initialParsed = parseColor(value);
+    const initialRgb = initialParsed && initialParsed.kind === "rgb" ? initialParsed : {r: 0, g: 0, b: 0};
+    const [hsv, setHsv] = useState(() => rgbToHsv(initialRgb.r, initialRgb.g, initialRgb.b));
+    const [hexInput, setHexInput] = useState(() => rgbToHex(initialRgb.r, initialRgb.g, initialRgb.b));
 
     const applyHsv = useCallback((nextHsv: {h: number; s: number; v: number}) => {
         setHsv(nextHsv);
