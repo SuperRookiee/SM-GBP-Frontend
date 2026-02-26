@@ -643,7 +643,11 @@ const SelectionFloatingToolbar = () => {
 
     return (
         // 선택 텍스트 근처에 표시되는 플로팅 툴바
-        <div ref={toolbarRef} className="demo-editor-selection-toolbar" style={{top: position.top, left: position.left}}>
+        <div
+            ref={toolbarRef}
+            className="demo-editor-selection-toolbar"
+            style={{transform: `translate3d(${position.left}px, ${position.top}px, 0) translateX(-50%)`}}
+        >
             <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.bold && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}><Bold size={14}/></Button>
             <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.italic && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}><Italic size={14}/></Button>
             <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.underline && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}><Underline size={14}/></Button>

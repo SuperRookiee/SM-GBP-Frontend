@@ -80,6 +80,59 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         );
     }, [editor, syncBlockPosition]);
 
+    useEffect(() => {
+        if (!shellRef.current || isDraggingBlock) return;
+
+        const shellElement = shellRef.current;
+
+        const syncBlockFromHover = (clientY: number) => {
+            const blockLayouts: Array<{ key: string; rect: DOMRect }> = [];
+
+            editor.getEditorState().read(() => {
+                const blocks = $getRoot().getChildren();
+                blocks.forEach((block) => {
+                    const blockElement = editor.getElementByKey(block.getKey());
+                    if (!blockElement) return;
+                    blockLayouts.push({key: block.getKey(), rect: blockElement.getBoundingClientRect()});
+                });
+            });
+
+            if (blockLayouts.length === 0) {
+                setActiveBlockKey(null);
+                return;
+            }
+
+            const hovered = blockLayouts.find((block) => clientY >= block.rect.top && clientY <= block.rect.bottom)
+                ?? blockLayouts.reduce((closest, block) => {
+                    const closestCenterY = closest.rect.top + closest.rect.height / 2;
+                    const blockCenterY = block.rect.top + block.rect.height / 2;
+                    const closestDistance = Math.abs(clientY - closestCenterY);
+                    const blockDistance = Math.abs(clientY - blockCenterY);
+                    return blockDistance < closestDistance ? block : closest;
+                }, blockLayouts[0]);
+
+            const shellRect = shellElement.getBoundingClientRect();
+            setActiveBlockKey(hovered.key);
+            setBlockTop(hovered.rect.top - shellRect.top);
+        };
+
+        const onMouseMove = (event: MouseEvent) => {
+            syncBlockFromHover(event.clientY);
+        };
+
+        const onMouseLeave = () => {
+            setActiveBlockKey(null);
+        };
+
+        shellElement.addEventListener("mousemove", onMouseMove);
+        shellElement.addEventListener("mouseleave", onMouseLeave);
+
+        return () => {
+            shellElement.removeEventListener("mousemove", onMouseMove);
+            shellElement.removeEventListener("mouseleave", onMouseLeave);
+        };
+    }, [editor, isDraggingBlock, shellRef]);
+
     // #. 현재 블록 뒤에 선택한 타입의 블록을 삽입
     const insertBlockAfter = (type: InsertBlockType) => {
         editor.update(() => {
@@ -238,7 +291,7 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
     return (
         <>
             {/* 블록 추가/이동 액션 래퍼 */}
-            <div className="demo-editor-block-actions" style={{top: `${blockTop - 3}px`}}>
+            <div className="demo-editor-block-actions" style={{transform: `translate3d(0, ${blockTop - 3}px, 0)`}}>
                 {/* 블록 추가 메뉴 */}
                 <DropdownMenu>
                     {/* 블록 추가 메뉴 트리거 */}
@@ -282,7 +335,7 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
             </div>
             {/* 드래그 중 표시되는 삽입 가이드 라인 */}
             {isDraggingBlock && dragGuideTop !== null && (
-                <div className="demo-editor-drag-guide" style={{top: `${dragGuideTop}px`}}/>
+                <div className="demo-editor-drag-guide" style={{transform: `translate3d(0, ${dragGuideTop}px, 0)`}}/>
             )}
         </>
     );

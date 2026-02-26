@@ -358,6 +358,7 @@
 
 :global(.demo-editor-block-actions) {
     position: absolute;
+    top: 0;
     left: 0.1rem;
     z-index: 30;
     display: inline-flex;
@@ -365,7 +366,8 @@
     gap: 0;
     border-radius: 0.5rem;
     opacity: 0;
-    transition: opacity 0.15s ease;
+    will-change: transform, opacity;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.15s ease;
 }
 
 :global(.editor-shell):hover :global(.demo-editor-block-actions),
@@ -392,6 +394,7 @@
 
 :global(.demo-editor-drag-guide) {
     position: absolute;
+    top: 0;
     left: 2.75rem;
     right: 0.75rem;
     z-index: 25;
@@ -400,12 +403,15 @@
     background: var(--color-primary);
     pointer-events: none;
     box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 18%, transparent);
+    will-change: transform;
+    transition: transform 0.12s ease-out;
 }
 
 :global(.demo-editor-selection-toolbar) {
     position: fixed;
+    top: 0;
+    left: 0;
     z-index: 40;
-    transform: translateX(-50%);
     display: inline-flex;
     align-items: center;
     gap: 0.15rem;
@@ -414,6 +420,18 @@
     border-radius: 0.7rem;
     background: color-mix(in oklab, var(--color-background) 95%, transparent);
     box-shadow: 0 8px 24px color-mix(in oklab, var(--color-foreground) 10%, transparent);
+    will-change: transform;
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: demo-editor-selection-toolbar-fade-in 0.3s ease-out;
+}
+
+@keyframes demo-editor-selection-toolbar-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 :global(.demo-editor-selection-button) {
