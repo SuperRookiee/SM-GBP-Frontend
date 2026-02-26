@@ -1,6 +1,6 @@
 import type {PointerEvent as ReactPointerEvent, RefObject} from "react";
 import {useCallback, useEffect, useRef, useState} from "react";
-import {INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND} from "@lexical/list";
+import {$createListItemNode, $createListNode} from "@lexical/list";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$createHeadingNode, QuoteNode} from "@lexical/rich-text";
 import {mergeRegister} from "@lexical/utils";
@@ -11,6 +11,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu.tsx";
 
 type InsertBlockType = "paragraph" | "h1" | "h2" | "h3" | "quote";
+type InsertListType = "bullet" | "number";
 
 interface IBlockSideActionsProps {
     shellRef: RefObject<HTMLDivElement | null>;
@@ -20,8 +21,10 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
     const [editor] = useLexicalComposerContext();
     const [activeBlockKey, setActiveBlockKey] = useState<string | null>(null);
     const [blockTop, setBlockTop] = useState(0);
+    const [blockHeight, setBlockHeight] = useState(0);
     const [isDraggingBlock, setIsDraggingBlock] = useState(false);
     const [dragGuideTop, setDragGuideTop] = useState<number | null>(null);
+    const [isInsertMenuOpen, setIsInsertMenuOpen] = useState(false);
     // #. 블록 드래그 상태를 React 렌더와 분리해 포인터 이동 중 성능 저하를 줄인다.
     const dragStateRef = useRef<{
         blockKey: string | null;
@@ -41,7 +44,6 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
     const syncBlockPosition = useCallback(() => {
         const selection = $getSelection();
         if (!$isRangeSelection(selection)) {
-            setActiveBlockKey(null);
             return;
         }
 
@@ -51,7 +53,6 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         const blockElement = editor.getElementByKey(key);
 
         if (!blockElement || !shellRef.current) {
-            setActiveBlockKey(null);
             return;
         }
 
@@ -60,6 +61,7 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
 
         setActiveBlockKey(key);
         setBlockTop(blockRect.top - shellRect.top);
+        setBlockHeight(blockRect.height);
     }, [editor, shellRef]);
 
     useEffect(() => {
@@ -114,6 +116,7 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
             const shellRect = shellElement.getBoundingClientRect();
             setActiveBlockKey(hovered.key);
             setBlockTop(hovered.rect.top - shellRect.top);
+            setBlockHeight(hovered.rect.height);
         };
 
         const onMouseMove = (event: MouseEvent) => {
@@ -121,6 +124,7 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         };
 
         const onMouseLeave = () => {
+            if (isInsertMenuOpen) return;
             setActiveBlockKey(null);
         };
 
@@ -131,15 +135,20 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
             shellElement.removeEventListener("mousemove", onMouseMove);
             shellElement.removeEventListener("mouseleave", onMouseLeave);
         };
-    }, [editor, isDraggingBlock, shellRef]);
+    }, [editor, isDraggingBlock, isInsertMenuOpen, shellRef]);
 
     // #. 현재 블록 뒤에 선택한 타입의 블록을 삽입
     const insertBlockAfter = (type: InsertBlockType) => {
         editor.update(() => {
-            const selection = $getSelection();
-            if (!$isRangeSelection(selection)) return;
+            const currentBlock = activeBlockKey
+                ? $getNodeByKey(activeBlockKey)?.getTopLevelElementOrThrow()
+                : (() => {
+                    const selection = $getSelection();
+                    if (!$isRangeSelection(selection)) return null;
+                    return selection.anchor.getNode().getTopLevelElementOrThrow();
+                })();
+            if (!currentBlock) return;
 
-            const currentBlock = selection.anchor.getNode().getTopLevelElementOrThrow();
             const newNode = type === "paragraph"
                 ? $createParagraphNode()
                 : type === "quote"
@@ -148,7 +157,45 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
 
             currentBlock.insertAfter(newNode);
             newNode.selectStart();
+            setActiveBlockKey(newNode.getKey());
         });
+    };
+
+    // #. 현재 블록 뒤에 리스트 블록을 삽입하고 첫 아이템으로 커서를 이동
+    const insertListAfter = (type: InsertListType) => {
+        editor.update(() => {
+            const currentBlock = activeBlockKey
+                ? $getNodeByKey(activeBlockKey)?.getTopLevelElementOrThrow()
+                : (() => {
+                    const selection = $getSelection();
+                    if (!$isRangeSelection(selection)) return null;
+                    return selection.anchor.getNode().getTopLevelElementOrThrow();
+                })();
+            if (!currentBlock) return;
+
+            const listNode = $createListNode(type);
+            const listItemNode = $createListItemNode();
+            listItemNode.append($createParagraphNode());
+            listNode.append(listItemNode);
+            currentBlock.insertAfter(listNode);
+            listItemNode.selectStart();
+            setActiveBlockKey(listNode.getKey());
+        });
+    };
+
+    // #. 드롭다운 액션 후 에디터 포커스를 복원해 새 블록 커서 위치를 유지
+    const refocusEditor = () => {
+        requestAnimationFrame(() => {
+            editor.focus();
+        });
+    };
+
+    // #. 메뉴 선택 시 삽입 로직과 포커스 복원을 동일한 타이밍으로 처리
+    const handleInsertSelect = (event: Event, action: () => void) => {
+        event.preventDefault();
+        action();
+        setIsInsertMenuOpen(false);
+        refocusEditor();
     };
 
     // #. 드롭 타깃과 위치(before/after)에 따라 블록 순서를 재배치
@@ -284,17 +331,20 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         document.body.style.userSelect = "none";
     };
 
-    if (!activeBlockKey && !isDraggingBlock) {
+    if (!activeBlockKey && !isDraggingBlock && !isInsertMenuOpen) {
         return null;
     }
 
     return (
         <>
-            {(activeBlockKey || isDraggingBlock) && (
+            {(activeBlockKey || isDraggingBlock || isInsertMenuOpen) && (
                 /* 블록 추가/이동 액션 래퍼 */
-                <div className={cn("demo-editor-block-actions", isDraggingBlock && "is-dragging")} style={{transform: `translate3d(0, ${blockTop - 3}px, 0)`}}>
+                <div
+                    className={cn("demo-editor-block-actions", isDraggingBlock && "is-dragging")}
+                    style={{transform: `translate3d(0, ${blockTop + blockHeight / 2}px, 0) translateY(-50%)`}}
+                >
                     {/* 블록 추가 메뉴 */}
-                    <DropdownMenu>
+                    <DropdownMenu open={isInsertMenuOpen} onOpenChange={setIsInsertMenuOpen}>
                         {/* 블록 추가 메뉴 트리거 */}
                         <DropdownMenuTrigger asChild>
                             <Button type="button" size="icon-xs" variant="ghost" className="demo-editor-block-action-button">
@@ -306,19 +356,19 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
                             {/* 메뉴 타이틀 */}
                             <div className="demo-editor-block-actions-title">Filter blocks...</div>
                             {/* 단락 삽입 */}
-                            <DropdownMenuItem onClick={() => insertBlockAfter("paragraph")}><Text size={10}/>Paragraph</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(event) => handleInsertSelect(event, () => insertBlockAfter("paragraph"))}><Text size={10}/>Paragraph</DropdownMenuItem>
                             {/* H1 삽입 */}
-                            <DropdownMenuItem onClick={() => insertBlockAfter("h1")}><Heading size={10}/>Heading 1</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(event) => handleInsertSelect(event, () => insertBlockAfter("h1"))}><Heading size={10}/>Heading 1</DropdownMenuItem>
                             {/* H2 삽입 */}
-                            <DropdownMenuItem onClick={() => insertBlockAfter("h2")}><Heading size={10}/>Heading 2</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(event) => handleInsertSelect(event, () => insertBlockAfter("h2"))}><Heading size={10}/>Heading 2</DropdownMenuItem>
                             {/* H3 삽입 */}
-                            <DropdownMenuItem onClick={() => insertBlockAfter("h3")}><Heading size={10}/>Heading 3</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(event) => handleInsertSelect(event, () => insertBlockAfter("h3"))}><Heading size={10}/>Heading 3</DropdownMenuItem>
                             {/* 인용구 삽입 */}
-                            <DropdownMenuItem onClick={() => insertBlockAfter("quote")}><Quote size={10}/>Quote</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(event) => handleInsertSelect(event, () => insertBlockAfter("quote"))}><Quote size={10}/>Quote</DropdownMenuItem>
                             {/* 번호 목록 삽입 */}
-                            <DropdownMenuItem onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}><ListOrdered size={10}/>Numbered List</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(event) => handleInsertSelect(event, () => insertListAfter("number"))}><ListOrdered size={10}/>Numbered List</DropdownMenuItem>
                             {/* 불릿 목록 삽입 */}
-                            <DropdownMenuItem onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}><List size={10}/>Bullet List</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(event) => handleInsertSelect(event, () => insertListAfter("bullet"))}><List size={10}/>Bullet List</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
 
