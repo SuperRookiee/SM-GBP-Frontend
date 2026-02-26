@@ -342,11 +342,11 @@
 }
 
 :global(.editor-input) {
-    padding-left: 3.5rem;
+    padding-left: 3.25rem;
 }
 
 :global(.editor-placeholder) {
-    left: 3.5rem;
+    left: 3.25rem;
 }
 
 :global(.editor-heading-h3) {

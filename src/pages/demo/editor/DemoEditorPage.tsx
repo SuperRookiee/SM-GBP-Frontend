@@ -73,6 +73,7 @@ const DemoEditorPage = () => {
                 <p className="mt-2 text-muted-foreground">{t("editorPage.description")}</p>
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
+                {/* 에디터 */}
                 <Card className="overflow-hidden pt-0">
                     <LexicalComposer initialConfig={editorConfig}>
                         <ToolbarPlugin/>
@@ -93,8 +94,9 @@ const DemoEditorPage = () => {
                     </LexicalComposer>
                 </Card>
 
+                {/* 에디터 출력 JSON */}
                 <Card className="p-4">
-                    <h2 className="mb-3 font-semibold">{t("editor.jsonOutput")}</h2>
+                    <h2 className="font-semibold">{t("editor.jsonOutput")}</h2>
                     <ScrollArea className="h-120">
                         <pre className="overflow-auto rounded-md bg-muted p-3 text-xs">{value || "{ }"}</pre>
                     </ScrollArea>
