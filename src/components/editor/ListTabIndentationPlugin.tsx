@@ -7,9 +7,9 @@ import {$getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, INDENT_CONTEN
 const ListTabIndentationPlugin = () => {
     const [editor] = useLexicalComposerContext();
 
-    // #. Tab 키를 리스트 들여쓰기 동작으로 연결
+    // #. Tab 키를 들여쓰기 동작으로 연결
     useEffect(() => {
-        // 리스트 항목에서만 Tab/Shift+Tab을 들여쓰기/내어쓰기로 매핑
+        // 모든 블록에서 Tab/Shift+Tab을 들여쓰기/내어쓰기로 매핑
         return editor.registerCommand(
             KEY_TAB_COMMAND,
             (event: KeyboardEvent) => {
@@ -22,24 +22,20 @@ const ListTabIndentationPlugin = () => {
                 const anchorNode = selection.anchor.getNode();
                 const listItemNode = $findMatchingParent(anchorNode, $isListItemNode);
 
-                if (!listItemNode) {
-                    return false;
-                }
-
                 event.preventDefault();
 
-                if (!event.shiftKey) {
+                if (event.shiftKey) {
+                    editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
+                    return true;
+                }
+
+                if (listItemNode) {
                     const previousSibling = listItemNode.getPreviousSibling();
 
                     // 일반 에디터 동작과 맞추기 위해 같은 레벨의 첫 항목은 추가 들여쓰기를 막는다.
                     if (!$isListItemNode(previousSibling)) {
                         return true;
                     }
-                }
-
-                if (event.shiftKey) {
-                    editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
-                    return true;
                 }
 
                 editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);

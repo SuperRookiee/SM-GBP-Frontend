@@ -375,6 +375,10 @@
     opacity: 1;
 }
 
+:global(.demo-editor-block-actions):global(.is-dragging) {
+    opacity: 1;
+}
+
 :global(.demo-editor-block-action-button) {
     display: inline-flex;
     align-items: center;

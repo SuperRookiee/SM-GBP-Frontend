@@ -9,6 +9,7 @@ import {$createParagraphNode, $getSelection, $isRangeSelection, CAN_REDO_COMMAND
 import {AlignLeft, Bold, ChevronDown, Code, Heading, Highlighter, Indent, Italic, List, ListOrdered, Minus, Plus, Redo2, Strikethrough, Underline, Undo2} from "lucide-react";
 import {cn} from "@/utils/utils.ts";
 import {Button} from "@/components/ui/button.tsx";
+import {Kbd} from "@/components/ui/kbd.tsx";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
 
 type TextFormat = "bold" | "italic" | "underline" | "strikethrough" | "code";
@@ -561,8 +562,32 @@ const EditorToolbar = () => {
                         <Button variant="ghost" className="w-full justify-start" onClick={() => applyAlign("right")}>Right Align</Button>
                         <Button variant="ghost" className="w-full justify-start" onClick={() => applyAlign("justify")}>Justify Align</Button>
                         <div className="my-1 border-t"/>
-                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined)}><Indent size={15} className="rotate-180"/>Outdent</Button>
-                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined)}><Indent size={15}/>Indent</Button>
+                        <Button
+                            variant="ghost"
+                            className="w-full justify-between gap-2"
+                            onClick={() => editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined)}
+                        >
+                            <span className="inline-flex items-center gap-2">
+                                <Indent size={15} className="rotate-180"/>
+                                Outdent
+                            </span>
+                            <span className="inline-flex items-center gap-1">
+                                <Kbd>Shift</Kbd>
+                                <span>+</span>
+                                <Kbd>Tab</Kbd>
+                            </span>
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            className="w-full justify-between gap-2"
+                            onClick={() => editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined)}
+                        >
+                            <span className="inline-flex items-center gap-2">
+                                <Indent size={15}/>
+                                Indent
+                            </span>
+                            <Kbd>Tab</Kbd>
+                        </Button>
                     </PopoverContent>
                 </Popover>
             </div>

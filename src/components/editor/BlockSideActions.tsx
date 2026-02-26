@@ -284,55 +284,57 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         document.body.style.userSelect = "none";
     };
 
-    if (!activeBlockKey) {
+    if (!activeBlockKey && !isDraggingBlock) {
         return null;
     }
 
     return (
         <>
-            {/* 블록 추가/이동 액션 래퍼 */}
-            <div className="demo-editor-block-actions" style={{transform: `translate3d(0, ${blockTop - 3}px, 0)`}}>
-                {/* 블록 추가 메뉴 */}
-                <DropdownMenu>
-                    {/* 블록 추가 메뉴 트리거 */}
-                    <DropdownMenuTrigger asChild>
-                        <Button type="button" size="icon-xs" variant="ghost" className="demo-editor-block-action-button">
-                            <Plus size={10}/>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    {/* 블록 타입 선택 메뉴 */}
-                    <DropdownMenuContent align="start" side="right" className="min-w-52">
-                        {/* 메뉴 타이틀 */}
-                        <div className="demo-editor-block-actions-title">Filter blocks...</div>
-                        {/* 단락 삽입 */}
-                        <DropdownMenuItem onClick={() => insertBlockAfter("paragraph")}><Text size={10}/>Paragraph</DropdownMenuItem>
-                        {/* H1 삽입 */}
-                        <DropdownMenuItem onClick={() => insertBlockAfter("h1")}><Heading size={10}/>Heading 1</DropdownMenuItem>
-                        {/* H2 삽입 */}
-                        <DropdownMenuItem onClick={() => insertBlockAfter("h2")}><Heading size={10}/>Heading 2</DropdownMenuItem>
-                        {/* H3 삽입 */}
-                        <DropdownMenuItem onClick={() => insertBlockAfter("h3")}><Heading size={10}/>Heading 3</DropdownMenuItem>
-                        {/* 인용구 삽입 */}
-                        <DropdownMenuItem onClick={() => insertBlockAfter("quote")}><Quote size={10}/>Quote</DropdownMenuItem>
-                        {/* 번호 목록 삽입 */}
-                        <DropdownMenuItem onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}><ListOrdered size={10}/>Numbered List</DropdownMenuItem>
-                        {/* 불릿 목록 삽입 */}
-                        <DropdownMenuItem onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}><List size={10}/>Bullet List</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+            {(activeBlockKey || isDraggingBlock) && (
+                /* 블록 추가/이동 액션 래퍼 */
+                <div className={cn("demo-editor-block-actions", isDraggingBlock && "is-dragging")} style={{transform: `translate3d(0, ${blockTop - 3}px, 0)`}}>
+                    {/* 블록 추가 메뉴 */}
+                    <DropdownMenu>
+                        {/* 블록 추가 메뉴 트리거 */}
+                        <DropdownMenuTrigger asChild>
+                            <Button type="button" size="icon-xs" variant="ghost" className="demo-editor-block-action-button">
+                                <Plus size={10}/>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        {/* 블록 타입 선택 메뉴 */}
+                        <DropdownMenuContent align="start" side="right" className="min-w-52">
+                            {/* 메뉴 타이틀 */}
+                            <div className="demo-editor-block-actions-title">Filter blocks...</div>
+                            {/* 단락 삽입 */}
+                            <DropdownMenuItem onClick={() => insertBlockAfter("paragraph")}><Text size={10}/>Paragraph</DropdownMenuItem>
+                            {/* H1 삽입 */}
+                            <DropdownMenuItem onClick={() => insertBlockAfter("h1")}><Heading size={10}/>Heading 1</DropdownMenuItem>
+                            {/* H2 삽입 */}
+                            <DropdownMenuItem onClick={() => insertBlockAfter("h2")}><Heading size={10}/>Heading 2</DropdownMenuItem>
+                            {/* H3 삽입 */}
+                            <DropdownMenuItem onClick={() => insertBlockAfter("h3")}><Heading size={10}/>Heading 3</DropdownMenuItem>
+                            {/* 인용구 삽입 */}
+                            <DropdownMenuItem onClick={() => insertBlockAfter("quote")}><Quote size={10}/>Quote</DropdownMenuItem>
+                            {/* 번호 목록 삽입 */}
+                            <DropdownMenuItem onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}><ListOrdered size={10}/>Numbered List</DropdownMenuItem>
+                            {/* 불릿 목록 삽입 */}
+                            <DropdownMenuItem onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}><List size={10}/>Bullet List</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
 
-                {/* 블록 순서 이동용 드래그 핸들 */}
-                <Button
-                    type="button"
-                    size="icon-xs"
-                    variant="ghost"
-                    aria-label="Drag to reorder block"
-                    className={cn("demo-editor-block-action-button -ml-1", isDraggingBlock ? "cursor-grabbing" : "cursor-grab")}
-                    onPointerDown={onDragHandlePointerDown}
-                >
-                    <GripVertical size={10}/>
-                </Button>
-            </div>
+                    {/* 블록 순서 이동용 드래그 핸들 */}
+                    <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="ghost"
+                        aria-label="Drag to reorder block"
+                        className={cn("demo-editor-block-action-button -ml-1", isDraggingBlock ? "cursor-grabbing" : "cursor-grab")}
+                        onPointerDown={onDragHandlePointerDown}
+                    >
+                        <GripVertical size={10}/>
+                    </Button>
+                </div>
+            )}
             {/* 드래그 중 표시되는 삽입 가이드 라인 */}
             {isDraggingBlock && dragGuideTop !== null && (
                 <div className="demo-editor-drag-guide" style={{transform: `translate3d(0, ${dragGuideTop}px, 0)`}}/>
