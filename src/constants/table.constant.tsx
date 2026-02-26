@@ -28,7 +28,7 @@ const getDemoDataTableActions = (t: TFunction) => ({
     menuLabel: t("table.actions"),
     maxItems: 4,
     actions: [
-        { id: "view", label: t("table.detail"), href: (row: IDemoDataTableRow) => `/demo/grid_table/${row.id}` },
+        { id: "view", label: t("table.detail"), href: (row: IDemoDataTableRow) => `/demo/grid-table/${row.id}` },
         { id: "copy", label: t("table.copyEmail"), onSelect: (row: IDemoDataTableRow) => console.info("copy", row.email) },
         { id: "edit", label: t("table.editOwner"), onSelect: (row: IDemoDataTableRow) => console.info("edit", row.customer) },
         { id: "remove", label: t("table.remove"), destructive: true, onSelect: (row: IDemoDataTableRow) => console.info("remove", row.id) },

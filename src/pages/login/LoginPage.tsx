@@ -136,14 +136,14 @@ const LoginPage = () => {
                             <p className="py-1">
                                 <span className="mr-1 text-foreground">1.</span>
                                 {t("login.forgotPasswordPrefix")}{" "}
-                                <Link to="/forgot_password" className="font-semibold text-primary underline underline-offset-2">
+                                <Link to="/forgot-password" className="font-semibold text-primary underline underline-offset-2">
                                     {t("login.forgotPasswordLink")}
                                 </Link>
                             </p>
                             <p className="py-1">
                                 <span className="mr-1 text-foreground">2.</span>
                                 {t("login.signupPrefix")}{" "}
-                                <Link to="/sign_up" className="font-semibold text-primary underline underline-offset-2">
+                                <Link to="/sign-up" className="font-semibold text-primary underline underline-offset-2">
                                     {t("login.signup")}
                                 </Link>
                             </p>

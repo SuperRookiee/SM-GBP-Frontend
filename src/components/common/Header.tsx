@@ -27,7 +27,7 @@ const Header = () => {
             <Link to={user ? "/" : "/login"} className="text-2xl font-black">SAMSUNG</Link>
             <div className="flex items-center gap-2">
                 {user ? (
-                    <Link to="/my_page" className="text-sm text-muted-foreground hover:underline">
+                    <Link to="/my-page" className="text-sm text-muted-foreground hover:underline">
                         {t("header.greeting", {name: user.name})}
                     </Link>
                 ) : null}

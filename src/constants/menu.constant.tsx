@@ -71,12 +71,12 @@ export const MENU = {
         },
         {
             titleKey: "menu.adminSetting",
-            url: "/admin_settings/list",
+            url: "/admin-settings/list",
             icon: <Settings2Icon/>,
             items: [
-                {titleKey: "menu.adminList", url: "/admin_settings/list"},
-                {titleKey: "menu.adminPermissionInfoRegister", url: "/admin_settings/permission_register"},
-                {titleKey: "menu.adminNotice", url: "/admin_settings/notice"},
+                {titleKey: "menu.adminList", url: "/admin-settings/list"},
+                {titleKey: "menu.adminPermissionInfoRegister", url: "/admin-settings/permission-register"},
+                {titleKey: "menu.adminNotice", url: "/admin-settings/notice"},
             ],
         },
         {
@@ -85,8 +85,8 @@ export const MENU = {
             icon: <HomeIcon/>,
             isActive: true,
             items: [
-                {titleKey: "menu.dataTable", url: "/demo/data_table"},
-                {titleKey: "menu.gridTable", url: "/demo/grid_table"},
+                {titleKey: "menu.dataTable", url: "/demo/data-table"},
+                {titleKey: "menu.gridTable", url: "/demo/grid-table"},
                 {titleKey: "menu.chart", url: "/demo/chart"},
                 {titleKey: "menu.form", url: "/demo/form"},
                 {titleKey: "menu.dialog", url: "/demo/dialog"},
@@ -94,7 +94,7 @@ export const MENU = {
                 {titleKey: "menu.typography", url: "/demo/typography"},
                 {titleKey: "menu.editor", url: "/demo/editor"},
                 {titleKey: "menu.image", url: "/demo/image"},
-                {titleKey: "menu.notFound", url: "/demo/not_found"},
+                {titleKey: "menu.notFound", url: "/demo/not-found"},
             ],
         },
     ],

@@ -18,7 +18,7 @@ import ToolbarPlugin from "@/components/editor/DemoToolbarPlugin.tsx";
 import ListTabIndentationPlugin from "@/components/editor/ListTabIndentationPlugin.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {ScrollArea} from "@/components/ui/scroll-area.tsx";
-import "@/styles/demoEditor.css";
+import "@/styles/demoEditor.module.css";
 
 const theme = {
     paragraph: "editor-paragraph",
@@ -73,7 +73,7 @@ const DemoEditorPage = () => {
                 <p className="mt-2 text-muted-foreground">{t("editorPage.description")}</p>
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
-                <Card className="overflow-hidden">
+                <Card className="overflow-hidden pt-0">
                     <LexicalComposer initialConfig={editorConfig}>
                         <ToolbarPlugin/>
                         <div className="editor-shell" ref={shellRef}>

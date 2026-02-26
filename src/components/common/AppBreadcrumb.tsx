@@ -19,8 +19,8 @@ const AppBreadcrumb = ({className}: IAppBreadcrumbProps) => {
     const pathSegments = location.pathname.split("/").filter(Boolean);
     const segmentTitleMap: Record<string, string> = {
         demo: "menu.demo",
-        data_table: "menu.dataTable",
-        grid_table: "menu.gridTable",
+        "data-table": "menu.dataTable",
+        "grid-table": "menu.gridTable",
         chart: "menu.chart",
         form: "menu.form",
         dialog: "menu.dialog",
@@ -28,12 +28,12 @@ const AppBreadcrumb = ({className}: IAppBreadcrumbProps) => {
         typography: "menu.typography",
         editor: "menu.editor",
         image: "menu.image",
-        not_found: "menu.notFound",
+        "not-found": "menu.notFound",
         user: "menu.user",
-        "my_page": "menu.myPage",
-        admin_settings: "menu.adminSetting",
+        "my-page": "menu.myPage",
+        "admin-settings": "menu.adminSetting",
         list: "menu.adminList",
-        permission_register: "menu.adminPermissionInfoRegister",
+        "permission-register": "menu.adminPermissionInfoRegister",
         notice: "menu.adminNotice",
         new: "sampleDetail.create",
     };
@@ -62,7 +62,7 @@ const AppBreadcrumb = ({className}: IAppBreadcrumbProps) => {
             ? t(segmentTitleMap[segment])
             : (isIdUnderApi || isIdUnderUser)
                 ? segment
-                : segment.replaceAll("_", " ");
+                : segment.replaceAll("-", " ");
 
         return {href, title};
     });

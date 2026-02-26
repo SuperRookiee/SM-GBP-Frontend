@@ -369,7 +369,7 @@ const AdminListPage = () => {
                 showToolbar={false}
                 // #. 우측 상단의 권한 정보 등록 이동 버튼
                 headerRight={
-                    <Button type="button" variant="outline" onClick={() => navigate("/admin_settings/permission_register")}>
+                    <Button type="button" variant="outline" onClick={() => navigate("/admin-settings/permission-register")}>
                         {t("menu.adminPermissionInfoRegister")}
                     </Button>
                 }

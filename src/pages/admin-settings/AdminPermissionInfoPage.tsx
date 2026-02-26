@@ -2,15 +2,15 @@ import {type JSX, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {z} from "zod";
-import {SIGNUP_AUTHORITY_OPTIONS, CORPORATION_LABEL_KEY_BY_CODE, COUNTRY_GROUPS, COUNTRY_LABEL_KEY_BY_CODE} from "@/constants/country.constant.ts";
+import {CORPORATION_LABEL_KEY_BY_CODE, COUNTRY_GROUPS, COUNTRY_LABEL_KEY_BY_CODE, SIGNUP_AUTHORITY_OPTIONS} from "@/constants/country.constant.ts";
 import {PERMISSION_LEVEL_OPTIONS} from "@/constants/permissionLevel.constant.ts";
 import {PHONE_CODE_OPTIONS} from "@/constants/phoneCode.constant.ts";
 import {useAuthStore} from "@/stores/auth.store.ts";
 import type {AgreementTermKey} from "@/types/common.types.ts";
 import {PasswordInput} from "@/components/common/PasswordInput.tsx";
 import AgreementTermDialog from "@/components/dialog/AgreementTermDialog.tsx";
-import {FieldBlock} from "@/components/sign_up/FieldBlock.tsx";
-import {SectionTitle} from "@/components/sign_up/SectionTitle.tsx";
+import {FieldBlock} from "@/components/sign-up/FieldBlock.tsx";
+import {SectionTitle} from "@/components/sign-up/SectionTitle.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent, CardHeader} from "@/components/ui/card.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
@@ -483,7 +483,7 @@ const AdminPermissionInfoPage = () => {
                                 type="button"
                                 variant="secondary"
                                 className="min-w-32"
-                                onClick={() => navigate("/admin_settings/list")}
+                                onClick={() => navigate("/admin-settings/list")}
                             >
                                 {t("adminSettingPage.permission.registerForm.cancel")}
                             </Button>

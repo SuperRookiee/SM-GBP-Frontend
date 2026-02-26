@@ -1,9 +1,9 @@
-.editor-shell {
+:global(.editor-shell) {
     position: relative;
     min-height: 360px;
 }
 
-.editor-input {
+:global(.editor-input) {
     min-height: 360px;
     padding: 1rem;
     outline: none;
@@ -13,11 +13,11 @@
     caret-color: var(--color-foreground);
 }
 
-.editor-input:focus-visible {
+:global(.editor-input):focus-visible {
     box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--color-primary) 50%, transparent);
 }
 
-.editor-placeholder {
+:global(.editor-placeholder) {
     position: absolute;
     top: 1rem;
     left: 1rem;
@@ -25,77 +25,77 @@
     pointer-events: none;
 }
 
-.editor-paragraph {
+:global(.editor-paragraph) {
     margin-bottom: 0.5rem;
 }
 
-.editor-heading-h1 {
+:global(.editor-heading-h1) {
     margin: 0.75rem 0 0.5rem;
     font-size: 1.75rem;
     line-height: 1.25;
     font-weight: 700;
 }
 
-.editor-heading-h2 {
+:global(.editor-heading-h2) {
     margin: 0.65rem 0 0.45rem;
     font-size: 1.35rem;
     line-height: 1.3;
     font-weight: 700;
 }
 
-.editor-list-ul,
-.editor-list-ol {
+:global(.editor-list-ul),
+:global(.editor-list-ol) {
     margin: 0.5rem 0;
     padding-left: 1.5rem;
 }
 
-.editor-list-ul {
+:global(.editor-list-ul) {
     list-style-type: disc;
 }
 
-.editor-list-ol {
+:global(.editor-list-ol) {
     list-style-type: decimal;
 }
 
-.editor-list-ul-depth-1 {
+:global(.editor-list-ul-depth-1) {
     list-style-type: disc;
 }
 
-.editor-list-ul-depth-2 {
+:global(.editor-list-ul-depth-2) {
     list-style-type: circle;
 }
 
-.editor-list-ul-depth-3 {
+:global(.editor-list-ul-depth-3) {
     list-style-type: square;
 }
 
-.editor-list-ol-depth-1 {
+:global(.editor-list-ol-depth-1) {
     list-style-type: decimal;
 }
 
-.editor-list-ol-depth-2 {
+:global(.editor-list-ol-depth-2) {
     list-style-type: lower-alpha;
 }
 
-.editor-list-ol-depth-3 {
+:global(.editor-list-ol-depth-3) {
     list-style-type: lower-roman;
 }
 
-.editor-nested-list {
+:global(.editor-nested-list) {
     margin-top: 0.25rem;
     margin-bottom: 0.25rem;
 }
 
-.editor-list-item {
+:global(.editor-list-item) {
     margin: 0.25rem 0;
 }
 
 /* Hide marker for structural wrapper items that only contain a nested list (optionally with a <br>). */
-.editor-list-item:has(> .editor-list-ul, > .editor-list-ol, > ul, > ol):not(:has(> :not(.editor-list-ul):not(.editor-list-ol):not(ul):not(ol):not(br))) {
+:global(.editor-list-item):has(> :global(.editor-list-ul), > :global(.editor-list-ol), > ul, > ol):not(:has(> :not(:global(.editor-list-ul)):not(:global(.editor-list-ol)):not(ul):not(ol):not(br))) {
     list-style-type: none;
 }
 
-.editor-quote {
+:global(.editor-quote) {
     border-left: 3px solid var(--color-border);
     margin: 0.75rem 0;
     padding-left: 0.75rem;
@@ -103,40 +103,40 @@
     font-style: italic;
 }
 
-.editor-text-bold {
+:global(.editor-text-bold) {
     font-weight: 700;
 }
 
-.editor-text-italic {
+:global(.editor-text-italic) {
     font-style: italic;
 }
 
-.editor-text-underline {
+:global(.editor-text-underline) {
     text-decoration: underline;
 }
 
-.editor-text-strikethrough {
+:global(.editor-text-strikethrough) {
     text-decoration: line-through;
 }
 
-.editor-text-subscript {
+:global(.editor-text-subscript) {
     vertical-align: sub;
     font-size: 0.75em;
 }
 
-.editor-text-superscript {
+:global(.editor-text-superscript) {
     vertical-align: super;
     font-size: 0.75em;
 }
 
-.editor-text-code {
+:global(.editor-text-code) {
     border-radius: 0.25rem;
     padding: 0.05rem 0.25rem;
     background: color-mix(in oklab, var(--color-muted) 75%, transparent);
     font-family: "Courier New", Courier, monospace;
 }
 
-.demo-editor-toolbar {
+:global(.demo-editor-toolbar) {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -145,7 +145,7 @@
     padding: 0.65rem;
 }
 
-.demo-editor-toolbar-group {
+:global(.demo-editor-toolbar-group) {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
@@ -153,24 +153,24 @@
     padding-right: 0.5rem;
 }
 
-.demo-editor-toolbar-group:last-child {
+:global(.demo-editor-toolbar-group):last-child {
     border-right: 0;
 }
 
-.demo-editor-toolbar-button {
+:global(.demo-editor-toolbar-button) {
     min-width: 2rem;
 }
 
-.demo-editor-toolbar-button.is-active {
+:global(.demo-editor-toolbar-button):global(.is-active) {
     background-color: var(--color-accent);
     color: var(--color-accent-foreground);
 }
 
-.demo-editor-toolbar-trigger {
+:global(.demo-editor-toolbar-trigger) {
     height: 2rem;
 }
 
-.demo-editor-font-size-control {
+:global(.demo-editor-font-size-control) {
     display: inline-flex;
     align-items: center;
     border: 1px solid var(--color-border);
@@ -178,7 +178,7 @@
     overflow: hidden;
 }
 
-.demo-editor-font-size-input {
+:global(.demo-editor-font-size-input) {
     width: 3rem;
     border: 0;
     background: transparent;
@@ -188,45 +188,45 @@
     outline: none;
 }
 
-.demo-editor-font-size-input::-webkit-outer-spin-button,
-.demo-editor-font-size-input::-webkit-inner-spin-button {
+:global(.demo-editor-font-size-input)::-webkit-outer-spin-button,
+:global(.demo-editor-font-size-input)::-webkit-inner-spin-button {
     -webkit-appearance: none;
     appearance: none;
     display: none;
     margin: 0;
 }
 
-.demo-editor-font-size-input[type="number"] {
+:global(.demo-editor-font-size-input)[type="number"] {
     -moz-appearance: textfield;
 }
 
-.demo-editor-color-icon {
+:global(.demo-editor-color-icon) {
     font-weight: 700;
     font-size: 1rem;
 }
 
-.demo-editor-color-popover {
+:global(.demo-editor-color-popover) {
     width: 18rem;
 }
 
-.demo-editor-color-picker {
+:global(.demo-editor-color-picker) {
     display: grid;
     gap: 0.75rem;
 }
 
-.demo-editor-color-picker-row {
+:global(.demo-editor-color-picker-row) {
     display: grid;
     grid-template-columns: 2.5rem 1fr;
     align-items: center;
     gap: 0.5rem;
 }
 
-.demo-editor-color-picker-label {
+:global(.demo-editor-color-picker-label) {
     font-size: 0.85rem;
     color: var(--color-muted-foreground);
 }
 
-.demo-editor-color-hex-input {
+:global(.demo-editor-color-hex-input) {
     height: 2rem;
     width: 100%;
     border: 1px solid var(--color-border);
@@ -238,17 +238,17 @@
     outline: none;
 }
 
-.demo-editor-color-hex-input:focus-visible {
+:global(.demo-editor-color-hex-input):focus-visible {
     box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 35%, transparent);
 }
 
-.demo-editor-color-grid {
+:global(.demo-editor-color-grid) {
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
     gap: 0.4rem;
 }
 
-.demo-editor-color-swatch {
+:global(.demo-editor-color-swatch) {
     position: relative;
     width: 1.25rem;
     height: 1.25rem;
@@ -258,18 +258,18 @@
     cursor: pointer;
 }
 
-.demo-editor-color-swatch.is-active {
+:global(.demo-editor-color-swatch):global(.is-active) {
     box-shadow:
         inset 0 0 0 1px color-mix(in oklab, var(--color-background) 45%, transparent),
         0 0 0 2px var(--color-primary);
 }
 
-.demo-editor-color-swatch.is-contrast {
+:global(.demo-editor-color-swatch):global(.is-contrast) {
     border-color: color-mix(in oklab, var(--color-foreground) 40%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-background) 30%, transparent);
 }
 
-.demo-editor-color-swatch.is-transparent {
+:global(.demo-editor-color-swatch):global(.is-transparent) {
     background-image:
         linear-gradient(45deg, color-mix(in oklab, var(--color-foreground) 14%, transparent) 25%, transparent 25%),
         linear-gradient(-45deg, color-mix(in oklab, var(--color-foreground) 14%, transparent) 25%, transparent 25%),
@@ -279,7 +279,7 @@
     background-position: 0 0, 0 0.25rem, 0.25rem -0.25rem, -0.25rem 0;
 }
 
-.demo-editor-color-sv {
+:global(.demo-editor-color-sv) {
     position: relative;
     height: 11rem;
     border-radius: 0.45rem;
@@ -288,21 +288,21 @@
     cursor: crosshair;
 }
 
-.demo-editor-color-sv-overlay-white,
-.demo-editor-color-sv-overlay-black {
+:global(.demo-editor-color-sv-overlay-white),
+:global(.demo-editor-color-sv-overlay-black) {
     position: absolute;
     inset: 0;
 }
 
-.demo-editor-color-sv-overlay-white {
+:global(.demo-editor-color-sv-overlay-white) {
     background: linear-gradient(to right, #fff, transparent);
 }
 
-.demo-editor-color-sv-overlay-black {
+:global(.demo-editor-color-sv-overlay-black) {
     background: linear-gradient(to top, #000, transparent);
 }
 
-.demo-editor-color-sv-thumb {
+:global(.demo-editor-color-sv-thumb) {
     position: absolute;
     width: 1.35rem;
     height: 1.35rem;
@@ -312,7 +312,7 @@
     transform: translate(-50%, -50%);
 }
 
-.demo-editor-color-hue {
+:global(.demo-editor-color-hue) {
     position: relative;
     height: 0.9rem;
     border-radius: 9999px;
@@ -330,7 +330,7 @@
     cursor: ew-resize;
 }
 
-.demo-editor-color-hue-thumb {
+:global(.demo-editor-color-hue-thumb) {
     position: absolute;
     top: 50%;
     width: 1rem;
@@ -341,22 +341,22 @@
     transform: translate(-50%, -50%);
 }
 
-.editor-input {
+:global(.editor-input) {
     padding-left: 3.5rem;
 }
 
-.editor-placeholder {
+:global(.editor-placeholder) {
     left: 3.5rem;
 }
 
-.editor-heading-h3 {
+:global(.editor-heading-h3) {
     margin: 0.6rem 0 0.4rem;
     font-size: 1.15rem;
     line-height: 1.35;
     font-weight: 700;
 }
 
-.demo-editor-block-actions {
+:global(.demo-editor-block-actions) {
     position: absolute;
     left: 0.1rem;
     z-index: 30;
@@ -368,12 +368,12 @@
     transition: opacity 0.15s ease;
 }
 
-.editor-shell:hover .demo-editor-block-actions,
-.editor-shell:focus-within .demo-editor-block-actions {
+:global(.editor-shell):hover :global(.demo-editor-block-actions),
+:global(.editor-shell):focus-within :global(.demo-editor-block-actions) {
     opacity: 1;
 }
 
-.demo-editor-block-action-button {
+:global(.demo-editor-block-action-button) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -382,7 +382,7 @@
     color: var(--color-muted-foreground);
 }
 
-.demo-editor-block-actions-title {
+:global(.demo-editor-block-actions-title) {
     border-bottom: 1px solid var(--color-border);
     margin: -0.25rem -0.25rem 0.25rem;
     padding: 0.5rem 0.75rem;
@@ -390,7 +390,7 @@
     color: var(--color-muted-foreground);
 }
 
-.demo-editor-drag-guide {
+:global(.demo-editor-drag-guide) {
     position: absolute;
     left: 2.75rem;
     right: 0.75rem;
@@ -402,7 +402,7 @@
     box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 18%, transparent);
 }
 
-.demo-editor-selection-toolbar {
+:global(.demo-editor-selection-toolbar) {
     position: fixed;
     z-index: 40;
     transform: translateX(-50%);
@@ -416,11 +416,11 @@
     box-shadow: 0 8px 24px color-mix(in oklab, var(--color-foreground) 10%, transparent);
 }
 
-.demo-editor-selection-button {
+:global(.demo-editor-selection-button) {
     min-width: 1.9rem;
 }
 
-.demo-editor-selection-button.is-active {
+:global(.demo-editor-selection-button):global(.is-active) {
     background-color: var(--color-accent);
     color: var(--color-accent-foreground);
 }
