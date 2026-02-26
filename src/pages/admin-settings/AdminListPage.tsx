@@ -2,7 +2,7 @@ import {useMemo, useState} from "react";
 import {RotateCcwIcon, SearchIcon} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
-import {SIGNUP_AUTHORITY_OPTIONS, CORPORATION_LABEL_KEY_BY_CODE, COUNTRY_GROUPS, COUNTRY_LABEL_KEY_BY_CODE} from "@/constants/country.constant.ts";
+import {CORPORATION_LABEL_KEY_BY_CODE, COUNTRY_GROUPS, COUNTRY_LABEL_KEY_BY_CODE, SIGNUP_AUTHORITY_OPTIONS} from "@/constants/country.constant.ts";
 import {type DemoDataTableColumn, type DemoDataTableFilterOption} from "@/types/demo/demoDataTable.types.ts";
 import DataTable from "@/components/table/DataTable";
 import {Button} from "@/components/ui/button";
@@ -111,9 +111,9 @@ const AdminListPage = () => {
 
     // #. '전체' 선택 시 빈 배열로 간주하는 공통 헬퍼다.
     const getActiveValues = <T extends string>(values: T[], allKey: T) => (values.includes(allKey) ? [] : values);
-    // #. 그룹 체크박스가 '전체' 상태인지 계산한다.
+    // #. 그룹 체크박스가 '전체' 상태인지 계산
     const isAllSelected = <T extends string>(values: T[], allKey: T) => values.includes(allKey);
-    // #. 그룹 체크박스(전체/개별) 토글 로직을 처리한다.
+    // #. 그룹 체크박스(전체/개별) 토글 로직을 처리
     const toggleGroupedCheckbox = <T extends string>(
         current: T[],
         value: T,
@@ -135,7 +135,7 @@ const AdminListPage = () => {
         setValue(next);
     };
 
-    // #. 선택한 필터 조건으로 기본 목록을 필터링한다.
+    // #. 선택한 필터 조건으로 기본 목록을 필터링
     const baseFilteredRows = useMemo(() => {
         const selectedPermissionLevels = getActiveValues(permissionLevels, "all");
         const selectedApprovals = getActiveValues(approvals, "all");
@@ -150,7 +150,7 @@ const AdminListPage = () => {
         });
     }, [approvals, authority, corporation, country, permissionLevels]);
 
-    // #. 검색어/검색키로 2차 검색 결과를 계산한다.
+    // #. 검색어/검색키로 2차 검색 결과를 계산
     const searchedRows = useMemo(() => {
         const keyword = query.trim().toLowerCase();
         if (!keyword) return baseFilteredRows;
@@ -162,7 +162,7 @@ const AdminListPage = () => {
         });
     }, [baseFilteredRows, filterKey, query]);
 
-    // #. 현재 정렬 키/방향으로 목록을 정렬한다.
+    // #. 현재 정렬 키/방향으로 목록을 정렬
     const sortedRows = useMemo(() => {
         if (!sortKey) return searchedRows;
         return [...searchedRows].sort((a, b) => {
@@ -178,7 +178,7 @@ const AdminListPage = () => {
         return sortedRows.slice(start, start + size);
     }, [page, size, sortedRows]);
 
-    // #. 데이터테이블 컬럼 정의를 구성한다.
+    // #. 데이터테이블 컬럼 정의를 구성
     const columns: DemoDataTableColumn<AdminListRow>[] = [
         {key: "authority", label: t("adminSettingPage.columns.authority"), width: 130, render: (row) => authorityLabelByCode[row.authority] ?? row.authority},
         {
@@ -208,7 +208,7 @@ const AdminListPage = () => {
         },
     ];
 
-    // #. 데이터테이블 상단 검색 필터 옵션을 구성한다.
+    // #. 데이터테이블 상단 검색 필터 옵션을 구성
     const filterOptions: DemoDataTableFilterOption<AdminListRow>[] = [
         {value: "all", label: t("common.all")},
         {value: "userId", label: t("adminSettingPage.columns.userId")},

@@ -17,10 +17,12 @@ type BlockType = "paragraph" | "h1" | "h2" | "h3" | "quote";
 const fontOptions = ["Arial", "Georgia", "Times New Roman", "Courier New", "Verdana", "Trebuchet MS"];
 const toolbarButtonClass = "demo-editor-toolbar-button";
 
+// #. 색상 계산에서 반복되는 범위 제한 로직을 공통 함수로 분리
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 const rgbToHex = (r: number, g: number, b: number) => `#${[r, g, b].map((value) => value.toString(16).padStart(2, "0")).join("")}`;
 
+// #. hex 문자열을 RGB로 변환
 const hexToRgb = (hex: string) => {
     const normalized = hex.trim().toLowerCase();
     const compact = normalized.startsWith("#") ? normalized.slice(1) : normalized;
@@ -33,6 +35,7 @@ const hexToRgb = (hex: string) => {
     return {r, g, b};
 };
 
+// #. RGB를 HSV로 변환
 const rgbToHsv = (r: number, g: number, b: number) => {
     const rn = r / 255;
     const gn = g / 255;
@@ -53,6 +56,7 @@ const rgbToHsv = (r: number, g: number, b: number) => {
     return {h, s, v};
 };
 
+// #. HSV를 RGB로 변환
 const hsvToRgb = (h: number, s: number, v: number) => {
     const c = v * s;
     const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
@@ -75,12 +79,14 @@ const hsvToRgb = (h: number, s: number, v: number) => {
     };
 };
 
+// #. HSV를 hex 문자열로 변환
 const hsvToHex = (h: number, s: number, v: number) => {
     const {r, g, b} = hsvToRgb(h, s, v);
     return rgbToHex(r, g, b);
 };
 
 const parseColor = (value: string) => {
+    // hex/rgb(a)/transparent 형태를 단일 파서로 정규화해 ColorPicker 상태를 단순화
     const normalized = value.trim().toLowerCase();
     if (!normalized || normalized === "transparent") return {kind: "transparent" as const};
     const hexRgb = hexToRgb(normalized);
@@ -113,6 +119,7 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
     const [hsv, setHsv] = useState(() => rgbToHsv(initialRgb.r, initialRgb.g, initialRgb.b));
     const [hexInput, setHexInput] = useState(() => rgbToHex(initialRgb.r, initialRgb.g, initialRgb.b));
 
+    // #. HSV 변경값을 상태/UI/외부 onChange에 동시에 반영
     const applyHsv = useCallback((nextHsv: {h: number; s: number; v: number}) => {
         setHsv(nextHsv);
         const nextHex = hsvToHex(nextHsv.h, nextHsv.s, nextHsv.v);
@@ -120,6 +127,7 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
         onChange(nextHex);
     }, [onChange]);
 
+    // #. 포인터 위치로 채도/명도(S/V)를 계산
     const updateFromSvPointer = useCallback((clientX: number, clientY: number) => {
         if (!svRef.current) return;
         const rect = svRef.current.getBoundingClientRect();
@@ -128,6 +136,7 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
         applyHsv({...hsv, s, v});
     }, [applyHsv, hsv]);
 
+    // #. 포인터 위치로 색상(H)을 계산
     const updateFromHuePointer = useCallback((clientX: number) => {
         if (!hueRef.current) return;
         const rect = hueRef.current.getBoundingClientRect();
@@ -135,6 +144,7 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
         applyHsv({...hsv, h});
     }, [applyHsv, hsv]);
 
+    // #. Hex 입력값을 검증 후 실제 색상 상태로 반영
     const handleHexCommit = () => {
         const candidate = hexInput.startsWith("#") ? hexInput : `#${hexInput}`;
         const parsed = hexToRgb(candidate);
@@ -145,20 +155,26 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
         onChange(nextHex);
     };
 
+    // #. 드래그 중 텍스트 선택 방지를 시작
     const startDragGuard = () => {
         document.body.style.userSelect = "none";
         onDragStateChange?.(true);
     };
 
+    // #. 드래그 종료 후 텍스트 선택 방지를 해제
     const stopDragGuard = () => {
         document.body.style.userSelect = "";
         onDragStateChange?.(false);
     };
 
     return (
+        // 색상 선택기 전체 컨테이너
         <div className="demo-editor-color-picker">
+            {/* Hex 입력 영역 */}
             <div className="demo-editor-color-picker-row">
+                {/* Hex 라벨 */}
                 <span className="demo-editor-color-picker-label">Hex</span>
+                {/* Hex 입력 필드 */}
                 <input
                     className="demo-editor-color-hex-input"
                     value={hexInput}
@@ -172,6 +188,7 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
                 />
             </div>
 
+            {/* 채도/명도 선택 영역 */}
             <div
                 ref={svRef}
                 className="demo-editor-color-sv"
@@ -194,11 +211,15 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
                     window.addEventListener("mouseup", up);
                 }}
             >
+                {/* SV 흰색 그라데이션 오버레이 */}
                 <div className="demo-editor-color-sv-overlay-white"/>
+                {/* SV 검정 그라데이션 오버레이 */}
                 <div className="demo-editor-color-sv-overlay-black"/>
+                {/* SV 현재 위치 썸 */}
                 <div className="demo-editor-color-sv-thumb" style={{left: `${hsv.s * 100}%`, top: `${(1 - hsv.v) * 100}%`}}/>
             </div>
 
+            {/* 색상(H) 선택 슬라이더 */}
             <div
                 ref={hueRef}
                 className="demo-editor-color-hue"
@@ -220,9 +241,11 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
                     window.addEventListener("mouseup", up);
                 }}
             >
+                {/* H 현재 위치 썸 */}
                 <div className="demo-editor-color-hue-thumb" style={{left: `${(hsv.h / 360) * 100}%`}}/>
             </div>
 
+            {/* 투명/초기화 버튼 */}
             {allowTransparent || onClear ? (
                 <Button
                     variant="outline"
@@ -264,6 +287,7 @@ const EditorToolbar = () => {
         code: false,
     });
 
+    // #. 블록 타입 표시 라벨을 계산
     const blockLabel = useMemo(() => {
         if (blockType === "h1") return "Heading 1";
         if (blockType === "h2") return "Heading 2";
@@ -271,6 +295,7 @@ const EditorToolbar = () => {
         if (blockType === "quote") return "Quote";
         return "Normal";
     }, [blockType]);
+    // #. 정렬 표시 라벨을 계산
     const alignLabel = useMemo(() => {
         if (alignType === "center") return "Center Align";
         if (alignType === "right") return "Right Align";
@@ -279,6 +304,7 @@ const EditorToolbar = () => {
     }, [alignType]);
 
     const updateToolbar = useCallback(() => {
+        // 현재 selection의 블록/텍스트 스타일을 읽어 툴바 UI 상태를 동기화
         editor.getEditorState().read(() => {
             const selection = $getSelection();
             if (!$isRangeSelection(selection)) return;
@@ -318,6 +344,7 @@ const EditorToolbar = () => {
         });
     }, [editor]);
 
+    // #. 선택 블록 타입(문단/헤딩/인용)을 적용
     const applyHeading = (type: BlockType) => {
         editor.update(() => {
             const selection = $getSelection();
@@ -328,6 +355,7 @@ const EditorToolbar = () => {
         });
     };
 
+    // #. 선택 텍스트에 CSS 스타일을 패치
     const applyTextStyle = (styles: Record<string, string>) => {
         editor.update(() => {
             const selection = $getSelection();
@@ -336,19 +364,23 @@ const EditorToolbar = () => {
         });
     };
 
+    // #. 블록 정렬을 적용
     const applyAlign = (alignType: ElementFormatType) => {
         editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignType);
         setAlignType(alignType);
     };
+    // #. 글자색을 초기화
     const clearTextColor = () => {
         applyTextStyle({color: "inherit"});
         setTextColor("inherit");
     };
+    // #. 형광색을 초기화
     const clearHighlight = () => {
         applyTextStyle({"background-color": "transparent"});
         setHighlightColor("transparent");
     };
 
+    // #. 글자 크기를 범위 제한 후 적용
     const applyFontSize = (nextSize: number) => {
         const clamped = Math.min(72, Math.max(10, nextSize));
         setFontSize(clamped);
@@ -356,6 +388,7 @@ const EditorToolbar = () => {
         applyTextStyle({"font-size": `${clamped}px`});
     };
 
+    // #. 글자 크기 입력값을 확정
     const commitFontSizeInput = () => {
         const parsed = Number.parseInt(fontSizeInput, 10);
         if (Number.isNaN(parsed)) return setFontSizeInput(String(fontSize));
@@ -381,13 +414,17 @@ const EditorToolbar = () => {
     }, [editor, updateToolbar]);
 
     return (
+        // 상단 고정 툴바 전체
         <div className="demo-editor-toolbar">
+            {/* 실행 취소/다시 실행 그룹 */}
             <div className="demo-editor-toolbar-group">
                 <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} disabled={!canUndo} onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}><Undo2 size={16}/></Button>
                 <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} disabled={!canRedo} onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}><Redo2 size={16}/></Button>
             </div>
 
+            {/* 블록/폰트/크기 그룹 */}
             <div className="demo-editor-toolbar-group">
+                {/* 블록 타입 선택 */}
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button variant="outline" className="demo-editor-toolbar-trigger min-w-40 justify-between"><span className="inline-flex items-center gap-2"><Heading size={15}/>{blockLabel}</span><ChevronDown size={15}/></Button>
@@ -401,6 +438,7 @@ const EditorToolbar = () => {
                     </PopoverContent>
                 </Popover>
 
+                {/* 폰트 선택 */}
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button variant="outline" className="demo-editor-toolbar-trigger min-w-32 justify-between"><span className="truncate">{fontFamily}</span><ChevronDown size={15}/></Button>
@@ -410,6 +448,7 @@ const EditorToolbar = () => {
                     </PopoverContent>
                 </Popover>
 
+                {/* 폰트 크기 증감/입력 */}
                 <div className="demo-editor-font-size-control">
                     <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} onClick={() => applyFontSize(fontSize - 1)}><Minus size={15}/></Button>
                     <input type="number" min={10} max={72} step={1} inputMode="numeric" className="demo-editor-font-size-input" value={fontSizeInput} onChange={(event) => setFontSizeInput(event.target.value)} onBlur={commitFontSizeInput}
@@ -424,7 +463,9 @@ const EditorToolbar = () => {
                 </div>
             </div>
 
+            {/* 리스트/텍스트색/형광색 그룹 */}
             <div className="demo-editor-toolbar-group">
+                {/* 리스트 명령 메뉴 */}
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button variant="ghost" size="icon-sm" className={toolbarButtonClass}><List size={15}/></Button>
@@ -437,6 +478,7 @@ const EditorToolbar = () => {
                     </PopoverContent>
                 </Popover>
 
+                {/* 텍스트 색상 선택 */}
                 <Popover
                     open={isTextColorOpen}
                     onOpenChange={(open) => {
@@ -465,6 +507,7 @@ const EditorToolbar = () => {
                     </PopoverContent>
                 </Popover>
 
+                {/* 하이라이트 색상 선택 */}
                 <Popover
                     open={isHighlightOpen}
                     onOpenChange={(open) => {
@@ -497,6 +540,7 @@ const EditorToolbar = () => {
                 </Popover>
             </div>
 
+            {/* 인라인 포맷 그룹 */}
             <div className="demo-editor-toolbar-group">
                 <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.bold && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}><Bold size={15}/></Button>
                 <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.italic && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}><Italic size={15}/></Button>
@@ -505,6 +549,7 @@ const EditorToolbar = () => {
                 <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.code && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code")}><Code size={15}/></Button>
             </div>
 
+            {/* 정렬/들여쓰기 그룹 */}
             <div className="demo-editor-toolbar-group">
                 <Popover>
                     <PopoverTrigger asChild>
@@ -537,6 +582,7 @@ const SelectionFloatingToolbar = () => {
         code: false
     });
 
+    // 선택 영역 근처 플로팅 툴바 위치/상태를 동기화
     const syncSelectionToolbar = useCallback(() => {
         editor.getEditorState().read(() => {
             const selection = $getSelection();
@@ -567,6 +613,7 @@ const SelectionFloatingToolbar = () => {
                 code: selection.hasFormat("code"),
             });
 
+            // 플로팅 툴바가 화면 밖으로 나가지 않도록 좌우/상하 위치를 보정
             const viewportMargin = 8;
             const toolbarWidth = toolbarRef.current?.offsetWidth ?? 420;
             const toolbarHeight = toolbarRef.current?.offsetHeight ?? 44;
@@ -595,6 +642,7 @@ const SelectionFloatingToolbar = () => {
     if (!position) return null;
 
     return (
+        // 선택 텍스트 근처에 표시되는 플로팅 툴바
         <div ref={toolbarRef} className="demo-editor-selection-toolbar" style={{top: position.top, left: position.left}}>
             <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.bold && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}><Bold size={14}/></Button>
             <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.italic && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}><Italic size={14}/></Button>
@@ -605,10 +653,12 @@ const SelectionFloatingToolbar = () => {
     );
 };
 
-export default function DemoToolbarPlugin() {
+export default function ToolbarPlugin() {
     return (
         <>
+            {/* 메인 상단 툴바 */}
             <EditorToolbar/>
+            {/* 텍스트 선택 플로팅 툴바 */}
             <SelectionFloatingToolbar/>
         </>
     );

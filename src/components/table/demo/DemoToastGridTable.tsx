@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
+import {useCallback, useEffect, useRef} from "react";
+import {useTranslation} from "react-i18next";
 import Grid from "tui-grid";
 import "tui-grid/dist/tui-grid.css";
 import Pagination from "@/components/table/Pagination.tsx";
-import { Card, CardContent } from "@/components/ui/card.tsx";
-import { Checkbox } from "@/components/ui/checkbox.tsx";
-import { Label } from "@/components/ui/label.tsx";
-import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
+import {Card, CardContent} from "@/components/ui/card.tsx";
+import {Checkbox} from "@/components/ui/checkbox.tsx";
+import {Label} from "@/components/ui/label.tsx";
+import type {DemoGridCategory, DemoGridStatus, IDemoGridTableRow} from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
 interface Props {
   rows: IDemoGridTableRow[];
@@ -87,7 +87,7 @@ const DemoToastGridTable = ({
         let grid: Grid | null = null;
         let frameId: number;
 
-// #. 토스트 그리드 인스턴스를 초기화한다.
+// #. 토스트 그리드 인스턴스를 초기화
         const initGrid = () => {
             const el = gridWrapperRef.current;
             if (!el) return;

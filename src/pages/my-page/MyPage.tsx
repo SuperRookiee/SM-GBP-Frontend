@@ -87,7 +87,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
     const [submitted, setSubmitted] = useState(false);
     const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
 
-    // #.선택된 권역 기준으로 법인 코드 목록을 필터링한다.
+    // #.선택된 권역 기준으로 법인 코드 목록을 필터링
     const filteredCorporations = useMemo(() => {
         if (!form.authority) return [];
 
@@ -103,7 +103,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
         );
     }, [form.authority]);
 
-    // #.선택된 권역/법인 기준으로 국가 목록을 필터링한다.
+    // #.선택된 권역/법인 기준으로 국가 목록을 필터링
     const filteredCountries = useMemo(() => {
         if (!form.authority) return [];
 
@@ -126,7 +126,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
         return Array.from(new Set(countries));
     }, [form.authority, form.corporation]);
 
-    // #.약관 전체 동의 여부를 계산한다.
+    // #.약관 전체 동의 여부를 계산
     const allAgreed = useMemo(
         () => Object.values(agreements).every(Boolean),
         [agreements]
@@ -165,7 +165,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
         })
     ), []);
 
-    // #.회원정보 수정 시 사용할 상세 유효성 검사 스키마를 구성한다.
+    // #.회원정보 수정 시 사용할 상세 유효성 검사 스키마를 구성
     const myPageSchema = useMemo(() => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^\d+$/;
@@ -238,13 +238,13 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
         });
     }, []);
 
-    // #. 최소 필수 검증 결과를 기준으로 수정 버튼 활성화 여부를 계산한다.
+    // #. 최소 필수 검증 결과를 기준으로 수정 버튼 활성화 여부를 계산
     const canUpdate = useMemo(
         () => myPageRequiredSchema.safeParse({form, agreements}).success,
         [myPageRequiredSchema, form, agreements]
     );
 
-    // #. 약관별 라벨/제목/본문 메타 정보를 구성한다.
+    // #. 약관별 라벨/제목/본문 메타 정보를 구성
     const termMeta = useMemo<Record<AgreementTermKey, TermMeta>>(() => ({
         service: {
             label: t("signup.terms.service.label"),
@@ -268,17 +268,17 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
         },
     }), [t]);
 
-    // #. 제출 이후 필드별 에러 목록을 조회한다.
+    // #. 제출 이후 필드별 에러 목록을 조회
     const getErrors = (key: string) => (submitted ? (validationErrors[key] || []) : []);
-    // #. 에러 키를 번역 문자열로 변환한다.
+    // #. 에러 키를 번역 문자열로 변환
     const getErrorMessages = (key: string) => getErrors(key).map((errorKey) => t(errorKey));
 
-    // #.단일 필드 값을 변경한다.
+    // #.단일 필드 값을 변경
     const onChangeField = <K extends keyof FormValues>(key: K, value: FormValues[K]) => {
         setForm((prev) => ({...prev, [key]: value}));
     };
 
-    // #.권역 변경 시 법인/국가를 초기화한다.
+    // #.권역 변경 시 법인/국가를 초기화
     const onChangeAuthority = (value: string) => {
         setForm((prev) => ({
             ...prev,
@@ -288,7 +288,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
         }));
     };
 
-    // #.법인 변경 시 국가를 초기화한다.
+    // #.법인 변경 시 국가를 초기화
     const onChangeCorporation = (value: string) => {
         setForm((prev) => ({
             ...prev,
@@ -297,7 +297,7 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
         }));
     };
 
-    // #.전체 동의 체크 상태를 모든 약관에 일괄 반영한다.
+    // #.전체 동의 체크 상태를 모든 약관에 일괄 반영
     const onToggleAll = (checked: boolean) => {
         setAgreements({
             service: checked,
@@ -307,12 +307,12 @@ const MyPageContent = ({user}: IMyPageContentProps) => {
         });
     };
 
-    // #.개별 약관 동의 상태를 변경한다.
+    // #.개별 약관 동의 상태를 변경
     const onToggleAgreement = (key: AgreementTermKey, checked: boolean) => {
         setAgreements((prev) => ({...prev, [key]: checked}));
     };
 
-    // #. 필수 조건 충족 시에만 수정 요청을 수행한다.
+    // #. 필수 조건 충족 시에만 수정 요청을 수행
     const onClickUpdate = () => {
         setSubmitted(true);
         const result = myPageSchema.safeParse({form, agreements});

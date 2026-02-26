@@ -1,15 +1,15 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { Slot } from "radix-ui"
-import { cn } from "@/utils/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Separator } from "@/components/ui/separator"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, } from "@/components/ui/sheet"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
-import { useIsMobile } from "@/hooks/useMobile.tsx"
-import { PanelLeftIcon } from "lucide-react"
+import {cva, type VariantProps} from "class-variance-authority"
+import {Slot} from "radix-ui"
+import {cn} from "@/utils/utils"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {Separator} from "@/components/ui/separator"
+import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle,} from "@/components/ui/sheet"
+import {Skeleton} from "@/components/ui/skeleton"
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip"
+import {useIsMobile} from "@/hooks/useMobile.tsx"
+import {PanelLeftIcon} from "lucide-react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -30,7 +30,7 @@ interface SidebarContextProps {
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
 
-// #. 사이드바 상태와 제어 함수를 제공한다.
+// #. 사이드바 상태와 제어 함수를 제공
 const useSidebar = () => {
   const context = React.useContext(SidebarContext)
   if (!context) {
@@ -82,7 +82,7 @@ const SidebarProvider = ({
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
-// #. 단축키 입력으로 사이드바 토글을 처리한다.
+// #. 단축키 입력으로 사이드바 토글을 처리
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
         event.key === SIDEBAR_KEYBOARD_SHORTCUT &&

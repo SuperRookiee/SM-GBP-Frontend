@@ -1,13 +1,15 @@
-﻿import { useEffect } from "react";
-import { $isListItemNode } from "@lexical/list";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $findMatchingParent } from "@lexical/utils";
-import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, INDENT_CONTENT_COMMAND, KEY_TAB_COMMAND, OUTDENT_CONTENT_COMMAND } from "lexical";
+﻿import {useEffect} from "react";
+import {$isListItemNode} from "@lexical/list";
+import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
+import {$findMatchingParent} from "@lexical/utils";
+import {$getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, INDENT_CONTENT_COMMAND, KEY_TAB_COMMAND, OUTDENT_CONTENT_COMMAND} from "lexical";
 
 const ListTabIndentationPlugin = () => {
     const [editor] = useLexicalComposerContext();
 
+    // #. Tab 키를 리스트 들여쓰기 동작으로 연결
     useEffect(() => {
+        // 리스트 항목에서만 Tab/Shift+Tab을 들여쓰기/내어쓰기로 매핑
         return editor.registerCommand(
             KEY_TAB_COMMAND,
             (event: KeyboardEvent) => {
@@ -29,7 +31,7 @@ const ListTabIndentationPlugin = () => {
                 if (!event.shiftKey) {
                     const previousSibling = listItemNode.getPreviousSibling();
 
-                    // Match common editor behavior: first item in a list level cannot indent.
+                    // 일반 에디터 동작과 맞추기 위해 같은 레벨의 첫 항목은 추가 들여쓰기를 막는다.
                     if (!$isListItemNode(previousSibling)) {
                         return true;
                     }

@@ -38,7 +38,7 @@ const AppBreadcrumb = ({className}: IAppBreadcrumbProps) => {
         new: "sampleDetail.create",
     };
 
-    // #. 1depth 메뉴의 기본 이동 경로를 메뉴 설정에서 자동 계산한다.
+    // #. 1depth 메뉴의 기본 이동 경로를 메뉴 설정에서 자동 계산
     const segmentHrefMap: Record<string, string> = MENU.navMain.reduce<Record<string, string>>((acc, menu) => {
         const candidateHref = (menu.url && menu.url !== "#")
             ? menu.url

@@ -1,19 +1,19 @@
-﻿import { ChevronRightIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { MENU } from "@/constants/menu.constant.tsx";
-import { Button } from "@/components/ui/button.tsx";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@/components/ui/collapsible'
-import { Field } from "@/components/ui/field.tsx";
-import { Item, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item.tsx";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarMenu, SidebarMenuAction, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail, useSidebar } from '@/components/ui/sidebar'
+﻿import {ChevronRightIcon} from "lucide-react";
+import {useTranslation} from "react-i18next";
+import {Link} from "react-router-dom";
+import {MENU} from "@/constants/menu.constant.tsx";
+import {Button} from "@/components/ui/button.tsx";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import {Collapsible, CollapsibleContent, CollapsibleTrigger,} from '@/components/ui/collapsible'
+import {Field} from "@/components/ui/field.tsx";
+import {Item, ItemContent, ItemDescription, ItemTitle} from "@/components/ui/item.tsx";
+import {Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarMenu, SidebarMenuAction, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail, useSidebar} from '@/components/ui/sidebar'
 
 const AppSidebar = () => {
     const { isMobile, setOpenMobile } = useSidebar();
     const { t } = useTranslation();
 
-// #. 메뉴 클릭 시 사이드바 닫기 동작을 처리한다.
+// #. 메뉴 클릭 시 사이드바 닫기 동작을 처리
     const handleMenuClick = () => {
         if (isMobile) setOpenMobile(false);
     }

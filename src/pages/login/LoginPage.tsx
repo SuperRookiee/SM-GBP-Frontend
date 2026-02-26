@@ -71,7 +71,7 @@ const LoginPage = () => {
     const showPasswordError = formState.submitted && !!matchedUser && password.trim() !== matchedUser.password;
     const isFormReady = id.trim().length > 0 && password.trim().length > 0;
 
-    // 아이디 저장 체크 상태에 따라 쿠키를 동기화한다.
+    // 아이디 저장 체크 상태에 따라 쿠키를 동기화
     useEffect(() => {
         if (!rememberId) {
             removeCookie(REMEMBER_ID_COOKIE_KEY);

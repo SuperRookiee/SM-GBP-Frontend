@@ -57,7 +57,7 @@ interface IGridTableClientProps<T> {
     headerRight?: ReactNode;                // 카드 헤더 우측 사용자 영역
 }
 
-// #. 컬럼 너비 스타일 객체를 계산한다.
+// #. 컬럼 너비 스타일 객체를 계산
 const getColumnWidthStyle = (width?: string | number) => {
     if (width === undefined) return undefined;
     const computedWidth = typeof width === "number" ? `${width}px` : width;
@@ -164,7 +164,7 @@ const DataTable = <T, >({
         Array.from({ length: pageWindowEnd - pageWindowStart + 1 }, (_, index) => pageWindowStart + index),
     [pageWindowEnd, pageWindowStart]);
 
-// #. 현재 정렬 상태에 맞는 표시값을 반환한다.
+// #. 현재 정렬 상태에 맞는 표시값을 반환
     const sortIndicator = (key: keyof T) => {
         if (sortKey !== key) return null;
         return <span className="ml-1 text-xs text-muted-foreground">{sortDirection === "asc" ? "▲" : "▼"}</span>;

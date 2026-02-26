@@ -7,7 +7,7 @@ import {Label} from "@/components/ui/label.tsx";
 const DEFAULT_IMAGE = "https://valentinh.github.io/react-easy-crop/static/dog-26b9422dccf83dc4e809f679c0f2b78e.jpeg";
 const CROPPED_SIZE = 720;
 
-// #. 이미지 URL을 HTMLImageElement로 로드한다.
+// #. 이미지 URL을 HTMLImageElement로 로드
 const createImage = (url: string): Promise<HTMLImageElement> =>
     new Promise((resolve, reject) => {
         const image = new Image();
@@ -19,13 +19,13 @@ const createImage = (url: string): Promise<HTMLImageElement> =>
 
 const getRadianAngle = (degreeValue: number) => (degreeValue * Math.PI) / 180;
 
-// #. 회전 후 캔버스 경계 박스 크기를 계산한다.
+// #. 회전 후 캔버스 경계 박스 크기를 계산
 const rotateSize = (width: number, height: number, rotation: number) => ({
     width: Math.abs(Math.cos(rotation) * width) + Math.abs(Math.sin(rotation) * height),
     height: Math.abs(Math.sin(rotation) * width) + Math.abs(Math.cos(rotation) * height),
 });
 
-// #. 선택한 영역을 720x720 이미지로 잘라 DataURL로 반환한다.
+// #. 선택한 영역을 720x720 이미지로 잘라 DataURL로 반환
 const getCroppedImage = async (imageSrc: string, pixelCrop: Area, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
@@ -73,12 +73,12 @@ const DemoImagePage = () => {
     const [previewImage, setPreviewImage] = useState<string>("");
     const [errorMessage, setErrorMessage] = useState("");
 
-    // #. 크롭 완료 시 픽셀 기준 좌표/크기를 저장한다.
+    // #. 크롭 완료 시 픽셀 기준 좌표/크기를 저장
     const onCropComplete = useCallback((_croppedArea: Area, croppedPixels: Area) => {
         setCroppedAreaPixels(croppedPixels);
     }, []);
 
-    // #. 로컬 파일을 읽어 크롭 대상 이미지로 설정한다.
+    // #. 로컬 파일을 읽어 크롭 대상 이미지로 설정
     const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -98,7 +98,7 @@ const DemoImagePage = () => {
         reader.readAsDataURL(file);
     };
 
-    // #. 현재 크롭 영역으로 결과 미리보기를 생성한다.
+    // #. 현재 크롭 영역으로 결과 미리보기를 생성
     const onCreatePreview = async () => {
         if (!croppedAreaPixels) return;
         try {

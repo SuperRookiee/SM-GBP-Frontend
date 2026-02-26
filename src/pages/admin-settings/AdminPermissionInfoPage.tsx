@@ -83,7 +83,7 @@ const AdminPermissionInfoPage = () => {
     const [openCompleteDialog, setOpenCompleteDialog] = useState(false);
     const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
 
-    // #. 등록 폼 검증에 사용할 zod 스키마를 구성한다.
+    // #. 등록 폼 검증에 사용할 zod 스키마를 구성
     const registerSchema = useMemo(() => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^\d+$/;
@@ -125,7 +125,7 @@ const AdminPermissionInfoPage = () => {
         });
     }, []);
 
-    // #. 약관 타입별 라벨/제목/본문 메타 정보를 구성한다.
+    // #. 약관 타입별 라벨/제목/본문 메타 정보를 구성
     const termMeta = useMemo<Record<AgreementTermKey, TermMeta>>(() => ({
         service: {label: t("signup.terms.service.label"), title: t("signup.terms.service.title"), body: t("signup.terms.service.body", {returnObjects: true}) as string[]},
         privacy: {label: t("signup.terms.privacy.label"), title: t("signup.terms.privacy.title"), body: t("signup.terms.privacy.body", {returnObjects: true}) as string[]},
@@ -133,23 +133,23 @@ const AdminPermissionInfoPage = () => {
         marketing: {label: t("signup.terms.marketing.label"), title: t("signup.terms.marketing.title"), body: t("signup.terms.marketing.body", {returnObjects: true}) as string[]},
     }), [t]);
 
-    // #. 전체 약관 동의 여부를 계산한다.
+    // #. 전체 약관 동의 여부를 계산
     const allAgreed = useMemo(() => Object.values(agreements).every(Boolean), [agreements]);
-    // #. 승인일시 표시용 오늘 날짜(YYYY-MM-DD)를 계산한다.
+    // #. 승인일시 표시용 오늘 날짜(YYYY-MM-DD)를 계산
     const approvalDate = useMemo(() => new Date().toISOString().slice(0, 10), []);
-    // #. 제출 이후 필드별 에러 목록을 조회한다.
+    // #. 제출 이후 필드별 에러 목록을 조회
     const getErrors = (key: string) => (submitted ? (validationErrors[key] || []) : []);
-    // #. 에러 키를 번역 문구로 변환한다.
+    // #. 에러 키를 번역 문구로 변환
     const getErrorMessages = (key: string) => getErrors(key).map((errorKey) => `${t(errorKey)}`);
 
-    // #. 단일 필드 값을 갱신한다.
+    // #. 단일 필드 값을 갱신
     const onChangeField = <K extends keyof FormValues>(key: K, value: FormValues[K]) => setForm((prev) => ({...prev, [key]: value}));
-    // #. 권역 변경 시 법인/국가 값을 초기화한다.
+    // #. 권역 변경 시 법인/국가 값을 초기화
     const onChangeAuthority = (value: string) => setForm((prev) => ({...prev, authority: value, corporation: "", country: ""}));
-    // #. 법인 변경 시 국가 값을 초기화한다.
+    // #. 법인 변경 시 국가 값을 초기화
     const onChangeCorporation = (value: string) => setForm((prev) => ({...prev, corporation: value, country: ""}));
 
-    // #. 선택한 권역 기준 법인 옵션 목록을 계산한다.
+    // #. 선택한 권역 기준 법인 옵션 목록을 계산
     const filteredCorporationOptions = useMemo<DynamicSelectOption[]>(() => {
         if (!form.authority || form.authority === "default") return [];
         const groups = form.authority === "all" ? COUNTRY_GROUPS : COUNTRY_GROUPS.filter((group) => group.authorityCode === form.authority);
@@ -160,7 +160,7 @@ const AdminPermissionInfoPage = () => {
         }));
     }, [form.authority, t]);
 
-    // #. 선택한 권역/법인 기준 국가 옵션 목록을 계산한다.
+    // #. 선택한 권역/법인 기준 국가 옵션 목록을 계산
     const filteredCountryOptions = useMemo<DynamicSelectOption[]>(() => {
         if (!form.authority || form.authority === "default") return [];
         const groups = form.authority === "all" ? COUNTRY_GROUPS : COUNTRY_GROUPS.filter((group) => group.authorityCode === form.authority);
@@ -174,7 +174,7 @@ const AdminPermissionInfoPage = () => {
         }));
     }, [form.authority, form.corporation, t]);
 
-    // #. 이메일 중복 여부를 목업 규칙으로 확인한다.
+    // #. 이메일 중복 여부를 목업 규칙으로 확인
     const onCheckDuplicate = () => {
         const email = form.email.trim().toLowerCase();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -194,7 +194,7 @@ const AdminPermissionInfoPage = () => {
         );
     };
 
-    // #. 이메일 인증코드를 발송(생성)한다.
+    // #. 이메일 인증코드를 발송(생성)
     const onSendAuthCode = () => {
         const email = form.email.trim();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -214,7 +214,7 @@ const AdminPermissionInfoPage = () => {
         setEmailAuthMessage(t("adminSettingPage.permission.registerForm.messages.codeSent"));
     };
 
-    // #. 입력한 이메일 인증코드 일치 여부를 확인한다.
+    // #. 입력한 이메일 인증코드 일치 여부를 확인
     const onCompleteAuth = () => {
         if (!generatedAuthCode) {
             setIsEmailVerified(false);

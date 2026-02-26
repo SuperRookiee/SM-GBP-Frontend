@@ -1,16 +1,16 @@
-﻿import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CreateSampleApi, DeleteSampleApi, GetSampleDetailApi, UpdateSampleApi } from "@/apis/demo/sample.api.ts";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum } from "@/enums/apiResult.enum.ts";
-import type { ISampleApiItem, ISampleUpsertPayload } from "@/interfaces/demo/ISample.interface.ts";
+﻿import {useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useNavigate, useParams} from "react-router-dom";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {CreateSampleApi, DeleteSampleApi, GetSampleDetailApi, UpdateSampleApi} from "@/apis/demo/sample.api.ts";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Textarea} from "@/components/ui/textarea";
+import {ApiResultEnum, ErrorResultCodeEnum, SuccessResultCodeEnum} from "@/enums/apiResult.enum.ts";
+import type {ISampleApiItem, ISampleUpsertPayload} from "@/interfaces/demo/ISample.interface.ts";
 
 type FormState = {
     name: string;
@@ -93,12 +93,12 @@ const SampleDetailPage = () => {
         nextPath: null,
     });
 
-// #. 알림 다이얼로그를 열고 메시지를 설정한다.
+// #. 알림 다이얼로그를 열고 메시지를 설정
     const openNoticeDialog = (title: string, description: string, nextPath: string | null = null) => {
         setNoticeDialog({ open: true, title, description, nextPath });
     };
 
-// #. 알림 다이얼로그를 닫고 후속 이동을 처리한다.
+// #. 알림 다이얼로그를 닫고 후속 이동을 처리
     const closeNoticeDialog = () => {
         const nextPath = noticeDialog.nextPath;
         setNoticeDialog((prev) => ({ ...prev, open: false, nextPath: null }));
@@ -150,7 +150,7 @@ const SampleDetailPage = () => {
         },
     });
 
-// #. 입력 폼 값 변경 이벤트를 처리한다.
+// #. 입력 폼 값 변경 이벤트를 처리
 const onChange = <K extends keyof FormState>(key: K, value: FormState[K]) => {
         if (!isFormDirty) {
             setForm({ ...formValue, [key]: value });

@@ -1,27 +1,27 @@
-﻿import { useCallback, useMemo, useState } from "react";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
-import { CalendarIcon, ChevronDown, Search } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getDemoGridTableSampleDataApi } from "@/apis/demo/demoGridTable.api.ts";
-import { GC_TIME, STALE_TIME } from "@/constants/query.constant.ts";
-import { DEFAULT_TABLE } from "@/constants/table.constant.tsx";
-import { useGridTablePageStore } from "@/stores/page/demo/gridTablePage.store.ts";
-import { cn } from "@/utils/utils.ts";
+﻿import {useCallback, useMemo, useState} from "react";
+import {format} from "date-fns";
+import {ko} from "date-fns/locale";
+import {CalendarIcon, ChevronDown, Search} from "lucide-react";
+import {useTranslation} from "react-i18next";
+import {keepPreviousData, useQuery} from "@tanstack/react-query";
+import {getDemoGridTableSampleDataApi} from "@/apis/demo/demoGridTable.api.ts";
+import {GC_TIME, STALE_TIME} from "@/constants/query.constant.ts";
+import {DEFAULT_TABLE} from "@/constants/table.constant.tsx";
+import {useGridTablePageStore} from "@/stores/page/demo/gridTablePage.store.ts";
+import {cn} from "@/utils/utils.ts";
 import DemoAgGridTable from "@/components/table/demo/DemoAgGridTable.tsx";
 import DemoToastGridTable from "@/components/table/demo/DemoToastGridTable.tsx";
-import { Button } from "@/components/ui/button.tsx";
-import { Calendar } from "@/components/ui/calendar.tsx";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
-import { Checkbox } from "@/components/ui/checkbox.tsx";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible.tsx";
-import { Input } from "@/components/ui/input.tsx";
-import { Label } from "@/components/ui/label.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
+import {Button} from "@/components/ui/button.tsx";
+import {Calendar} from "@/components/ui/calendar.tsx";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import {Checkbox} from "@/components/ui/checkbox.tsx";
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible.tsx";
+import {Input} from "@/components/ui/input.tsx";
+import {Label} from "@/components/ui/label.tsx";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
 import style from "@/styles/demoGridTable.module.css";
-import type { DemoGridCategory, DemoGridStatus, IDemoGridTableRow } from "@/interfaces/demo/IDemoGridTable.interface.ts";
+import type {DemoGridCategory, DemoGridStatus, IDemoGridTableRow} from "@/interfaces/demo/IDemoGridTable.interface.ts";
 
 const STATUS_OPTIONS: DemoGridStatus[] = ["판매중", "품절", "품절임박"];
 const CATEGORY_OPTIONS: DemoGridCategory[] = ["전자기기", "생활용품", "패션", "사무용품"];
@@ -37,7 +37,7 @@ const defaultColumnVisibility: Record<string, boolean> = {
     discontinued: true,
 };
 
-// #. 행 데이터에 표시용 클래스명을 합성한다.
+// #. 행 데이터에 표시용 클래스명을 합성
 const withRowClassName = (rows: IDemoGridTableRow[]) =>
     rows.map((row) => ({
         ...row,

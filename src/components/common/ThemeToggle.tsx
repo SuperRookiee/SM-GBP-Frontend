@@ -1,9 +1,9 @@
-﻿import { useEffect, useEffectEvent, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { Button } from "@/components/ui/button"
+﻿import {useEffect, useEffectEvent, useState} from "react"
+import {useTranslation} from "react-i18next"
+import {Button} from "@/components/ui/button"
 import ThemeToggleIcon from "@/assets/icons/theme-toggle-icon.svg?react"
 
-// #. 초기 다크모드 상태를 계산한다.
+// #. 초기 다크모드 상태를 계산
 const initDark = () => {
     const theme = localStorage.theme
     return theme ? theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches

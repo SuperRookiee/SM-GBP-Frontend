@@ -80,7 +80,7 @@ const SignupPage = () => {
     const [openCompleteDialog, setOpenCompleteDialog] = useState(false);
     const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
 
-    // #. 약관 타입별 라벨/본문을 한곳에서 관리한다.
+    // #. 약관 타입별 라벨/본문을 한곳에서 관리
     const termMeta = useMemo<Record<AgreementTermKey, TermMeta>>(() => ({
         service: {
             label: t("signup.terms.service.label"),
@@ -108,10 +108,10 @@ const SignupPage = () => {
         },
     }), [t]);
 
-    // #. 약관 전체 동의 여부를 계산한다.
+    // #. 약관 전체 동의 여부를 계산
     const allAgreed = useMemo(() => Object.values(agreements).every(Boolean), [agreements]);
 
-    // #. 제출 시 재사용할 유효성 검사 스키마를 메모이징한다.
+    // #. 제출 시 재사용할 유효성 검사 스키마를 메모이징
     const signupSchema = useMemo(() => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^\d+$/;
@@ -187,27 +187,27 @@ const SignupPage = () => {
         });
     }, []);
 
-    // #. 필드별 에러 목록을 조회한다.
+    // #. 필드별 에러 목록을 조회
     const getErrors = (key: string) => (submitted ? (validationErrors[key] || []) : []);
-    // #. 에러 키를 번역 문구로 변환한다.
+    // #. 에러 키를 번역 문구로 변환
     const getErrorMessages = (key: string) => getErrors(key).map((errorKey) => t(errorKey));
 
-    // #. 단일 필드 값을 갱신한다.
+    // #. 단일 필드 값을 갱신
     const onChangeField = <K extends keyof FormValues>(key: K, value: FormValues[K]) => {
         setForm((prev) => ({...prev, [key]: value}));
     };
 
-    // #. 권역 변경 시 법인/국가를 초기화한다.
+    // #. 권역 변경 시 법인/국가를 초기화
     const onChangeAuthority = (value: string) => {
         setForm((prev) => ({...prev, authority: value, corporation: "", country: ""}));
     };
 
-    // #. 법인 변경 시 국가를 초기화한다.
+    // #. 법인 변경 시 국가를 초기화
     const onChangeCorporation = (value: string) => {
         setForm((prev) => ({...prev, corporation: value, country: ""}));
     };
 
-    // #. 이메일 인증코드를 발송(생성)한다.
+    // #. 이메일 인증코드를 발송(생성)
     const onSendAuthCode = () => {
         const email = form.email.trim();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -228,7 +228,7 @@ const SignupPage = () => {
         setEmailAuthMessage("인증코드가 발송되었습니다. 메일로 받은 코드를 입력해 주세요.");
     };
 
-    // #. 입력한 인증코드의 유효성을 확인한다.
+    // #. 입력한 인증코드의 유효성을 확인
     const onCompleteAuth = () => {
         const inputCode = form.authCode.trim();
         if (!generatedAuthCode) {
@@ -247,7 +247,7 @@ const SignupPage = () => {
         setEmailAuthMessage("인증코드가 일치하지 않습니다.");
     };
 
-    // #. 이메일 중복 여부를 목업 규칙으로 확인한다.
+    // #. 이메일 중복 여부를 목업 규칙으로 확인
     const onCheckDuplicate = () => {
         const email = form.email.trim().toLowerCase();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -264,7 +264,7 @@ const SignupPage = () => {
         setEmailDuplicateMessage(isTaken ? "이미 사용 중인 이메일입니다." : "사용 가능한 이메일입니다.");
     };
 
-    // #. 선택된 권역 기준 법인 목록을 계산한다.
+    // #. 선택된 권역 기준 법인 목록을 계산
     const filteredCorporationOptions = useMemo<DynamicSelectOption[]>(() => {
         if (!form.authority || form.authority === "default") return [];
 
@@ -280,7 +280,7 @@ const SignupPage = () => {
         }));
     }, [form.authority, t]);
 
-    // #. 선택된 권역/법인 기준 국가 목록을 계산한다.
+    // #. 선택된 권역/법인 기준 국가 목록을 계산
     const filteredCountryOptions = useMemo<DynamicSelectOption[]>(() => {
         if (!form.authority || form.authority === "default") return [];
 
@@ -301,7 +301,7 @@ const SignupPage = () => {
         }));
     }, [form.authority, form.corporation, t]);
 
-    // #. 전체 동의 체크 시 개별 약관 상태를 일괄 반영한다.
+    // #. 전체 동의 체크 시 개별 약관 상태를 일괄 반영
     const onToggleAll = (checked: boolean) => {
         setAgreements({
             service: checked,
@@ -311,7 +311,7 @@ const SignupPage = () => {
         });
     };
 
-    // #. 약관 개별 동의 상태를 변경한다.
+    // #. 약관 개별 동의 상태를 변경
     const onToggleAgreement = (key: AgreementTermKey, checked: boolean) => {
         setAgreements((prev) => ({...prev, [key]: checked}));
     };
