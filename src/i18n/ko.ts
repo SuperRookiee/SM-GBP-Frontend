@@ -908,6 +908,7 @@
             htmlInputPlaceholder: "<h2>직접 HTML을 입력하세요</h2>",
             htmlInputAria: "HTML 직접 입력",
             htmlReset: "초기화",
+            blockDelete: "삭제",
         },
         menu: {
             demo: "데모",

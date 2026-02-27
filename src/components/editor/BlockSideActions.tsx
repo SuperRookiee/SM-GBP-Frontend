@@ -5,7 +5,8 @@ import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$createHeadingNode, QuoteNode} from "@lexical/rich-text";
 import {mergeRegister} from "@lexical/utils";
 import {$createParagraphNode, $getNodeByKey, $getRoot, $getSelection, $isRangeSelection, COMMAND_PRIORITY_LOW, SELECTION_CHANGE_COMMAND} from "lexical";
-import {GripVertical, Heading, List, ListOrdered, Plus, Quote, Text} from "lucide-react";
+import {GripVertical, Heading, List, ListOrdered, Plus, Quote, Text, Trash2} from "lucide-react";
+import {useTranslation} from "react-i18next";
 import {cn} from "@/utils/utils.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu.tsx";
@@ -19,12 +20,14 @@ interface IBlockSideActionsProps {
 
 const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
     const [editor] = useLexicalComposerContext();
+    const {t} = useTranslation();
     const [activeBlockKey, setActiveBlockKey] = useState<string | null>(null);
     const [blockTop, setBlockTop] = useState(0);
     const [blockHeight, setBlockHeight] = useState(0);
     const [isDraggingBlock, setIsDraggingBlock] = useState(false);
     const [dragGuideTop, setDragGuideTop] = useState<number | null>(null);
     const [isInsertMenuOpen, setIsInsertMenuOpen] = useState(false);
+    const [isBlockMenuOpen, setIsBlockMenuOpen] = useState(false);
     // #. 블록 드래그 상태를 React 렌더와 분리해 포인터 이동 중 성능 저하를 줄인다.
     const dragStateRef = useRef<{
         blockKey: string | null;
@@ -38,6 +41,20 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         active: false,
         dropTargetKey: null,
         dropPosition: "before",
+    });
+    // #. Grip 버튼의 클릭/드래그를 구분하기 위한 포인터 추적 상태
+    const dragPointerRef = useRef<{
+        pointerId: number | null;
+        startX: number;
+        startY: number;
+        moved: boolean;
+        active: boolean;
+    }>({
+        pointerId: null,
+        startX: 0,
+        startY: 0,
+        moved: false,
+        active: false,
     });
 
     // #. 선택된 블록 기준으로 사이드 액션 위치를 동기화
@@ -124,7 +141,7 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         };
 
         const onMouseLeave = () => {
-            if (isInsertMenuOpen) return;
+            if (isInsertMenuOpen || isBlockMenuOpen) return;
             setActiveBlockKey(null);
         };
 
@@ -135,7 +152,7 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
             shellElement.removeEventListener("mousemove", onMouseMove);
             shellElement.removeEventListener("mouseleave", onMouseLeave);
         };
-    }, [editor, isDraggingBlock, isInsertMenuOpen, shellRef]);
+    }, [editor, isBlockMenuOpen, isDraggingBlock, isInsertMenuOpen, shellRef]);
 
     // #. 현재 블록 뒤에 선택한 타입의 블록을 삽입
     const insertBlockAfter = (type: InsertBlockType) => {
@@ -197,6 +214,35 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         setIsInsertMenuOpen(false);
         refocusEditor();
     };
+    // #. 현재 활성 블록을 삭제하고, 인접 블록(또는 새 문단)으로 커서를 이동
+    const deleteActiveBlock = useCallback(() => {
+        editor.update(() => {
+            const currentBlock = activeBlockKey
+                ? $getNodeByKey(activeBlockKey)?.getTopLevelElementOrThrow()
+                : (() => {
+                    const selection = $getSelection();
+                    if (!$isRangeSelection(selection)) return null;
+                    return selection.anchor.getNode().getTopLevelElementOrThrow();
+                })();
+            if (!currentBlock) return;
+
+            const nextBlock = currentBlock.getNextSibling();
+            const prevBlock = currentBlock.getPreviousSibling();
+            currentBlock.remove();
+
+            const targetBlock = nextBlock ?? prevBlock;
+            if (targetBlock) {
+                targetBlock.selectStart();
+                setActiveBlockKey(targetBlock.getKey());
+                return;
+            }
+
+            const paragraph = $createParagraphNode();
+            $getRoot().append(paragraph);
+            paragraph.selectStart();
+            setActiveBlockKey(paragraph.getKey());
+        });
+    }, [activeBlockKey, editor]);
 
     // #. 드롭 타깃과 위치(before/after)에 따라 블록 순서를 재배치
     const moveBlockByDropTarget = useCallback((blockKey: string, targetKey: string, position: "before" | "after") => {
@@ -312,23 +358,85 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         };
     }, [isDraggingBlock, onDragPointerMove, onDragPointerUp, onDragPointerCancel]);
 
-    // #. 드래그 핸들 포인터 다운 시 드래그 상태를 시작
-    const onDragHandlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    // #. 드래그 시작을 실제 이동 시점까지 지연해 클릭/드래그를 분리
+    const startDraggingFromPoint = useCallback((clientY: number) => {
         if (!activeBlockKey) return;
-
-        event.preventDefault();
-        event.stopPropagation();
 
         dragStateRef.current = {
             blockKey: activeBlockKey,
-            lastClientY: event.clientY,
+            lastClientY: clientY,
             active: true,
             dropTargetKey: activeBlockKey,
             dropPosition: "before",
         };
         setIsDraggingBlock(true);
-        resolveDropTargetFromPointer(event.clientY);
+        setIsBlockMenuOpen(false);
+        resolveDropTargetFromPointer(clientY);
         document.body.style.userSelect = "none";
+    }, [activeBlockKey, resolveDropTargetFromPointer]);
+    // #. Grip 포인터 다운 시 클릭/드래그 판별용 초기 좌표를 기록
+    const onDragHandlePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
+        if (!activeBlockKey || isInsertMenuOpen) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        dragPointerRef.current = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            moved: false,
+            active: true,
+        };
+        event.currentTarget.setPointerCapture(event.pointerId);
+    };
+    // #. 임계값 이상 이동하면 드래그 모드로 전환
+    const onDragHandlePointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
+        const pointer = dragPointerRef.current;
+        if (!pointer.active || pointer.pointerId !== event.pointerId) return;
+        if (isDraggingBlock) return;
+
+        const deltaX = Math.abs(event.clientX - pointer.startX);
+        const deltaY = Math.abs(event.clientY - pointer.startY);
+        if (deltaX + deltaY < 4) return;
+
+        pointer.moved = true;
+        startDraggingFromPoint(event.clientY);
+    };
+    // #. 이동이 없으면 클릭으로 간주해 블록 메뉴를 연다.
+    const onDragHandlePointerUp = (event: ReactPointerEvent<HTMLButtonElement>) => {
+        const pointer = dragPointerRef.current;
+        if (!pointer.active || pointer.pointerId !== event.pointerId) return;
+
+        // #. 드래그가 진행 중이면 현재 포인터 업 이벤트로 즉시 드롭을 확정
+        if (isDraggingBlock) {
+            onDragPointerUp(event.nativeEvent);
+        } else {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!pointer.moved) {
+                setIsBlockMenuOpen(true);
+            }
+        }
+        dragPointerRef.current = {
+            pointerId: null,
+            startX: 0,
+            startY: 0,
+            moved: false,
+            active: false,
+        };
+    };
+    // #. 포인터 취소 시 클릭/드래그 대기 상태를 정리
+    const onDragHandlePointerCancel = (event: ReactPointerEvent<HTMLButtonElement>) => {
+        const pointer = dragPointerRef.current;
+        if (pointer.pointerId === event.pointerId) {
+            dragPointerRef.current = {
+                pointerId: null,
+                startX: 0,
+                startY: 0,
+                moved: false,
+                active: false,
+            };
+        }
     };
 
     if (!activeBlockKey && !isDraggingBlock && !isInsertMenuOpen) {
@@ -373,16 +481,38 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
                     </DropdownMenu>
 
                     {/* 블록 순서 이동용 드래그 핸들 */}
-                    <Button
-                        type="button"
-                        size="icon-xs"
-                        variant="ghost"
-                        aria-label="Drag to reorder block"
-                        className={cn("demo-editor-block-action-button -ml-1", isDraggingBlock ? "cursor-grabbing" : "cursor-grab")}
-                        onPointerDown={onDragHandlePointerDown}
-                    >
-                        <GripVertical size={10}/>
-                    </Button>
+                    <DropdownMenu open={isBlockMenuOpen} onOpenChange={setIsBlockMenuOpen}>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                type="button"
+                                size="icon-xs"
+                                variant="ghost"
+                                aria-label="Drag to reorder block"
+                                className={cn("demo-editor-block-action-button -ml-1", isDraggingBlock ? "cursor-grabbing" : "cursor-grab")}
+                                onPointerDown={onDragHandlePointerDown}
+                                onPointerMove={onDragHandlePointerMove}
+                                onPointerUp={onDragHandlePointerUp}
+                                onPointerCancel={onDragHandlePointerCancel}
+                            >
+                                <GripVertical size={10}/>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        {/* 블록 단위 액션 메뉴 */}
+                        <DropdownMenuContent align="start" side="right" className="min-w-40">
+                            {/* 현재 줄 삭제 */}
+                            <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onSelect={(event) => {
+                                    event.preventDefault();
+                                    deleteActiveBlock();
+                                    setIsBlockMenuOpen(false);
+                                    refocusEditor();
+                                }}
+                            >
+                                <Trash2 size={10}/>{t("editor.blockDelete")}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             )}
             {/* 드래그 중 표시되는 삽입 가이드 라인 */}

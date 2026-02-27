@@ -7,7 +7,7 @@ import {$getSelectionStyleValueForProperty, $patchStyleText, $setBlocksType} fro
 import {mergeRegister} from "@lexical/utils";
 import type {ElementFormatType} from "lexical";
 import {$createParagraphNode, $getSelection, $isRangeSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_LOW, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, OUTDENT_CONTENT_COMMAND, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND} from "lexical";
-import {AlignLeft, Bold, Check, ChevronDown, Code, Heading, Highlighter, ImagePlus, Indent, Italic, Link2, List, ListOrdered, Minus, Plus, Redo2, Strikethrough, Underline, Undo2, X} from "lucide-react";
+import {AlignLeft, Bold, Check, ChevronDown, Code, Highlighter, ImagePlus, Indent, Italic, Link2, List, ListOrdered, Minus, Plus, Quote, Redo2, Strikethrough, Underline, Undo2, X} from "lucide-react";
 import {cn} from "@/utils/utils.ts";
 import {INSERT_IMAGE_COMMAND} from "@/components/editor/nodes/ImageNode.tsx";
 import {Button} from "@/components/ui/button.tsx";
@@ -295,13 +295,13 @@ const EditorToolbar = () => {
         code: false,
     });
 
-    // #. 블록 타입 표시 라벨을 계산
-    const blockLabel = useMemo(() => {
-        if (blockType === "h1") return "Heading 1";
-        if (blockType === "h2") return "Heading 2";
-        if (blockType === "h3") return "Heading 3";
-        if (blockType === "quote") return "Quote";
-        return "Normal";
+    // #. 블록 타입별 라벨/아이콘 메타를 계산
+    const blockMeta = useMemo(() => {
+        if (blockType === "h1") return {label: "Heading 1", icon: <span className="inline-flex w-5 text-muted-foreground">H1</span>};
+        if (blockType === "h2") return {label: "Heading 2", icon: <span className="inline-flex w-5 text-muted-foreground">H2</span>};
+        if (blockType === "h3") return {label: "Heading 3", icon: <span className="inline-flex w-5 text-muted-foreground">H3</span>};
+        if (blockType === "quote") return {label: "Quote", icon: <Quote size={15} className="text-muted-foreground"/>};
+        return {label: "Normal", icon: <AlignLeft size={15} className="text-muted-foreground"/>};
     }, [blockType]);
     // #. 정렬 표시 라벨을 계산
     const alignLabel = useMemo(() => {
@@ -493,15 +493,15 @@ const EditorToolbar = () => {
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button variant="outline" className="demo-editor-toolbar-trigger min-w-40 justify-between"><span
-                            className="inline-flex items-center gap-2"><Heading size={15}/>{blockLabel}</span><ChevronDown
+                            className="inline-flex items-center gap-2">{blockMeta.icon}{blockMeta.label}</span><ChevronDown
                             size={15}/></Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="min-w-56 p-1">
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => applyHeading("paragraph")}>Normal</Button>
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => applyHeading("h1")}>Heading 1</Button>
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => applyHeading("h2")}>Heading 2</Button>
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => applyHeading("h3")}>Heading 3</Button>
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => applyHeading("quote")}>Quote</Button>
+                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => applyHeading("paragraph")}><AlignLeft size={15} className="text-muted-foreground"/>Normal</Button>
+                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => applyHeading("h1")}><span className="inline-flex w-5 text-muted-foreground">H1</span>Heading 1</Button>
+                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => applyHeading("h2")}><span className="inline-flex w-5 text-muted-foreground">H2</span>Heading 2</Button>
+                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => applyHeading("h3")}><span className="inline-flex w-5 text-muted-foreground">H3</span>Heading 3</Button>
+                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => applyHeading("quote")}><Quote size={15} className="text-muted-foreground"/>Quote</Button>
                     </PopoverContent>
                 </Popover>
 

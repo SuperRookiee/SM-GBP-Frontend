@@ -910,6 +910,7 @@
             htmlInputPlaceholder: "<h2>Type HTML directly</h2>",
             htmlInputAria: "Direct HTML input",
             htmlReset: "Reset",
+            blockDelete: "Delete",
         },
         menu: {
             demo: "Demo",

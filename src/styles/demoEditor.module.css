@@ -145,6 +145,19 @@
     vertical-align: middle;
 }
 
+:global(.editor-image-frame) {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 0;
+}
+
+:global(.editor-image-frame):global(.is-selected) {
+    outline: 2px solid color-mix(in oklab, var(--color-primary) 65%, transparent);
+    outline-offset: 2px;
+    border-radius: 0.45rem;
+}
+
 :global(.editor-image) {
     display: inline-block;
     max-width: 100%;
@@ -153,6 +166,23 @@
     border: 1px solid color-mix(in oklab, var(--color-border) 75%, transparent);
     margin: 0 0.25rem;
     vertical-align: middle;
+}
+
+:global(.editor-image-resize-handle) {
+    position: absolute;
+    right: -6px;
+    bottom: -6px;
+    display: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in oklab, var(--color-border) 75%, transparent);
+    background: var(--color-primary);
+    cursor: nwse-resize;
+}
+
+:global(.editor-image-frame):global(.is-selected) :global(.editor-image-resize-handle) {
+    display: inline-block;
 }
 
 :global(.editor-input a) {
