@@ -136,6 +136,17 @@
     font-family: "Courier New", Courier, monospace;
 }
 
+:global(.editor-input a) {
+    color: #216fdb;
+    text-decoration: underline;
+    text-underline-offset: 0.14em;
+}
+
+:global(.editor-input a:hover) {
+    color: #1d4ed8;
+    cursor: pointer;
+}
+
 :global(.demo-editor-toolbar) {
     display: flex;
     flex-wrap: wrap;
@@ -445,4 +456,41 @@
 :global(.demo-editor-selection-button):global(.is-active) {
     background-color: var(--color-accent);
     color: var(--color-accent-foreground);
+}
+
+:global(.demo-editor-link-editor) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 41;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 28rem;
+    padding: 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.8rem;
+    background: color-mix(in oklab, var(--color-background) 97%, transparent);
+    box-shadow: 0 8px 24px color-mix(in oklab, var(--color-foreground) 12%, transparent);
+    animation: demo-editor-selection-toolbar-fade-in 0.2s ease-out;
+}
+
+:global(.demo-editor-link-input) {
+    height: 2.6rem;
+    border: 0;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--color-muted) 82%, transparent);
+    padding: 0 1rem;
+    font-size: 1.1rem;
+}
+
+:global(.demo-editor-link-input):focus-visible {
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 30%, transparent);
+}
+
+:global(.demo-editor-link-action) {
+    width: 1.9rem;
+    min-width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 9999px;
 }

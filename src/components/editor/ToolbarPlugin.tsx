@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {$isLinkNode, TOGGLE_LINK_COMMAND} from "@lexical/link";
 import {INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND} from "@lexical/list";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$createHeadingNode, $isHeadingNode, QuoteNode} from "@lexical/rich-text";
@@ -6,9 +7,10 @@ import {$getSelectionStyleValueForProperty, $patchStyleText, $setBlocksType} fro
 import {mergeRegister} from "@lexical/utils";
 import type {ElementFormatType} from "lexical";
 import {$createParagraphNode, $getSelection, $isRangeSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_LOW, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, OUTDENT_CONTENT_COMMAND, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND} from "lexical";
-import {AlignLeft, Bold, ChevronDown, Code, Heading, Highlighter, Indent, Italic, List, ListOrdered, Minus, Plus, Redo2, Strikethrough, Underline, Undo2} from "lucide-react";
+import {AlignLeft, Bold, Check, ChevronDown, Code, Heading, Highlighter, Indent, Italic, Link2, List, ListOrdered, Minus, Plus, Redo2, Strikethrough, Underline, Undo2, X} from "lucide-react";
 import {cn} from "@/utils/utils.ts";
 import {Button} from "@/components/ui/button.tsx";
+import {Input} from "@/components/ui/input.tsx";
 import {Kbd} from "@/components/ui/kbd.tsx";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
 
@@ -279,6 +281,7 @@ const EditorToolbar = () => {
     const [isHighlightOpen, setIsHighlightOpen] = useState(false);
     const [isTextColorDragging, setIsTextColorDragging] = useState(false);
     const [isHighlightDragging, setIsHighlightDragging] = useState(false);
+    const [isLink, setIsLink] = useState(false);
     const [alignType, setAlignType] = useState<ElementFormatType>("left");
     const [formats, setFormats] = useState<Record<TextFormat, boolean>>({
         bold: false,
@@ -334,6 +337,20 @@ const EditorToolbar = () => {
                 strikethrough: selection.hasFormat("strikethrough"),
                 code: selection.hasFormat("code"),
             });
+            const anchorNode = selection.anchor.getNode();
+            const anchorParent = anchorNode.getParent();
+            const focusNode = selection.focus.getNode();
+            const focusParent = focusNode.getParent();
+            const linkNode = $isLinkNode(anchorNode)
+                ? anchorNode
+                : $isLinkNode(anchorParent)
+                    ? anchorParent
+                    : $isLinkNode(focusNode)
+                        ? focusNode
+                        : $isLinkNode(focusParent)
+                            ? focusParent
+                            : null;
+            setIsLink(Boolean(linkNode));
 
             setFontFamily($getSelectionStyleValueForProperty(selection, "font-family", "Arial").replaceAll("\"", ""));
             const resolvedSize = Number.parseInt($getSelectionStyleValueForProperty(selection, "font-size", "15px"), 10);
@@ -379,6 +396,9 @@ const EditorToolbar = () => {
     const clearHighlight = () => {
         applyTextStyle({"background-color": "transparent"});
         setHighlightColor("transparent");
+    };
+    const handleOpenLinkEditor = () => {
+        window.dispatchEvent(new CustomEvent("demo-editor-open-link-editor"));
     };
 
     // #. 글자 크기를 범위 제한 후 적용
@@ -548,6 +568,15 @@ const EditorToolbar = () => {
                 <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.underline && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}><Underline size={15}/></Button>
                 <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.strikethrough && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")}><Strikethrough size={15}/></Button>
                 <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.code && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code")}><Code size={15}/></Button>
+                <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className={cn(toolbarButtonClass, isLink && "is-active")}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={handleOpenLinkEditor}
+                >
+                    <Link2 size={15}/>
+                </Button>
             </div>
 
             {/* 정렬/들여쓰기 그룹 */}
@@ -598,7 +627,9 @@ const EditorToolbar = () => {
 const SelectionFloatingToolbar = () => {
     const [editor] = useLexicalComposerContext();
     const toolbarRef = useRef<HTMLDivElement>(null);
+    const linkEditorRef = useRef<HTMLDivElement>(null);
     const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+    const [linkEditorPosition, setLinkEditorPosition] = useState<{ top: number; left: number } | null>(null);
     const [formats, setFormats] = useState<Record<TextFormat, boolean>>({
         bold: false,
         italic: false,
@@ -606,6 +637,10 @@ const SelectionFloatingToolbar = () => {
         strikethrough: false,
         code: false
     });
+    const [isLink, setIsLink] = useState(false);
+    const [currentLinkUrl, setCurrentLinkUrl] = useState("");
+    const [isLinkEditorOpen, setIsLinkEditorOpen] = useState(false);
+    const [linkUrlInput, setLinkUrlInput] = useState("https://");
 
     // 선택 영역 근처 플로팅 툴바 위치/상태를 동기화
     const syncSelectionToolbar = useCallback(() => {
@@ -613,20 +648,20 @@ const SelectionFloatingToolbar = () => {
             const selection = $getSelection();
             const rootElement = editor.getRootElement();
             if (!$isRangeSelection(selection) || selection.isCollapsed() || !rootElement) {
-                setPosition(null);
+                if (!isLinkEditorOpen) setPosition(null);
                 return;
             }
 
             const nativeSelection = window.getSelection();
             if (!nativeSelection || nativeSelection.rangeCount === 0) {
-                setPosition(null);
+                if (!isLinkEditorOpen) setPosition(null);
                 return;
             }
 
             const range = nativeSelection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
             if (rect.width === 0 && rect.height === 0) {
-                setPosition(null);
+                if (!isLinkEditorOpen) setPosition(null);
                 return;
             }
 
@@ -637,6 +672,25 @@ const SelectionFloatingToolbar = () => {
                 strikethrough: selection.hasFormat("strikethrough"),
                 code: selection.hasFormat("code"),
             });
+            const anchorNode = selection.anchor.getNode();
+            const anchorParent = anchorNode.getParent();
+            const focusNode = selection.focus.getNode();
+            const focusParent = focusNode.getParent();
+            const linkNode = $isLinkNode(anchorNode)
+                ? anchorNode
+                : $isLinkNode(anchorParent)
+                    ? anchorParent
+                    : $isLinkNode(focusNode)
+                        ? focusNode
+                        : $isLinkNode(focusParent)
+                            ? focusParent
+                            : null;
+            setIsLink(Boolean(linkNode));
+            const detectedUrl = linkNode?.getURL() ?? "";
+            setCurrentLinkUrl(detectedUrl);
+            if (!isLinkEditorOpen) {
+                setLinkUrlInput(detectedUrl || "https://");
+            }
 
             // 플로팅 툴바가 화면 밖으로 나가지 않도록 좌우/상하 위치를 보정
             const viewportMargin = 8;
@@ -651,8 +705,48 @@ const SelectionFloatingToolbar = () => {
             const top = placeAboveTop < viewportMargin ? rect.bottom + 8 : placeAboveTop;
 
             setPosition({top, left: clampedLeft});
+            setLinkEditorPosition({top, left: clampedLeft});
         });
-    }, [editor]);
+    }, [editor, isLinkEditorOpen]);
+
+    const resolveSelectionPosition = useCallback(() => {
+        const nativeSelection = window.getSelection();
+        if (!nativeSelection || nativeSelection.rangeCount === 0) return null;
+        const rect = nativeSelection.getRangeAt(0).getBoundingClientRect();
+        if (rect.width === 0 && rect.height === 0) return null;
+        const viewportMargin = 8;
+        const toolbarWidth = toolbarRef.current?.offsetWidth ?? 420;
+        const toolbarHeight = toolbarRef.current?.offsetHeight ?? 44;
+        const desiredLeft = rect.left + rect.width / 2;
+        const clampedLeft = Math.max(
+            viewportMargin + toolbarWidth / 2,
+            Math.min(window.innerWidth - viewportMargin - toolbarWidth / 2, desiredLeft),
+        );
+        const placeAboveTop = rect.top - toolbarHeight - 8;
+        const top = placeAboveTop < viewportMargin ? rect.bottom + 8 : placeAboveTop;
+        return {top, left: clampedLeft};
+    }, []);
+
+    const openLinkEditor = useCallback(() => {
+        const nextPosition = resolveSelectionPosition() ?? position ?? linkEditorPosition;
+        if (!nextPosition) return;
+        setPosition((prev) => prev ?? nextPosition);
+        setLinkEditorPosition(nextPosition);
+        setLinkUrlInput(currentLinkUrl || "https://");
+        setIsLinkEditorOpen(true);
+    }, [currentLinkUrl, linkEditorPosition, position, resolveSelectionPosition]);
+    const applyLinkFromInput = useCallback(() => {
+        const trimmed = linkUrlInput.trim();
+        editor.focus(() => {
+            if (!trimmed) {
+                editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+                return;
+            }
+            const normalizedUrl = /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmed) ? trimmed : `https://${trimmed}`;
+            editor.dispatchCommand(TOGGLE_LINK_COMMAND, normalizedUrl);
+        });
+        setIsLinkEditorOpen(false);
+    }, [editor, linkUrlInput]);
 
     useEffect(() => {
         return mergeRegister(
@@ -663,22 +757,104 @@ const SelectionFloatingToolbar = () => {
             }, COMMAND_PRIORITY_LOW),
         );
     }, [editor, syncSelectionToolbar]);
+    useEffect(() => {
+        const handleOpen = () => openLinkEditor();
+        window.addEventListener("demo-editor-open-link-editor", handleOpen as EventListener);
+        return () => {
+            window.removeEventListener("demo-editor-open-link-editor", handleOpen as EventListener);
+        };
+    }, [openLinkEditor]);
+    useEffect(() => {
+        if (!isLinkEditorOpen) return;
+        const handleMouseDown = (event: MouseEvent) => {
+            const target = event.target as Node | null;
+            if (!target) return;
+            if (toolbarRef.current?.contains(target)) return;
+            if (linkEditorRef.current?.contains(target)) return;
+            setIsLinkEditorOpen(false);
+        };
+        window.addEventListener("mousedown", handleMouseDown);
+        return () => {
+            window.removeEventListener("mousedown", handleMouseDown);
+        };
+    }, [isLinkEditorOpen]);
 
-    if (!position) return null;
+    if (!position && !isLinkEditorOpen) return null;
+    const anchorPosition = position ?? linkEditorPosition;
+    if (!anchorPosition) return null;
 
     return (
-        // 선택 텍스트 근처에 표시되는 플로팅 툴바
-        <div
-            ref={toolbarRef}
-            className="demo-editor-selection-toolbar"
-            style={{transform: `translate3d(${position.left}px, ${position.top}px, 0) translateX(-50%)`}}
-        >
-            <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.bold && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}><Bold size={14}/></Button>
-            <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.italic && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}><Italic size={14}/></Button>
-            <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.underline && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}><Underline size={14}/></Button>
-            <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.strikethrough && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")}><Strikethrough size={14}/></Button>
-            <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.code && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code")}>{"<>"}</Button>
-        </div>
+        <>
+            {/* 선택 텍스트 근처에 표시되는 플로팅 툴바 */}
+            {position && !isLinkEditorOpen ? (
+                <div
+                    ref={toolbarRef}
+                    className="demo-editor-selection-toolbar"
+                    style={{transform: `translate3d(${position.left}px, ${position.top}px, 0) translateX(-50%)`}}
+                >
+                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.bold && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}><Bold size={14}/></Button>
+                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.italic && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}><Italic size={14}/></Button>
+                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.underline && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}><Underline size={14}/></Button>
+                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.strikethrough && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")}><Strikethrough size={14}/></Button>
+                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.code && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code")}>{"<>"}</Button>
+                    <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        className={cn("demo-editor-selection-button", isLink && "is-active")}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={openLinkEditor}
+                    >
+                        <Link2 size={14}/>
+                    </Button>
+                </div>
+            ) : null}
+            {isLinkEditorOpen ? (
+                <div
+                    ref={linkEditorRef}
+                    className="demo-editor-link-editor"
+                    style={{
+                        transform: `translate3d(${anchorPosition.left}px, ${anchorPosition.top + (toolbarRef.current?.offsetHeight ?? 44) + 8}px, 0) translateX(-50%)`,
+                    }}
+                >
+                    <Input
+                        value={linkUrlInput}
+                        onChange={(event) => setLinkUrlInput(event.target.value)}
+                        placeholder="https://"
+                        className="demo-editor-link-input"
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                                event.preventDefault();
+                                applyLinkFromInput();
+                            }
+                            if (event.key === "Escape") {
+                                event.preventDefault();
+                                setIsLinkEditorOpen(false);
+                            }
+                        }}
+                    />
+                    <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        className="demo-editor-link-action"
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => setIsLinkEditorOpen(false)}
+                        aria-label="Cancel link"
+                    >
+                        <X size={14}/>
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        className="demo-editor-link-action"
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={applyLinkFromInput}
+                        aria-label="Apply link"
+                    >
+                        <Check size={14}/>
+                    </Button>
+                </div>
+            ) : null}
+        </>
     );
 };
 
