@@ -303,6 +303,7 @@ const EditorToolbar = () => {
         if (blockType === "quote") return {label: "Quote", icon: <Quote size={15} className="text-muted-foreground"/>};
         return {label: "Normal", icon: <AlignLeft size={15} className="text-muted-foreground"/>};
     }, [blockType]);
+
     // #. 정렬 표시 라벨을 계산
     const alignLabel = useMemo(() => {
         if (alignType === "center") return "Center Align";
@@ -317,7 +318,12 @@ const EditorToolbar = () => {
             const selection = $getSelection();
             if (!$isRangeSelection(selection)) return;
 
-            const topLevelNode = selection.anchor.getNode().getTopLevelElementOrThrow();
+            const topLevelNode = selection.anchor.getNode().getTopLevelElement();
+            if (!topLevelNode) {
+                setBlockType("paragraph");
+                setAlignType("left");
+                return;
+            }
             const headingType = $isHeadingNode(topLevelNode) ? topLevelNode.getTag() : undefined;
             setBlockType(
                 headingType === "h1" || headingType === "h2" || headingType === "h3"

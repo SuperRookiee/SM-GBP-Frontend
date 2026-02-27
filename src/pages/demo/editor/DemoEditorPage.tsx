@@ -54,6 +54,7 @@ const theme = {
 
 // #. 에디터에서 사용할 노드 목록 (이미지 노드 포함)
 const nodes: Array<Klass<LexicalNode>> = [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode, AutoLinkNode, ImageNode];
+const HTML_SYNC_TAG = "demo-editor-html-sync";
 
 const editorConfig = {
     namespace: "DemoEditor",
@@ -275,7 +276,7 @@ const LexicalSyncPlugin = ({
                                onSync,
                                onEditorReady,
                            }: {
-    onSync: (editorState: SerializedEditorStateNode, html: string) => void;
+    onSync: (editorState: SerializedEditorStateNode, html: string, fromHtmlSync: boolean) => void;
     onEditorReady: (editor: LexicalEditor | null) => void;
 }) => {
     const [editor] = useLexicalComposerContext();
@@ -283,14 +284,16 @@ const LexicalSyncPlugin = ({
     useEffect(() => {
         onEditorReady(editor);
 
-        const syncState = (editorState: ReturnType<LexicalEditor["getEditorState"]>) => {
+        const syncState = (editorState: ReturnType<LexicalEditor["getEditorState"]>, fromHtmlSync: boolean) => {
             editorState.read(() => {
-                onSync(editorState.toJSON() as SerializedEditorStateNode, $generateHtmlFromNodes(editor, null));
+                onSync(editorState.toJSON() as SerializedEditorStateNode, $generateHtmlFromNodes(editor, null), fromHtmlSync);
             });
         };
 
-        syncState(editor.getEditorState());
-        const unregister = editor.registerUpdateListener(({editorState}) => syncState(editorState));
+        syncState(editor.getEditorState(), false);
+        const unregister = editor.registerUpdateListener(({editorState, tags}) => {
+            syncState(editorState, tags.has(HTML_SYNC_TAG));
+        });
 
         return () => {
             unregister();
@@ -304,21 +307,27 @@ const LexicalSyncPlugin = ({
 const DemoEditorPage = () => {
     const {t} = useTranslation();
     const [editorJson, setEditorJson] = useState<SerializedEditorStateNode | null>(null);
-    const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("json");
+    const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("markdown");
     const [editorMode, setEditorMode] = useState<"editor" | "preview" | "html">("editor");
     const [htmlInput, setHtmlInput] = useState("");
     const [exportStatus, setExportStatus] = useState("");
     const shellRef = useRef<HTMLDivElement>(null);
+    const htmlTextareaRef = useRef<HTMLTextAreaElement>(null);
     const editorRef = useRef<LexicalEditor | null>(null);
-    const isApplyingHtmlRef = useRef(false);
+    const isHtmlComposingRef = useRef(false);
+    const editorModeRef = useRef(editorMode);
 
-    const handleLexicalSync = useCallback((nextEditorJson: SerializedEditorStateNode, nextHtml: string) => {
+    useEffect(() => {
+        editorModeRef.current = editorMode;
+    }, [editorMode]);
+
+    const handleLexicalSync = useCallback((nextEditorJson: SerializedEditorStateNode, nextHtml: string, fromHtmlSync: boolean) => {
         setEditorJson(nextEditorJson);
+        if (fromHtmlSync) {
+            return;
+        }
         const formattedHtml = formatHtmlForTextarea(nextHtml);
         setHtmlInput((prev) => (prev === formattedHtml ? prev : formattedHtml));
-        if (isApplyingHtmlRef.current) {
-            isApplyingHtmlRef.current = false;
-        }
     }, []);
 
     const handleEditorReady = useCallback((editor: LexicalEditor | null) => {
@@ -331,28 +340,44 @@ const DemoEditorPage = () => {
         markdown: convertLexicalJsonToMarkdown(editorJson),
     }), [editorJson, htmlInput]);
 
-    const handleHtmlInputChange = useCallback((value: string) => {
-        setHtmlInput(value);
+    const applyHtmlToEditor = useCallback((value: string) => {
         const editor = editorRef.current;
         if (!editor) return;
+
+        const textarea = htmlTextareaRef.current;
+        const shouldRestoreFocus = editorModeRef.current === "html" && document.activeElement === textarea;
+        const selectionStart = textarea?.selectionStart ?? null;
+        const selectionEnd = textarea?.selectionEnd ?? null;
 
         const parser = new DOMParser();
         const dom = parser.parseFromString(value || "", "text/html");
         removeWhitespaceTextNodes(dom.body);
-        isApplyingHtmlRef.current = true;
+
         editor.update(() => {
             const root = $getRoot();
             root.clear();
             const nodesFromHtml = $generateNodesFromDOM(editor, dom);
             if (nodesFromHtml.length === 0) {
                 root.append($createParagraphNode());
-                root.selectEnd();
                 return;
             }
             root.append(...nodesFromHtml);
-            root.selectEnd();
+        }, {tag: HTML_SYNC_TAG});
+
+        if (!shouldRestoreFocus || !textarea || selectionStart === null || selectionEnd === null) return;
+        requestAnimationFrame(() => {
+            if (document.activeElement !== textarea) {
+                textarea.focus({preventScroll: true});
+            }
+            textarea.setSelectionRange(selectionStart, selectionEnd);
         });
     }, []);
+
+    const handleHtmlInputChange = useCallback((value: string) => {
+        setHtmlInput(value);
+        if (isHtmlComposingRef.current) return;
+        applyHtmlToEditor(value);
+    }, [applyHtmlToEditor]);
 
     const handleHtmlReset = useCallback(() => {
         handleHtmlInputChange("");
@@ -425,7 +450,7 @@ const DemoEditorPage = () => {
                                         ErrorBoundary={LexicalErrorBoundary}
                                     />
                                     <HistoryPlugin/>
-                                    <AutoFocusPlugin/>
+                                    {editorMode === "editor" ? <AutoFocusPlugin/> : null}
                                     <ListPlugin/>
                                     {/* 이미지 삽입/클립보드 붙여넣기 처리 */}
                                     <ImagePlugin/>
@@ -458,8 +483,16 @@ const DemoEditorPage = () => {
                                         </Button>
                                     </div>
                                     <Textarea
+                                        ref={htmlTextareaRef}
                                         value={htmlInput}
                                         onChange={(event) => handleHtmlInputChange(event.target.value)}
+                                        onCompositionStart={() => {
+                                            isHtmlComposingRef.current = true;
+                                        }}
+                                        onCompositionEnd={(event) => {
+                                            isHtmlComposingRef.current = false;
+                                            handleHtmlInputChange(event.currentTarget.value);
+                                        }}
                                         placeholder={t("editor.htmlInputPlaceholder")}
                                         aria-label={t("editor.htmlInputAria")}
                                         className="h-[380px] resize-none font-mono text-xs leading-relaxed"

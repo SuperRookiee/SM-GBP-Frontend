@@ -65,7 +65,8 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
         }
 
         // 현재 커서가 위치한 최상위 블록의 화면 좌표를 기준으로 액션 버튼 위치를 맞춘다.
-        const topLevelNode = selection.anchor.getNode().getTopLevelElementOrThrow();
+        const topLevelNode = selection.anchor.getNode().getTopLevelElement();
+        if (!topLevelNode) return;
         const key = topLevelNode.getKey();
         const blockElement = editor.getElementByKey(key);
 
@@ -158,11 +159,11 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
     const insertBlockAfter = (type: InsertBlockType) => {
         editor.update(() => {
             const currentBlock = activeBlockKey
-                ? $getNodeByKey(activeBlockKey)?.getTopLevelElementOrThrow()
+                ? $getNodeByKey(activeBlockKey)?.getTopLevelElement()
                 : (() => {
                     const selection = $getSelection();
                     if (!$isRangeSelection(selection)) return null;
-                    return selection.anchor.getNode().getTopLevelElementOrThrow();
+                    return selection.anchor.getNode().getTopLevelElement();
                 })();
             if (!currentBlock) return;
 
@@ -182,11 +183,11 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
     const insertListAfter = (type: InsertListType) => {
         editor.update(() => {
             const currentBlock = activeBlockKey
-                ? $getNodeByKey(activeBlockKey)?.getTopLevelElementOrThrow()
+                ? $getNodeByKey(activeBlockKey)?.getTopLevelElement()
                 : (() => {
                     const selection = $getSelection();
                     if (!$isRangeSelection(selection)) return null;
-                    return selection.anchor.getNode().getTopLevelElementOrThrow();
+                    return selection.anchor.getNode().getTopLevelElement();
                 })();
             if (!currentBlock) return;
 
@@ -218,11 +219,11 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
     const deleteActiveBlock = useCallback(() => {
         editor.update(() => {
             const currentBlock = activeBlockKey
-                ? $getNodeByKey(activeBlockKey)?.getTopLevelElementOrThrow()
+                ? $getNodeByKey(activeBlockKey)?.getTopLevelElement()
                 : (() => {
                     const selection = $getSelection();
                     if (!$isRangeSelection(selection)) return null;
-                    return selection.anchor.getNode().getTopLevelElementOrThrow();
+                    return selection.anchor.getNode().getTopLevelElement();
                 })();
             if (!currentBlock) return;
 
@@ -253,8 +254,9 @@ const BlockSideActions = ({shellRef}: IBlockSideActionsProps) => {
             const targetNode = $getNodeByKey(targetKey);
             if (!blockNode || !targetNode) return;
 
-            const currentBlock = blockNode.getTopLevelElementOrThrow();
-            const targetBlock = targetNode.getTopLevelElementOrThrow();
+            const currentBlock = blockNode.getTopLevelElement();
+            const targetBlock = targetNode.getTopLevelElement();
+            if (!currentBlock || !targetBlock) return;
             if (currentBlock.getKey() === targetBlock.getKey()) return;
 
             if (position === "before") targetBlock.insertBefore(currentBlock);
