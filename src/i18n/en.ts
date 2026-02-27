@@ -896,7 +896,9 @@
             copy: "Copy",
             download: "Download",
             exportPreview: "Selected Format Preview",
+            renderedPreview: "Rendered Preview",
             exportEmpty: "No content to export yet.",
+            renderedPreviewEmpty: "No content to render yet.",
             copySuccess: "Copied {{format}} to clipboard.",
             copyFailed: "Failed to copy.",
             copyUnavailable: "Clipboard copy is not available in this environment.",
@@ -1001,7 +1003,6 @@
 };
 
 export default en;
-
 
 
 

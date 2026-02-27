@@ -414,6 +414,27 @@ const DemoEditorPage = () => {
                                 </ScrollArea>
                             </div>
                         </section>
+
+                        <section className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-sm font-semibold">{t("editor.renderedPreview")}</h3>
+                                <span className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground">live</span>
+                            </div>
+                            <div className="rounded-lg border border-border/80 bg-background/80 p-2">
+                                <ScrollArea className="h-60">
+                                    {exportedTexts.html ? (
+                                        <div
+                                            className="prose prose-sm max-w-none rounded-md bg-muted/40 p-3 dark:prose-invert"
+                                            dangerouslySetInnerHTML={{__html: exportedTexts.html}}
+                                        />
+                                    ) : (
+                                        <p className="rounded-md bg-muted/40 p-3 text-xs text-muted-foreground">
+                                            {t("editor.renderedPreviewEmpty")}
+                                        </p>
+                                    )}
+                                </ScrollArea>
+                            </div>
+                        </section>
                     </CardContent>
                 </Card>
             </div>
