@@ -20,6 +20,7 @@ type BlockType = "paragraph" | "h1" | "h2" | "h3" | "quote";
 
 const fontOptions = ["Arial", "Georgia", "Times New Roman", "Courier New", "Verdana", "Trebuchet MS"];
 const toolbarButtonClass = "demo-editor-toolbar-button";
+const floatingToolbarHeight = 44;
 
 // #. 색상 계산에서 반복되는 범위 제한 로직을 공통 함수로 분리
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -774,7 +775,7 @@ const SelectionFloatingToolbar = () => {
             // 플로팅 툴바가 화면 밖으로 나가지 않도록 좌우/상하 위치를 보정
             const viewportMargin = 8;
             const toolbarWidth = toolbarRef.current?.offsetWidth ?? 420;
-            const toolbarHeight = toolbarRef.current?.offsetHeight ?? 44;
+            const toolbarHeight = floatingToolbarHeight;
             const desiredLeft = rect.left + rect.width / 2;
             const clampedLeft = Math.max(
                 viewportMargin + toolbarWidth / 2,
@@ -796,7 +797,7 @@ const SelectionFloatingToolbar = () => {
         if (rect.width === 0 && rect.height === 0) return null;
         const viewportMargin = 8;
         const toolbarWidth = toolbarRef.current?.offsetWidth ?? 420;
-        const toolbarHeight = toolbarRef.current?.offsetHeight ?? 44;
+        const toolbarHeight = floatingToolbarHeight;
         const desiredLeft = rect.left + rect.width / 2;
         const clampedLeft = Math.max(
             viewportMargin + toolbarWidth / 2,
@@ -908,7 +909,7 @@ const SelectionFloatingToolbar = () => {
                     ref={linkEditorRef}
                     className="demo-editor-link-editor"
                     style={{
-                        transform: `translate3d(${anchorPosition.left}px, ${anchorPosition.top + (toolbarRef.current?.offsetHeight ?? 44) + 8}px, 0) translateX(-50%)`,
+                        transform: `translate3d(${anchorPosition.left}px, ${anchorPosition.top + floatingToolbarHeight + 8}px, 0) translateX(-50%)`,
                     }}
                 >
                     <Input
