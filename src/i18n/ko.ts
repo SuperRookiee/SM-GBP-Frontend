@@ -879,6 +879,7 @@
             paragraph: "본문",
             modeEditor: "Editor",
             modePreview: "Preview",
+            modeHtml: "HTML",
             alignLeft: "왼쪽",
             alignCenter: "가운데",
             alignRight: "오른쪽",
@@ -903,6 +904,10 @@
             copyFailed: "복사에 실패했습니다.",
             copyUnavailable: "이 환경에서는 클립보드 복사를 지원하지 않습니다.",
             downloadSuccess: "{{format}} 파일 다운로드를 시작했습니다.",
+            htmlInputDescription: "HTML을 직접 입력/수정하면 미리보기와 HTML 내보내기에 반영됩니다.",
+            htmlInputPlaceholder: "<h2>직접 HTML을 입력하세요</h2>",
+            htmlInputAria: "HTML 직접 입력",
+            htmlReset: "초기화",
         },
         menu: {
             demo: "데모",

@@ -1,17 +1,19 @@
-import {useMemo, useRef, useState} from "react";
-import {AutoLinkNode, LinkNode} from "@lexical/link";
-import {ListItemNode, ListNode} from "@lexical/list";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {$createLinkNode, AutoLinkNode, LinkNode} from "@lexical/link";
+import {$createListItemNode, $createListNode, ListItemNode, ListNode} from "@lexical/list";
 import {AutoFocusPlugin} from "@lexical/react/LexicalAutoFocusPlugin";
 import {LexicalComposer} from "@lexical/react/LexicalComposer";
 import {ContentEditable} from "@lexical/react/LexicalContentEditable";
+import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {LexicalErrorBoundary} from "@lexical/react/LexicalErrorBoundary";
 import {HistoryPlugin} from "@lexical/react/LexicalHistoryPlugin";
 import {LinkPlugin} from "@lexical/react/LexicalLinkPlugin";
 import {ListPlugin} from "@lexical/react/LexicalListPlugin";
 import {OnChangePlugin} from "@lexical/react/LexicalOnChangePlugin";
 import {RichTextPlugin} from "@lexical/react/LexicalRichTextPlugin";
-import {HeadingNode, QuoteNode} from "@lexical/rich-text";
-import type {EditorState, Klass, LexicalNode, SerializedEditorState, SerializedLexicalNode} from "lexical";
+import {$createHeadingNode, $createQuoteNode, HeadingNode, QuoteNode} from "@lexical/rich-text";
+import type {EditorState, ElementNode, Klass, LexicalEditor, LexicalNode, SerializedEditorState, SerializedLexicalNode, TextFormatType} from "lexical";
+import {$createLineBreakNode, $createParagraphNode, $createTextNode, $getRoot} from "lexical";
 import {Copy, Download} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import BlockSideActions from "@/components/editor/BlockSideActions.tsx";
@@ -21,6 +23,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent, CardHeader} from "@/components/ui/card.tsx";
 import {ScrollArea} from "@/components/ui/scroll-area.tsx";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
+import {Textarea} from "@/components/ui/textarea.tsx";
 import "@/styles/demoEditor.module.css";
 
 const theme = {
@@ -263,11 +266,188 @@ const downloadTextFile = (content: string, extension: string, mimeType: string) 
     URL.revokeObjectURL(url);
 };
 
+type InlineFormatState = Record<TextFormatType, boolean>;
+
+const DEFAULT_INLINE_FORMAT: InlineFormatState = {
+    bold: false,
+    italic: false,
+    underline: false,
+    strikethrough: false,
+    code: false,
+    subscript: false,
+    superscript: false,
+    highlight: false,
+    lowercase: false,
+    uppercase: false,
+    capitalize: false,
+};
+
+const applyInlineFormats = (textNode: ReturnType<typeof $createTextNode>, format: InlineFormatState) => {
+    (Object.keys(format) as TextFormatType[]).forEach((key) => {
+        if (format[key]) textNode.toggleFormat(key);
+    });
+};
+
+const appendInlineChildrenFromDom = (domNode: ChildNode, parent: ElementNode, format: InlineFormatState) => {
+    if (domNode.nodeType === Node.TEXT_NODE) {
+        const text = domNode.textContent ?? "";
+        if (!text) return;
+        const textNode = $createTextNode(text);
+        applyInlineFormats(textNode, format);
+        parent.append(textNode);
+        return;
+    }
+
+    if (domNode.nodeType !== Node.ELEMENT_NODE) return;
+
+    const element = domNode as HTMLElement;
+    const tag = element.tagName.toLowerCase();
+
+    if (tag === "br") {
+        parent.append($createLineBreakNode());
+        return;
+    }
+
+    if (tag === "a") {
+        const linkNode = $createLinkNode(element.getAttribute("href") ?? "#");
+        parent.append(linkNode);
+        Array.from(element.childNodes).forEach((child) => appendInlineChildrenFromDom(child, linkNode, format));
+        return;
+    }
+
+    const nextFormat = {...format};
+    if (tag === "b" || tag === "strong") nextFormat.bold = true;
+    if (tag === "i" || tag === "em") nextFormat.italic = true;
+    if (tag === "u") nextFormat.underline = true;
+    if (tag === "s" || tag === "strike" || tag === "del") nextFormat.strikethrough = true;
+    if (tag === "code") nextFormat.code = true;
+    if (tag === "sub") nextFormat.subscript = true;
+    if (tag === "sup") nextFormat.superscript = true;
+
+    Array.from(element.childNodes).forEach((child) => appendInlineChildrenFromDom(child, parent, nextFormat));
+};
+
+const buildListFromDom = (element: HTMLElement, listType: "bullet" | "number") => {
+    const listNode = $createListNode(listType);
+    const listItems = Array.from(element.children).filter((child) => child.tagName.toLowerCase() === "li");
+
+    listItems.forEach((listItemElement) => {
+        const itemNode = $createListItemNode();
+        const inlineContainer = $createParagraphNode();
+
+        Array.from(listItemElement.childNodes).forEach((child) => {
+            if (child.nodeType === Node.ELEMENT_NODE) {
+                const tag = (child as HTMLElement).tagName.toLowerCase();
+                if (tag === "ul" || tag === "ol") return;
+            }
+            appendInlineChildrenFromDom(child, inlineContainer, DEFAULT_INLINE_FORMAT);
+        });
+
+        if (inlineContainer.getChildrenSize() > 0) {
+            itemNode.append(inlineContainer);
+        } else {
+            itemNode.append($createParagraphNode());
+        }
+
+        Array.from(listItemElement.children).forEach((child) => {
+            const tag = child.tagName.toLowerCase();
+            if (tag === "ul") itemNode.append(buildListFromDom(child as HTMLElement, "bullet"));
+            if (tag === "ol") itemNode.append(buildListFromDom(child as HTMLElement, "number"));
+        });
+
+        listNode.append(itemNode);
+    });
+
+    return listNode;
+};
+
+const setEditorFromHtml = (editor: LexicalEditor, html: string) => {
+    const parser = new DOMParser();
+    const documentFragment = parser.parseFromString(html || "", "text/html");
+    const bodyChildren = Array.from(documentFragment.body.childNodes);
+
+    editor.update(() => {
+        const root = $getRoot();
+        root.clear();
+
+        if (bodyChildren.length === 0) {
+            root.append($createParagraphNode());
+            return;
+        }
+
+        bodyChildren.forEach((child) => {
+            if (child.nodeType === Node.TEXT_NODE) {
+                const text = child.textContent?.trim();
+                if (!text) return;
+                const paragraph = $createParagraphNode();
+                paragraph.append($createTextNode(text));
+                root.append(paragraph);
+                return;
+            }
+
+            if (child.nodeType !== Node.ELEMENT_NODE) return;
+
+            const element = child as HTMLElement;
+            const tag = element.tagName.toLowerCase();
+
+            if (/^h[1-6]$/.test(tag)) {
+                const heading = $createHeadingNode(tag as "h1" | "h2" | "h3" | "h4" | "h5" | "h6");
+                Array.from(element.childNodes).forEach((inlineChild) =>
+                    appendInlineChildrenFromDom(inlineChild, heading, DEFAULT_INLINE_FORMAT),
+                );
+                root.append(heading);
+                return;
+            }
+
+            if (tag === "blockquote") {
+                const quote = $createQuoteNode();
+                Array.from(element.childNodes).forEach((inlineChild) =>
+                    appendInlineChildrenFromDom(inlineChild, quote, DEFAULT_INLINE_FORMAT),
+                );
+                root.append(quote);
+                return;
+            }
+
+            if (tag === "ul") {
+                root.append(buildListFromDom(element, "bullet"));
+                return;
+            }
+
+            if (tag === "ol") {
+                root.append(buildListFromDom(element, "number"));
+                return;
+            }
+
+            const paragraph = $createParagraphNode();
+            Array.from(element.childNodes).forEach((inlineChild) =>
+                appendInlineChildrenFromDom(inlineChild, paragraph, DEFAULT_INLINE_FORMAT),
+            );
+            root.append(paragraph);
+        });
+
+        if (root.getChildrenSize() === 0) {
+            root.append($createParagraphNode());
+        }
+    });
+};
+
+const EditorInstancePlugin = ({onReady}: { onReady: (editor: LexicalEditor) => void }) => {
+    const [editor] = useLexicalComposerContext();
+
+    useEffect(() => {
+        onReady(editor);
+    }, [editor, onReady]);
+
+    return null;
+};
+
 const DemoEditorPage = () => {
     const {t} = useTranslation();
     const [editorJson, setEditorJson] = useState<SerializedEditorStateNode | null>(null);
     const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("json");
-    const [editorMode, setEditorMode] = useState<"editor" | "preview">("editor");
+    const [editorMode, setEditorMode] = useState<"editor" | "preview" | "html">("editor");
+    const [htmlInput, setHtmlInput] = useState("");
+    const [editorInstance, setEditorInstance] = useState<LexicalEditor | null>(null);
     const [exportStatus, setExportStatus] = useState("");
     const shellRef = useRef<HTMLDivElement>(null);
 
@@ -277,9 +457,24 @@ const DemoEditorPage = () => {
 
     const exportedTexts = useMemo(() => ({
         json: editorJson ? JSON.stringify(editorJson, null, 2) : "",
-        html: convertLexicalJsonToHtml(editorJson),
+        html: htmlInput,
         markdown: convertLexicalJsonToMarkdown(editorJson),
-    }), [editorJson]);
+    }), [editorJson, htmlInput]);
+
+    useEffect(() => {
+        const generatedHtml = convertLexicalJsonToHtml(editorJson);
+        setHtmlInput((prev) => (prev === generatedHtml ? prev : generatedHtml));
+    }, [editorJson]);
+
+    const handleHtmlInputChange = useCallback((value: string) => {
+        setHtmlInput(value);
+        if (!editorInstance) return;
+        setEditorFromHtml(editorInstance, value);
+    }, [editorInstance]);
+
+    const handleHtmlReset = useCallback(() => {
+        handleHtmlInputChange("");
+    }, [handleHtmlInputChange]);
 
     const handleCopy = async () => {
         const value = exportedTexts[selectedFormat];
@@ -323,11 +518,13 @@ const DemoEditorPage = () => {
                 {/* 에디터 */}
                 <Card className="overflow-hidden pt-0 lg:col-span-2">
                     <LexicalComposer initialConfig={editorConfig}>
-                        <Tabs value={editorMode} onValueChange={(value) => setEditorMode(value as "editor" | "preview")} className="space-y-0">
+                        <EditorInstancePlugin onReady={setEditorInstance}/>
+                        <Tabs value={editorMode} onValueChange={(value) => setEditorMode(value as "editor" | "preview" | "html")} className="space-y-0">
                             <div className="border-b border-border/70 px-3 py-2">
-                                <TabsList className="grid h-8 w-fit grid-cols-2">
+                                <TabsList className="grid h-8 w-fit grid-cols-3">
                                     <TabsTrigger value="editor">{t("editor.modeEditor")}</TabsTrigger>
                                     <TabsTrigger value="preview">{t("editor.modePreview")}</TabsTrigger>
+                                    <TabsTrigger value="html">{t("editor.modeHtml")}</TabsTrigger>
                                 </TabsList>
                             </div>
 
@@ -358,6 +555,24 @@ const DemoEditorPage = () => {
                                             <p className="p-4 text-sm text-muted-foreground">{t("editor.renderedPreviewEmpty")}</p>
                                         )}
                                     </ScrollArea>
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="html" forceMount className={editorMode !== "html" ? "hidden" : "mt-0"}>
+                                <div className="space-y-2 p-3">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <p className="text-xs text-muted-foreground">{t("editor.htmlInputDescription")}</p>
+                                        <Button size="sm" variant="ghost" onClick={handleHtmlReset}>
+                                            {t("editor.htmlReset")}
+                                        </Button>
+                                    </div>
+                                    <Textarea
+                                        value={htmlInput}
+                                        onChange={(event) => handleHtmlInputChange(event.target.value)}
+                                        placeholder={t("editor.htmlInputPlaceholder")}
+                                        aria-label={t("editor.htmlInputAria")}
+                                        className="h-[380px] resize-none font-mono text-xs leading-relaxed"
+                                    />
                                 </div>
                             </TabsContent>
                         </Tabs>

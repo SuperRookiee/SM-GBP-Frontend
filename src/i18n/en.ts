@@ -881,6 +881,7 @@
             paragraph: "Paragraph",
             modeEditor: "Editor",
             modePreview: "Preview",
+            modeHtml: "HTML",
             alignLeft: "Left",
             alignCenter: "Center",
             alignRight: "Right",
@@ -905,6 +906,10 @@
             copyFailed: "Failed to copy.",
             copyUnavailable: "Clipboard copy is not available in this environment.",
             downloadSuccess: "Started downloading the {{format}} file.",
+            htmlInputDescription: "Directly typed HTML is used for preview and HTML export.",
+            htmlInputPlaceholder: "<h2>Type HTML directly</h2>",
+            htmlInputAria: "Direct HTML input",
+            htmlReset: "Reset",
         },
         menu: {
             demo: "Demo",
