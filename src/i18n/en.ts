@@ -879,6 +879,8 @@
             undo: "Undo",
             redo: "Redo",
             paragraph: "Paragraph",
+            modeEditor: "Editor",
+            modePreview: "Preview",
             alignLeft: "Left",
             alignCenter: "Center",
             alignRight: "Right",

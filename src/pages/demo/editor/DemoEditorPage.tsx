@@ -20,6 +20,7 @@ import ToolbarPlugin from "@/components/editor/ToolbarPlugin.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent, CardHeader} from "@/components/ui/card.tsx";
 import {ScrollArea} from "@/components/ui/scroll-area.tsx";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
 import "@/styles/demoEditor.module.css";
 
 const theme = {
@@ -266,6 +267,7 @@ const DemoEditorPage = () => {
     const {t} = useTranslation();
     const [editorJson, setEditorJson] = useState<SerializedEditorStateNode | null>(null);
     const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("json");
+    const [editorMode, setEditorMode] = useState<"editor" | "preview">("editor");
     const [exportStatus, setExportStatus] = useState("");
     const shellRef = useRef<HTMLDivElement>(null);
 
@@ -321,21 +323,44 @@ const DemoEditorPage = () => {
                 {/* 에디터 */}
                 <Card className="overflow-hidden pt-0 lg:col-span-2">
                     <LexicalComposer initialConfig={editorConfig}>
-                        <ToolbarPlugin/>
-                        <div className="editor-shell" ref={shellRef}>
-                            <BlockSideActions shellRef={shellRef}/>
-                            <RichTextPlugin
-                                contentEditable={<ContentEditable className="editor-input" aria-label={t("editor.inputAria")}/>}
-                                placeholder={<div className="editor-placeholder">{t("editor.placeholder")}</div>}
-                                ErrorBoundary={LexicalErrorBoundary}
-                            />
-                            <HistoryPlugin/>
-                            <AutoFocusPlugin/>
-                            <ListPlugin/>
-                            <ListTabIndentationPlugin/>
-                            <LinkPlugin/>
-                            <OnChangePlugin onChange={onChange}/>
-                        </div>
+                        <Tabs value={editorMode} onValueChange={(value) => setEditorMode(value as "editor" | "preview")} className="space-y-0">
+                            <div className="border-b border-border/70 px-3 py-2">
+                                <TabsList className="grid h-8 w-fit grid-cols-2">
+                                    <TabsTrigger value="editor">{t("editor.modeEditor")}</TabsTrigger>
+                                    <TabsTrigger value="preview">{t("editor.modePreview")}</TabsTrigger>
+                                </TabsList>
+                            </div>
+
+                            <TabsContent value="editor" forceMount className={editorMode !== "editor" ? "hidden" : "mt-0"}>
+                                <ToolbarPlugin/>
+                                <div className="editor-shell" ref={shellRef}>
+                                    <BlockSideActions shellRef={shellRef}/>
+                                    <RichTextPlugin
+                                        contentEditable={<ContentEditable className="editor-input" aria-label={t("editor.inputAria")}/>}
+                                        placeholder={<div className="editor-placeholder">{t("editor.placeholder")}</div>}
+                                        ErrorBoundary={LexicalErrorBoundary}
+                                    />
+                                    <HistoryPlugin/>
+                                    <AutoFocusPlugin/>
+                                    <ListPlugin/>
+                                    <ListTabIndentationPlugin/>
+                                    <LinkPlugin/>
+                                    <OnChangePlugin onChange={onChange}/>
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="preview" forceMount className={editorMode !== "preview" ? "hidden" : "mt-0"}>
+                                <div className="editor-shell min-h-0">
+                                    <ScrollArea className="h-[420px]">
+                                        {exportedTexts.html ? (
+                                            <div className="editor-input min-h-0 p-4" dangerouslySetInnerHTML={{__html: exportedTexts.html}}/>
+                                        ) : (
+                                            <p className="p-4 text-sm text-muted-foreground">{t("editor.renderedPreviewEmpty")}</p>
+                                        )}
+                                    </ScrollArea>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
                     </LexicalComposer>
                 </Card>
 
@@ -423,30 +448,6 @@ const DemoEditorPage = () => {
                             </div>
                         </section>
 
-                        <section className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-semibold">{t("editor.renderedPreview")}</h3>
-                                <span className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground">live</span>
-                            </div>
-                            <div className="rounded-lg border border-border/80 bg-background/80 p-2">
-                                <ScrollArea className="h-60">
-                                    {exportedTexts.html ? (
-                                        <div
-                                            className="editor-shell min-h-0 rounded-md bg-muted/40"
-                                        >
-                                            <div
-                                                className="editor-input min-h-0 p-3"
-                                                dangerouslySetInnerHTML={{__html: exportedTexts.html}}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <p className="rounded-md bg-muted/40 p-3 text-xs text-muted-foreground">
-                                            {t("editor.renderedPreviewEmpty")}
-                                        </p>
-                                    )}
-                                </ScrollArea>
-                            </div>
-                        </section>
                     </CardContent>
                 </Card>
             </div>

@@ -877,6 +877,8 @@
             undo: "뒤로",
             redo: "앞으로",
             paragraph: "본문",
+            modeEditor: "Editor",
+            modePreview: "Preview",
             alignLeft: "왼쪽",
             alignCenter: "가운데",
             alignRight: "오른쪽",
