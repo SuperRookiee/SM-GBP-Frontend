@@ -2,7 +2,7 @@
   "name": "miracle-web",
   "private": true,
   "version": "0.0.0",
-  "packageManager": "pnpm@10.30.2",
+  "packageManager": "pnpm@10.30.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -49,7 +49,7 @@
     "lucide-react": "^0.575.0",
     "radix-ui": "^1.4.3",
     "react": "^19.2.4",
-    "react-day-picker": "^9.13.2",
+    "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.4",
     "react-easy-crop": "^5.5.6",
     "react-error-boundary": "^6.1.1",
@@ -63,7 +63,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^25.3.1",
+    "@types/node": "^25.3.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
