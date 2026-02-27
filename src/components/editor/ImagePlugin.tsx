@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
-import {$getRoot, $getSelection, $insertNodes, $isRangeSelection, COMMAND_PRIORITY_EDITOR, PASTE_COMMAND} from "lexical";
+import {$getRoot, $getSelection, $insertNodes, $isRangeSelection, COMMAND_PRIORITY_EDITOR} from "lexical";
 import {INSERT_IMAGE_COMMAND, $createImageNode} from "@/components/editor/nodes/ImageNode.tsx";
 
 const fileToDataUrl = (file: File): Promise<string> =>
@@ -49,27 +49,6 @@ export default function ImagePlugin() {
                 // #. 커맨드 진입점에서 실제 노드 삽입 수행
                 editor.update(() => {
                     insertImage(src, altText);
-                });
-                return true;
-            },
-            COMMAND_PRIORITY_EDITOR,
-        );
-    }, [editor]);
-
-    useEffect(() => {
-        return editor.registerCommand(
-            PASTE_COMMAND,
-            (event) => {
-                // #. Lexical paste 커맨드 경로에서 클립보드 이미지 처리
-                const clipboardEvent = event as ClipboardEvent | null;
-                const file = getImageFileFromDataTransfer(clipboardEvent?.clipboardData);
-                if (!file) return false;
-
-                void fileToDataUrl(file).then((dataUrl) => {
-                    editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-                        src: dataUrl,
-                        altText: file.name || "clipboard-image",
-                    });
                 });
                 return true;
             },
