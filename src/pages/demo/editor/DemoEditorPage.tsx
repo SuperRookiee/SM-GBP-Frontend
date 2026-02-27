@@ -11,8 +11,8 @@ import {ListPlugin} from "@lexical/react/LexicalListPlugin";
 import {OnChangePlugin} from "@lexical/react/LexicalOnChangePlugin";
 import {RichTextPlugin} from "@lexical/react/LexicalRichTextPlugin";
 import {HeadingNode, QuoteNode} from "@lexical/rich-text";
-import {Copy, Download} from "lucide-react";
 import type {EditorState, Klass, LexicalNode, SerializedEditorState, SerializedLexicalNode} from "lexical";
+import {Copy, Download} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import BlockSideActions from "@/components/editor/BlockSideActions.tsx";
 import ListTabIndentationPlugin from "@/components/editor/ListTabIndentationPlugin.tsx";
@@ -137,24 +137,32 @@ const renderInlineHtml = (nodes: SerializedEditorNode[]): string =>
         })
         .join("");
 
-const renderBlockHtml = (node: SerializedEditorNode): string => {
+const getListDepthClass = (type: "ul" | "ol", depth: number) => {
+    const normalizedDepth = Math.min(Math.max(depth + 1, 1), 3);
+    return `editor-list-${type}-depth-${normalizedDepth}`;
+};
+
+const renderBlockHtml = (node: SerializedEditorNode, listDepth = 0): string => {
     const children = getNodeChildren(node);
     switch (node.type) {
         case "paragraph":
-            return `<p>${renderInlineHtml(children)}</p>`;
+            return `<p class="editor-paragraph">${renderInlineHtml(children)}</p>`;
         case "heading": {
             const tag = node.tag && /^h[1-6]$/.test(node.tag) ? node.tag : "h2";
-            return `<${tag}>${renderInlineHtml(children)}</${tag}>`;
+            return `<${tag} class="editor-heading-${tag}">${renderInlineHtml(children)}</${tag}>`;
         }
         case "quote":
-            return `<blockquote>${renderInlineHtml(children)}</blockquote>`;
+            return `<blockquote class="editor-quote">${renderInlineHtml(children)}</blockquote>`;
         case "list": {
             const listTag = node.listType === "number" ? "ol" : "ul";
-            const items = children.map((item) => renderBlockHtml(item)).join("");
-            return `<${listTag}>${items}</${listTag}>`;
+            const listClass = `editor-list-${listTag}`;
+            const depthClass = getListDepthClass(listTag, listDepth);
+            const nestedClass = listDepth > 0 ? " editor-nested-list" : "";
+            const items = children.map((item) => renderBlockHtml(item, listDepth + 1)).join("");
+            return `<${listTag} class="${listClass} ${depthClass}${nestedClass}">${items}</${listTag}>`;
         }
         case "listitem":
-            return `<li>${children.map((child) => renderBlockHtml(child)).join("") || renderInlineHtml(children)}</li>`;
+            return `<li class="editor-list-item">${children.map((child) => renderBlockHtml(child, listDepth)).join("") || renderInlineHtml(children)}</li>`;
         case "linebreak":
             return "<br />";
         default:
@@ -424,9 +432,13 @@ const DemoEditorPage = () => {
                                 <ScrollArea className="h-60">
                                     {exportedTexts.html ? (
                                         <div
-                                            className="prose prose-sm max-w-none rounded-md bg-muted/40 p-3 dark:prose-invert"
-                                            dangerouslySetInnerHTML={{__html: exportedTexts.html}}
-                                        />
+                                            className="editor-shell min-h-0 rounded-md bg-muted/40"
+                                        >
+                                            <div
+                                                className="editor-input min-h-0 p-3"
+                                                dangerouslySetInnerHTML={{__html: exportedTexts.html}}
+                                            />
+                                        </div>
                                     ) : (
                                         <p className="rounded-md bg-muted/40 p-3 text-xs text-muted-foreground">
                                             {t("editor.renderedPreviewEmpty")}
