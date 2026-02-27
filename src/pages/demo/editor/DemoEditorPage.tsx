@@ -17,7 +17,9 @@ import {$createParagraphNode, $getRoot} from "lexical";
 import {Copy, Download} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import BlockSideActions from "@/components/editor/BlockSideActions.tsx";
+import ImagePlugin from "@/components/editor/ImagePlugin.tsx";
 import ListTabIndentationPlugin from "@/components/editor/ListTabIndentationPlugin.tsx";
+import {ImageNode} from "@/components/editor/nodes/ImageNode.tsx";
 import ToolbarPlugin from "@/components/editor/ToolbarPlugin.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent, CardHeader} from "@/components/ui/card.tsx";
@@ -50,7 +52,8 @@ const theme = {
     },
 };
 
-const nodes: Array<Klass<LexicalNode>> = [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode, AutoLinkNode];
+// #. 에디터에서 사용할 노드 목록 (이미지 노드 포함)
+const nodes: Array<Klass<LexicalNode>> = [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode, AutoLinkNode, ImageNode];
 
 const editorConfig = {
     namespace: "DemoEditor",
@@ -68,6 +71,8 @@ type SerializedEditorNode = SerializedLexicalNode & {
     text?: string;
     tag?: string;
     url?: string;
+    src?: string;
+    altText?: string;
     format?: number | string;
     listType?: "bullet" | "number" | string;
     children?: SerializedEditorNode[];
@@ -118,6 +123,13 @@ const renderInlineMarkdown = (nodes: SerializedEditorNode[]): string =>
                     return applyMarkdownTextFormat(escapeMarkdown(node.text ?? ""), node.format);
                 case "linebreak":
                     return "  \n";
+                case "image": {
+                    // #. 인라인 위치에 포함된 이미지 노드는 Markdown 이미지 문법으로 변환
+                    const src = node.src ?? "";
+                    if (!src) return "";
+                    const altText = node.altText ?? "";
+                    return `![${altText}](${src})`;
+                }
                 case "link": {
                     const label = renderInlineMarkdown(getNodeChildren(node)) || node.url || "";
                     return `[${label}](${node.url ?? "#"})`;
@@ -165,6 +177,13 @@ const renderBlockMarkdown = (node: SerializedEditorNode): string => {
         }
         case "list":
             return `${renderListMarkdown(node)}\n`;
+        case "image": {
+            // #. 블록 이미지 노드를 Markdown 이미지 문법으로 변환
+            const src = node.src ?? "";
+            if (!src) return "";
+            const altText = node.altText ?? "";
+            return `![${altText}](${src})\n\n`;
+        }
         default:
             return renderInlineMarkdown(children);
     }
@@ -209,6 +228,12 @@ const formatHtmlNode = (node: ChildNode, depth: number): string[] => {
         .join(" ");
     const openTag = attributes ? `<${tag} ${attributes}>` : `<${tag}>`;
     const children = Array.from(element.childNodes);
+    // #. 닫는 태그가 없는 요소는 단일 라인으로 출력
+    const voidTags = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"]);
+
+    if (voidTags.has(tag)) {
+        return [`${indent}${openTag}`];
+    }
 
     if (children.length === 1 && children[0]?.nodeType === Node.TEXT_NODE) {
         const inlineText = children[0].textContent?.trim() ?? "";
@@ -247,9 +272,9 @@ const removeWhitespaceTextNodes = (node: Node) => {
 };
 
 const LexicalSyncPlugin = ({
-    onSync,
-    onEditorReady,
-}: {
+                               onSync,
+                               onEditorReady,
+                           }: {
     onSync: (editorState: SerializedEditorStateNode, html: string) => void;
     onEditorReady: (editor: LexicalEditor | null) => void;
 }) => {
@@ -295,6 +320,7 @@ const DemoEditorPage = () => {
             isApplyingHtmlRef.current = false;
         }
     }, []);
+
     const handleEditorReady = useCallback((editor: LexicalEditor | null) => {
         editorRef.current = editor;
     }, []);
@@ -378,7 +404,8 @@ const DemoEditorPage = () => {
                             onSync={handleLexicalSync}
                             onEditorReady={handleEditorReady}
                         />
-                        <Tabs value={editorMode} onValueChange={(value) => setEditorMode(value as "editor" | "preview" | "html")} className="space-y-0">
+                        <Tabs value={editorMode} onValueChange={(value) => setEditorMode(value as "editor" | "preview" | "html")}
+                              className="space-y-0">
                             <div className="border-b border-border/70 px-3 py-2">
                                 <TabsList className="grid h-8 w-fit grid-cols-3">
                                     <TabsTrigger value="editor">{t("editor.modeEditor")}</TabsTrigger>
@@ -400,6 +427,8 @@ const DemoEditorPage = () => {
                                     <HistoryPlugin/>
                                     <AutoFocusPlugin/>
                                     <ListPlugin/>
+                                    {/* 이미지 삽입/클립보드 붙여넣기 처리 */}
+                                    <ImagePlugin/>
                                     <ListTabIndentationPlugin/>
                                     <LinkPlugin/>
                                 </div>
@@ -410,7 +439,8 @@ const DemoEditorPage = () => {
                                 <div className="editor-shell min-h-0">
                                     <ScrollArea className="h-[420px]">
                                         {exportedTexts.html ? (
-                                            <div className="editor-input min-h-0 p-4" dangerouslySetInnerHTML={{__html: exportedTexts.html}}/>
+                                            <div className="editor-input min-h-0 p-4"
+                                                 dangerouslySetInnerHTML={{__html: exportedTexts.html}}/>
                                         ) : (
                                             <p className="p-4 text-sm text-muted-foreground">{t("editor.renderedPreviewEmpty")}</p>
                                         )}
@@ -448,7 +478,8 @@ const DemoEditorPage = () => {
                                 <h2 className="text-base font-semibold tracking-tight">{t("editor.exportTitle")}</h2>
                                 <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("editor.exportDescription")}</p>
                             </div>
-                            <span className="rounded-full border border-border/80 bg-background px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+                            <span
+                                className="rounded-full border border-border/80 bg-background px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
                                 {selectedFormat}
                             </span>
                         </div>
@@ -462,7 +493,7 @@ const DemoEditorPage = () => {
                                     variant={selectedFormat === "html" ? "default" : "ghost"}
                                     onClick={() => setSelectedFormat("html")}
                                 >
-                                {t("editor.formatHtml")}
+                                    {t("editor.formatHtml")}
                                 </Button>
                                 <Button
                                     size="sm"
@@ -470,7 +501,7 @@ const DemoEditorPage = () => {
                                     variant={selectedFormat === "markdown" ? "default" : "ghost"}
                                     onClick={() => setSelectedFormat("markdown")}
                                 >
-                                {t("editor.formatMarkdown")}
+                                    {t("editor.formatMarkdown")}
                                 </Button>
                                 <Button
                                     size="sm"
@@ -478,7 +509,7 @@ const DemoEditorPage = () => {
                                     variant={selectedFormat === "json" ? "default" : "ghost"}
                                     onClick={() => setSelectedFormat("json")}
                                 >
-                                {t("editor.formatJson")}
+                                    {t("editor.formatJson")}
                                 </Button>
                             </div>
                         </section>
@@ -495,7 +526,7 @@ const DemoEditorPage = () => {
                                     aria-label={t("editor.copy")}
                                     title={t("editor.copy")}
                                 >
-                                    <Copy />
+                                    <Copy/>
                                 </Button>
                                 <Button
                                     size="icon-sm"
@@ -503,7 +534,7 @@ const DemoEditorPage = () => {
                                     aria-label={t("editor.download")}
                                     title={t("editor.download")}
                                 >
-                                    <Download />
+                                    <Download/>
                                 </Button>
                             </div>
                         </section>
@@ -517,7 +548,8 @@ const DemoEditorPage = () => {
                             </div>
                             <div className="rounded-lg border border-border/80 bg-background/80 p-2">
                                 <ScrollArea className="h-60">
-                                    <pre className="overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted/70 p-3 font-mono text-xs leading-relaxed">
+                                    <pre
+                                        className="overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted/70 p-3 font-mono text-xs leading-relaxed">
                                         {exportedTexts[selectedFormat] || t("editor.exportEmpty")}
                                     </pre>
                                 </ScrollArea>

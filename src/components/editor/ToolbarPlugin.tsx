@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {type ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {$isLinkNode, TOGGLE_LINK_COMMAND} from "@lexical/link";
 import {INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND} from "@lexical/list";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
@@ -7,8 +7,9 @@ import {$getSelectionStyleValueForProperty, $patchStyleText, $setBlocksType} fro
 import {mergeRegister} from "@lexical/utils";
 import type {ElementFormatType} from "lexical";
 import {$createParagraphNode, $getSelection, $isRangeSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_LOW, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, OUTDENT_CONTENT_COMMAND, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND} from "lexical";
-import {AlignLeft, Bold, Check, ChevronDown, Code, Heading, Highlighter, Indent, Italic, Link2, List, ListOrdered, Minus, Plus, Redo2, Strikethrough, Underline, Undo2, X} from "lucide-react";
+import {AlignLeft, Bold, Check, ChevronDown, Code, Heading, Highlighter, ImagePlus, Indent, Italic, Link2, List, ListOrdered, Minus, Plus, Redo2, Strikethrough, Underline, Undo2, X} from "lucide-react";
 import {cn} from "@/utils/utils.ts";
+import {INSERT_IMAGE_COMMAND} from "@/components/editor/nodes/ImageNode.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Kbd} from "@/components/ui/kbd.tsx";
@@ -123,7 +124,7 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
     const [hexInput, setHexInput] = useState(() => rgbToHex(initialRgb.r, initialRgb.g, initialRgb.b));
 
     // #. HSV 변경값을 상태/UI/외부 onChange에 동시에 반영
-    const applyHsv = useCallback((nextHsv: {h: number; s: number; v: number}) => {
+    const applyHsv = useCallback((nextHsv: { h: number; s: number; v: number }) => {
         setHsv(nextHsv);
         const nextHex = hsvToHex(nextHsv.h, nextHsv.s, nextHsv.v);
         setHexInput(nextHex);
@@ -269,6 +270,8 @@ const ColorPicker = ({value, onChange, allowTransparent = false, clearLabel, onC
 
 const EditorToolbar = () => {
     const [editor] = useLexicalComposerContext();
+    // #. 이미지 파일 선택 input 참조
+    const imageInputRef = useRef<HTMLInputElement>(null);
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
     const [blockType, setBlockType] = useState<BlockType>("paragraph");
@@ -387,16 +390,46 @@ const EditorToolbar = () => {
         editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignType);
         setAlignType(alignType);
     };
+
     // #. 글자색을 초기화
     const clearTextColor = () => {
         applyTextStyle({color: "inherit"});
         setTextColor("inherit");
     };
+
     // #. 형광색을 초기화
     const clearHighlight = () => {
         applyTextStyle({"background-color": "transparent"});
         setHighlightColor("transparent");
     };
+
+    // #. 숨김 파일 input을 열어 이미지 선택창을 호출
+    const openImagePicker = () => {
+        imageInputRef.current?.click();
+    };
+
+    // #. 선택한 이미지 파일을 data URL로 읽어 에디터에 삽입
+    const handleImageFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const src = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result ?? ""));
+                reader.onerror = () => reject(reader.error);
+                reader.readAsDataURL(file);
+            });
+            editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+                src,
+                altText: file.name || "image",
+            });
+        } finally {
+            event.target.value = "";
+        }
+    };
+
+    // #. 링크 입력 UI를 플로팅 툴바에서 열도록 커스텀 이벤트 전달
     const handleOpenLinkEditor = () => {
         window.dispatchEvent(new CustomEvent("demo-editor-open-link-editor"));
     };
@@ -437,10 +470,20 @@ const EditorToolbar = () => {
     return (
         // 상단 고정 툴바 전체
         <div className="demo-editor-toolbar">
+            {/* 이미지 삽입용 숨김 파일 입력 */}
+            <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageFileChange}
+            />
             {/* 실행 취소/다시 실행 그룹 */}
             <div className="demo-editor-toolbar-group">
-                <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} disabled={!canUndo} onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}><Undo2 size={16}/></Button>
-                <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} disabled={!canRedo} onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}><Redo2 size={16}/></Button>
+                <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} disabled={!canUndo}
+                        onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}><Undo2 size={16}/></Button>
+                <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} disabled={!canRedo}
+                        onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}><Redo2 size={16}/></Button>
             </div>
 
             {/* 블록/폰트/크기 그룹 */}
@@ -448,7 +491,9 @@ const EditorToolbar = () => {
                 {/* 블록 타입 선택 */}
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" className="demo-editor-toolbar-trigger min-w-40 justify-between"><span className="inline-flex items-center gap-2"><Heading size={15}/>{blockLabel}</span><ChevronDown size={15}/></Button>
+                        <Button variant="outline" className="demo-editor-toolbar-trigger min-w-40 justify-between"><span
+                            className="inline-flex items-center gap-2"><Heading size={15}/>{blockLabel}</span><ChevronDown
+                            size={15}/></Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="min-w-56 p-1">
                         <Button variant="ghost" className="w-full justify-start" onClick={() => applyHeading("paragraph")}>Normal</Button>
@@ -462,25 +507,31 @@ const EditorToolbar = () => {
                 {/* 폰트 선택 */}
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" className="demo-editor-toolbar-trigger min-w-32 justify-between"><span className="truncate">{fontFamily}</span><ChevronDown size={15}/></Button>
+                        <Button variant="outline" className="demo-editor-toolbar-trigger min-w-32 justify-between"><span
+                            className="truncate">{fontFamily}</span><ChevronDown size={15}/></Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="min-w-56 p-1">
-                        {fontOptions.map((font) => <Button key={font} variant="ghost" className="w-full justify-start" onClick={() => applyTextStyle({"font-family": font})} style={{fontFamily: font}}>{font}</Button>)}
+                        {fontOptions.map((font) => <Button key={font} variant="ghost" className="w-full justify-start"
+                                                           onClick={() => applyTextStyle({"font-family": font})}
+                                                           style={{fontFamily: font}}>{font}</Button>)}
                     </PopoverContent>
                 </Popover>
 
                 {/* 폰트 크기 증감/입력 */}
                 <div className="demo-editor-font-size-control">
-                    <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} onClick={() => applyFontSize(fontSize - 1)}><Minus size={15}/></Button>
-                    <input type="number" min={10} max={72} step={1} inputMode="numeric" className="demo-editor-font-size-input" value={fontSizeInput} onChange={(event) => setFontSizeInput(event.target.value)} onBlur={commitFontSizeInput}
-                        onKeyDown={(event) => {
-                            if (event.key === "Enter") {
-                                event.preventDefault();
-                                commitFontSizeInput();
-                                (event.currentTarget as HTMLInputElement).blur();
-                            }
-                        }}/>
-                    <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} onClick={() => applyFontSize(fontSize + 1)}><Plus size={15}/></Button>
+                    <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} onClick={() => applyFontSize(fontSize - 1)}><Minus
+                        size={15}/></Button>
+                    <input type="number" min={10} max={72} step={1} inputMode="numeric" className="demo-editor-font-size-input"
+                           value={fontSizeInput} onChange={(event) => setFontSizeInput(event.target.value)} onBlur={commitFontSizeInput}
+                           onKeyDown={(event) => {
+                               if (event.key === "Enter") {
+                                   event.preventDefault();
+                                   commitFontSizeInput();
+                                   (event.currentTarget as HTMLInputElement).blur();
+                               }
+                           }}/>
+                    <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} onClick={() => applyFontSize(fontSize + 1)}><Plus
+                        size={15}/></Button>
                 </div>
             </div>
 
@@ -492,12 +543,29 @@ const EditorToolbar = () => {
                         <Button variant="ghost" size="icon-sm" className={toolbarButtonClass}><List size={15}/></Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="p-1">
-                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}><List size={15}/>Bullet List</Button>
-                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}><ListOrdered size={15}/>Numbered List</Button>
+                        <Button variant="ghost" className="w-full justify-start gap-2"
+                                onClick={() => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)}><List size={15}/>Bullet
+                            List</Button>
+                        <Button variant="ghost" className="w-full justify-start gap-2"
+                                onClick={() => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)}><ListOrdered size={15}/>Numbered
+                            List</Button>
                         <div className="my-1 border-t"/>
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined)}>Clear List</Button>
+                        <Button variant="ghost" className="w-full justify-start"
+                                onClick={() => editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined)}>Clear List</Button>
                     </PopoverContent>
                 </Popover>
+                <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className={toolbarButtonClass}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={openImagePicker}
+                    aria-label="Insert image"
+                    title="Insert image"
+                >
+                    {/* 이미지 삽입 버튼 */}
+                    <ImagePlus size={15}/>
+                </Button>
 
                 {/* 텍스트 색상 선택 */}
                 <Popover
@@ -508,7 +576,9 @@ const EditorToolbar = () => {
                     }}
                 >
                     <PopoverTrigger asChild>
-                        <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} onMouseDown={(event) => event.preventDefault()}><span className="demo-editor-color-icon" style={{color: textColor}}>A</span></Button>
+                        <Button variant="ghost" size="icon-sm" className={toolbarButtonClass}
+                                onMouseDown={(event) => event.preventDefault()}><span className="demo-editor-color-icon"
+                                                                                      style={{color: textColor}}>A</span></Button>
                     </PopoverTrigger>
                     <PopoverContent
                         align="start"
@@ -537,7 +607,8 @@ const EditorToolbar = () => {
                     }}
                 >
                     <PopoverTrigger asChild>
-                        <Button variant="ghost" size="icon-sm" className={toolbarButtonClass} onMouseDown={(event) => event.preventDefault()}>
+                        <Button variant="ghost" size="icon-sm" className={toolbarButtonClass}
+                                onMouseDown={(event) => event.preventDefault()}>
                             <Highlighter size={14} style={{color: highlightColor === "transparent" ? "currentColor" : highlightColor}}/>
                         </Button>
                     </PopoverTrigger>
@@ -563,11 +634,16 @@ const EditorToolbar = () => {
 
             {/* 인라인 포맷 그룹 */}
             <div className="demo-editor-toolbar-group">
-                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.bold && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}><Bold size={15}/></Button>
-                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.italic && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}><Italic size={15}/></Button>
-                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.underline && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}><Underline size={15}/></Button>
-                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.strikethrough && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")}><Strikethrough size={15}/></Button>
-                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.code && "is-active")} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code")}><Code size={15}/></Button>
+                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.bold && "is-active")}
+                        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}><Bold size={15}/></Button>
+                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.italic && "is-active")}
+                        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}><Italic size={15}/></Button>
+                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.underline && "is-active")}
+                        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}><Underline size={15}/></Button>
+                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.strikethrough && "is-active")}
+                        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")}><Strikethrough size={15}/></Button>
+                <Button variant="ghost" size="icon-sm" className={cn(toolbarButtonClass, formats.code && "is-active")}
+                        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code")}><Code size={15}/></Button>
                 <Button
                     variant="ghost"
                     size="icon-sm"
@@ -583,13 +659,16 @@ const EditorToolbar = () => {
             <div className="demo-editor-toolbar-group">
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" className="demo-editor-toolbar-trigger min-w-34 justify-between"><span className="inline-flex items-center gap-2"><AlignLeft size={15}/>{alignLabel}</span><ChevronDown size={15}/></Button>
+                        <Button variant="outline" className="demo-editor-toolbar-trigger min-w-34 justify-between"><span
+                            className="inline-flex items-center gap-2"><AlignLeft size={15}/>{alignLabel}</span><ChevronDown
+                            size={15}/></Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="min-w-52 p-1">
                         <Button variant="ghost" className="w-full justify-start" onClick={() => applyAlign("left")}>Left Align</Button>
                         <Button variant="ghost" className="w-full justify-start" onClick={() => applyAlign("center")}>Center Align</Button>
                         <Button variant="ghost" className="w-full justify-start" onClick={() => applyAlign("right")}>Right Align</Button>
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => applyAlign("justify")}>Justify Align</Button>
+                        <Button variant="ghost" className="w-full justify-start" onClick={() => applyAlign("justify")}>Justify
+                            Align</Button>
                         <div className="my-1 border-t"/>
                         <Button
                             variant="ghost"
@@ -709,6 +788,7 @@ const SelectionFloatingToolbar = () => {
         });
     }, [editor, isLinkEditorOpen]);
 
+    // #. 현재 선택 영역의 화면 좌표를 계산
     const resolveSelectionPosition = useCallback(() => {
         const nativeSelection = window.getSelection();
         if (!nativeSelection || nativeSelection.rangeCount === 0) return null;
@@ -727,6 +807,7 @@ const SelectionFloatingToolbar = () => {
         return {top, left: clampedLeft};
     }, []);
 
+    // #. 링크 편집기 열기 (선택 좌표를 유지해 위치 안정화)
     const openLinkEditor = useCallback(() => {
         const nextPosition = resolveSelectionPosition() ?? position ?? linkEditorPosition;
         if (!nextPosition) return;
@@ -735,6 +816,7 @@ const SelectionFloatingToolbar = () => {
         setLinkUrlInput(currentLinkUrl || "https://");
         setIsLinkEditorOpen(true);
     }, [currentLinkUrl, linkEditorPosition, position, resolveSelectionPosition]);
+    // #. 입력값으로 링크 적용/해제
     const applyLinkFromInput = useCallback(() => {
         const trimmed = linkUrlInput.trim();
         editor.focus(() => {
@@ -758,6 +840,7 @@ const SelectionFloatingToolbar = () => {
         );
     }, [editor, syncSelectionToolbar]);
     useEffect(() => {
+        // #. 상단 툴바에서 보낸 링크 편집기 오픈 이벤트 구독
         const handleOpen = () => openLinkEditor();
         window.addEventListener("demo-editor-open-link-editor", handleOpen as EventListener);
         return () => {
@@ -766,6 +849,7 @@ const SelectionFloatingToolbar = () => {
     }, [openLinkEditor]);
     useEffect(() => {
         if (!isLinkEditorOpen) return;
+        // #. 링크 편집기 외부 클릭 시 닫기
         const handleMouseDown = (event: MouseEvent) => {
             const target = event.target as Node | null;
             if (!target) return;
@@ -792,11 +876,22 @@ const SelectionFloatingToolbar = () => {
                     className="demo-editor-selection-toolbar"
                     style={{transform: `translate3d(${position.left}px, ${position.top}px, 0) translateX(-50%)`}}
                 >
-                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.bold && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}><Bold size={14}/></Button>
-                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.italic && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}><Italic size={14}/></Button>
-                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.underline && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}><Underline size={14}/></Button>
-                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.strikethrough && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")}><Strikethrough size={14}/></Button>
-                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.code && "is-active")} onMouseDown={(event) => event.preventDefault()} onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code")}>{"<>"}</Button>
+                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.bold && "is-active")}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}><Bold size={14}/></Button>
+                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.italic && "is-active")}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}><Italic size={14}/></Button>
+                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.underline && "is-active")}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}><Underline size={14}/></Button>
+                    <Button variant="ghost" size="icon-sm"
+                            className={cn("demo-editor-selection-button", formats.strikethrough && "is-active")}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")}><Strikethrough size={14}/></Button>
+                    <Button variant="ghost" size="icon-sm" className={cn("demo-editor-selection-button", formats.code && "is-active")}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code")}>{"<>"}</Button>
                     <Button
                         variant="ghost"
                         size="icon-sm"
