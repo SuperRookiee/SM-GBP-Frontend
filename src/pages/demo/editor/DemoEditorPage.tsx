@@ -11,8 +11,8 @@ import {ListPlugin} from "@lexical/react/LexicalListPlugin";
 import {OnChangePlugin} from "@lexical/react/LexicalOnChangePlugin";
 import {RichTextPlugin} from "@lexical/react/LexicalRichTextPlugin";
 import {HeadingNode, QuoteNode} from "@lexical/rich-text";
-import {Copy, Download} from "lucide-react";
 import type {EditorState, Klass, LexicalNode, SerializedEditorState, SerializedLexicalNode} from "lexical";
+import {Copy, Download} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import BlockSideActions from "@/components/editor/BlockSideActions.tsx";
 import ListTabIndentationPlugin from "@/components/editor/ListTabIndentationPlugin.tsx";
@@ -20,6 +20,7 @@ import ToolbarPlugin from "@/components/editor/ToolbarPlugin.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent, CardHeader} from "@/components/ui/card.tsx";
 import {ScrollArea} from "@/components/ui/scroll-area.tsx";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
 import "@/styles/demoEditor.module.css";
 
 const theme = {
@@ -137,24 +138,32 @@ const renderInlineHtml = (nodes: SerializedEditorNode[]): string =>
         })
         .join("");
 
-const renderBlockHtml = (node: SerializedEditorNode): string => {
+const getListDepthClass = (type: "ul" | "ol", depth: number) => {
+    const normalizedDepth = Math.min(Math.max(depth + 1, 1), 3);
+    return `editor-list-${type}-depth-${normalizedDepth}`;
+};
+
+const renderBlockHtml = (node: SerializedEditorNode, listDepth = 0): string => {
     const children = getNodeChildren(node);
     switch (node.type) {
         case "paragraph":
-            return `<p>${renderInlineHtml(children)}</p>`;
+            return `<p class="editor-paragraph">${renderInlineHtml(children)}</p>`;
         case "heading": {
             const tag = node.tag && /^h[1-6]$/.test(node.tag) ? node.tag : "h2";
-            return `<${tag}>${renderInlineHtml(children)}</${tag}>`;
+            return `<${tag} class="editor-heading-${tag}">${renderInlineHtml(children)}</${tag}>`;
         }
         case "quote":
-            return `<blockquote>${renderInlineHtml(children)}</blockquote>`;
+            return `<blockquote class="editor-quote">${renderInlineHtml(children)}</blockquote>`;
         case "list": {
             const listTag = node.listType === "number" ? "ol" : "ul";
-            const items = children.map((item) => renderBlockHtml(item)).join("");
-            return `<${listTag}>${items}</${listTag}>`;
+            const listClass = `editor-list-${listTag}`;
+            const depthClass = getListDepthClass(listTag, listDepth);
+            const nestedClass = listDepth > 0 ? " editor-nested-list" : "";
+            const items = children.map((item) => renderBlockHtml(item, listDepth + 1)).join("");
+            return `<${listTag} class="${listClass} ${depthClass}${nestedClass}">${items}</${listTag}>`;
         }
         case "listitem":
-            return `<li>${children.map((child) => renderBlockHtml(child)).join("") || renderInlineHtml(children)}</li>`;
+            return `<li class="editor-list-item">${children.map((child) => renderBlockHtml(child, listDepth)).join("") || renderInlineHtml(children)}</li>`;
         case "linebreak":
             return "<br />";
         default:
@@ -258,6 +267,7 @@ const DemoEditorPage = () => {
     const {t} = useTranslation();
     const [editorJson, setEditorJson] = useState<SerializedEditorStateNode | null>(null);
     const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("json");
+    const [editorMode, setEditorMode] = useState<"editor" | "preview">("editor");
     const [exportStatus, setExportStatus] = useState("");
     const shellRef = useRef<HTMLDivElement>(null);
 
@@ -313,21 +323,44 @@ const DemoEditorPage = () => {
                 {/* 에디터 */}
                 <Card className="overflow-hidden pt-0 lg:col-span-2">
                     <LexicalComposer initialConfig={editorConfig}>
-                        <ToolbarPlugin/>
-                        <div className="editor-shell" ref={shellRef}>
-                            <BlockSideActions shellRef={shellRef}/>
-                            <RichTextPlugin
-                                contentEditable={<ContentEditable className="editor-input" aria-label={t("editor.inputAria")}/>}
-                                placeholder={<div className="editor-placeholder">{t("editor.placeholder")}</div>}
-                                ErrorBoundary={LexicalErrorBoundary}
-                            />
-                            <HistoryPlugin/>
-                            <AutoFocusPlugin/>
-                            <ListPlugin/>
-                            <ListTabIndentationPlugin/>
-                            <LinkPlugin/>
-                            <OnChangePlugin onChange={onChange}/>
-                        </div>
+                        <Tabs value={editorMode} onValueChange={(value) => setEditorMode(value as "editor" | "preview")} className="space-y-0">
+                            <div className="border-b border-border/70 px-3 py-2">
+                                <TabsList className="grid h-8 w-fit grid-cols-2">
+                                    <TabsTrigger value="editor">{t("editor.modeEditor")}</TabsTrigger>
+                                    <TabsTrigger value="preview">{t("editor.modePreview")}</TabsTrigger>
+                                </TabsList>
+                            </div>
+
+                            <TabsContent value="editor" forceMount className={editorMode !== "editor" ? "hidden" : "mt-0"}>
+                                <ToolbarPlugin/>
+                                <div className="editor-shell" ref={shellRef}>
+                                    <BlockSideActions shellRef={shellRef}/>
+                                    <RichTextPlugin
+                                        contentEditable={<ContentEditable className="editor-input" aria-label={t("editor.inputAria")}/>}
+                                        placeholder={<div className="editor-placeholder">{t("editor.placeholder")}</div>}
+                                        ErrorBoundary={LexicalErrorBoundary}
+                                    />
+                                    <HistoryPlugin/>
+                                    <AutoFocusPlugin/>
+                                    <ListPlugin/>
+                                    <ListTabIndentationPlugin/>
+                                    <LinkPlugin/>
+                                    <OnChangePlugin onChange={onChange}/>
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="preview" forceMount className={editorMode !== "preview" ? "hidden" : "mt-0"}>
+                                <div className="editor-shell min-h-0">
+                                    <ScrollArea className="h-[420px]">
+                                        {exportedTexts.html ? (
+                                            <div className="editor-input min-h-0 p-4" dangerouslySetInnerHTML={{__html: exportedTexts.html}}/>
+                                        ) : (
+                                            <p className="p-4 text-sm text-muted-foreground">{t("editor.renderedPreviewEmpty")}</p>
+                                        )}
+                                    </ScrollArea>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
                     </LexicalComposer>
                 </Card>
 
@@ -414,6 +447,7 @@ const DemoEditorPage = () => {
                                 </ScrollArea>
                             </div>
                         </section>
+
                     </CardContent>
                 </Card>
             </div>

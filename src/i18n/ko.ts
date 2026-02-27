@@ -877,6 +877,8 @@
             undo: "뒤로",
             redo: "앞으로",
             paragraph: "본문",
+            modeEditor: "Editor",
+            modePreview: "Preview",
             alignLeft: "왼쪽",
             alignCenter: "가운데",
             alignRight: "오른쪽",
@@ -894,7 +896,9 @@
             copy: "복사",
             download: "다운로드",
             exportPreview: "선택 포맷 미리보기",
+            renderedPreview: "실제 렌더링 미리보기",
             exportEmpty: "내보낼 내용이 없습니다.",
+            renderedPreviewEmpty: "렌더링할 내용이 없습니다.",
             copySuccess: "{{format}} 형식을 클립보드에 복사했습니다.",
             copyFailed: "복사에 실패했습니다.",
             copyUnavailable: "이 환경에서는 클립보드 복사를 지원하지 않습니다.",
@@ -999,6 +1003,5 @@
 };
 
 export default ko;
-
 
 
